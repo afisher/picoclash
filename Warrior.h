@@ -3,5 +3,5 @@
 
 class Warrior: public Character {
     private:
-        static SDL_Surface* image;
-}
+        void set_values(int lvl);
+};

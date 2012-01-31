@@ -3,5 +3,6 @@
 
 class Healer: public Character {
     private:
-        static SDL_Surface* image;
-}
+        int magic;
+        void set_values(int lvl);
+};

@@ -1,0 +1,45 @@
+#include "Util.h"
+
+class Util {
+    // intitializes the screen and returns it (returns null if something went wrong)
+    SDL_Surface* initScreen() {
+        //Initialize all SDL subsystems
+        if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
+            return NULL;
+        }
+
+        screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_SWSURFACE);
+
+        SDL_WM_SetCaption("Someday soon I'll be a game!", NULL);
+
+        return screen;
+    }
+
+    // loads an image from a file name and returns it as a surface
+    SDL_Surface* load_image(std::string filename) {
+        SDL_Surface* loadedImage    = NULL;
+        SDL_Surface* optimizedImage = NULL;
+
+        loadedImage = IMG_Load(filename.c_str());
+
+        // if nothing went wrong on load
+        if (loadedImage != NULL) {
+            //Create an optimized image
+            optimizedImage = SDL_DisplayFormatAlpha(loadedImage);
+
+            //Free the old image
+            SDL_FreeSurface(loadedImage);
+        }
+
+        return optimizedImage;
+    }
+
+    // applies one surface to another based on x and y coords
+    void apply_surface(int x, int y, SDL_Surface* source, SDL_Surface* destination) {
+        SDL_Rect offset;
+        offset.x = x;
+        offset.y = y;
+
+        SDL_BlitSurface(source, NULL, destination, &offset);
+    }
+}
