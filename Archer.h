@@ -1,7 +1,7 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 
-class Healer: public Character {
+class Archer: public Character {
     private:
         static SDL_Surface* image;
 }
