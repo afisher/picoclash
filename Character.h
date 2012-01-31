@@ -3,20 +3,25 @@
 #include <string>
 
 class Character {
-    private:
+    protected:
         int level;
         int mobility;
         int health;
         int strength;
         int range;
+
         std::string name;
+
         SDL_Surface* image;
 
     public:
-        int level();
-        int mobility();
-        int health();
-        int strength();
-        std::string name();
-        SDL_Surface* image();
+        Character();
+
+        int get_level();          
+        int get_mobility();       
+        int get_health();         
+        int get_strength();       
+        int get_range();          
+        std::string get_name();   
+        SDL_Surface* get_image(); 
 };

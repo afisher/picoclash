@@ -1,45 +1,52 @@
-#include "Util.h"
+#include "SDL/SDL.h"
+#include "SDL/SDL_image.h"
+#include <string>
 
 class Util {
-    // intitializes the screen and returns it (returns null if something went wrong)
-    SDL_Surface* initScreen() {
-        //Initialize all SDL subsystems
-        if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
-            return NULL;
-        }
+    public:
+        static SDL_Surface* init_screen(int width, int height, int bpp); 
+        static SDL_Surface* load_image(std::string filename); 
+        static void apply_surface(int x, int y, SDL_Surface* source, SDL_Surface* destination);
+};
 
-        screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_SWSURFACE);
-
-        SDL_WM_SetCaption("Someday soon I'll be a game!", NULL);
-
-        return screen;
+// intitializes the screen and returns it (returns null if something went wrong)
+SDL_Surface* Util::initScreen(int width, int height, int bpp) {
+    //Initialize all SDL subsystems
+    if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
+        return NULL;
     }
 
-    // loads an image from a file name and returns it as a surface
-    SDL_Surface* load_image(std::string filename) {
-        SDL_Surface* loadedImage    = NULL;
-        SDL_Surface* optimizedImage = NULL;
+    screen = SDL_SetVideoMode(width, height, bpp, SDL_SWSURFACE);
 
-        loadedImage = IMG_Load(filename.c_str());
+    SDL_WM_SetCaption("Someday soon I'll be a game!", NULL);
 
-        // if nothing went wrong on load
-        if (loadedImage != NULL) {
-            //Create an optimized image
-            optimizedImage = SDL_DisplayFormatAlpha(loadedImage);
+    return screen;
+}
 
-            //Free the old image
-            SDL_FreeSurface(loadedImage);
-        }
+// loads an image from a file name and returns it as a surface
+SDL_Surface* Util::load_image(std::string filename) {
+    SDL_Surface* loadedImage    = NULL;
+    SDL_Surface* optimizedImage = NULL;
 
-        return optimizedImage;
+    loadedImage = IMG_Load(filename.c_str());
+
+    // if nothing went wrong on load
+    if (loadedImage != NULL) {
+        //Create an optimized image
+        optimizedImage = SDL_DisplayFormatAlpha(loadedImage);
+
+        //Free the old image
+        SDL_FreeSurface(loadedImage);
     }
 
-    // applies one surface to another based on x and y coords
-    void apply_surface(int x, int y, SDL_Surface* source, SDL_Surface* destination) {
-        SDL_Rect offset;
-        offset.x = x;
-        offset.y = y;
+    return optimizedImage;
+}
 
-        SDL_BlitSurface(source, NULL, destination, &offset);
-    }
+// applies one surface to another based on x and y coords
+void Util::apply_surface(int x, int y, SDL_Surface* source, SDL_Surface* destination) {
+    SDL_Rect offset;
+    offset.x = x;
+    offset.y = y;
+
+    SDL_BlitSurface(source, NULL, destination, &offset);
 }

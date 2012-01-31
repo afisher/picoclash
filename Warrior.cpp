@@ -1,21 +1,25 @@
-#include "Warrior.h"
+#include "SDL/SDL.h"
+#include "SDL/SDL_image.h"
 
 class Warrior: public Character {
-    Warrior() {
-        set_values(1);
-    }
+    private:
+        void set_values(int lvl);
+};
 
-    Warrior(int lvl) {
-        set_values(lvl);
-    }
+Warrior::Warrior() {
+    set_values(1);
+}
 
-    void set_values(int lvl) {
-        level    = lvl;
-        mobility = 3;
-        health   = 10 * level;
-        strength = 5  * level;
-        range    = 1;
+Warrior::Warrior(int lvl) {
+    set_values(lvl);
+}
 
-        image = Util::load_image("sprites/warrior-blue.cpp");
-    }
+void Warrior::set_values(int lvl) {
+    level    = lvl;
+    mobility = 3;
+    health   = 10 * level;
+    strength = 5  * level;
+    range    = 1;
+
+    image = Util::load_image("sprites/warrior-blue.cpp");
 }

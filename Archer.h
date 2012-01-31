@@ -1,7 +1,11 @@
-#include "SDL/SDL.h"
-#include "SDL/SDL_image.h"
+#include "Character.h"
 
-class Archer: public Character {
+class Archer : public Character {
     private:
         void set_values(int lvl);
+
+    public:
+        Archer();
+        Archer(int lvl);
 };
+

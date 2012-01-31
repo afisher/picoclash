@@ -1,21 +1,25 @@
-#include "Archer.h"
+#include "SDL/SDL.h"
+#include "SDL/SDL_image.h"
 
 class Archer: public Character {
-    Archer() {
-        set_values(1);
-    }
+    private:
+        void set_values(int lvl);
+};
 
-    Archer(int lvl) {
-        set_values(lvl);
-    }
+Archer::Archer() {
+    set_values(1);
+}
 
-    void set_values(int lvl) {
-        level    = lvl;
-        mobility = 3;
-        health   = 8 * level;
-        strength = 3  * level;
-        range    = 6;
+Archer::Archer(int lvl) {
+    set_values(lvl);
+}
 
-        image = Util::load_image("sprites/warrior-blue.cpp");
-    }
+void Archer::set_values(int lvl) {
+    level    = lvl;
+    mobility = 3;
+    health   = 8 * level;
+    strength = 3  * level;
+    range    = 6;
+
+    image = Util::load_image("sprites/warrior-blue.cpp");
 }
