@@ -41,37 +41,36 @@ void print_menu() {
     std::cout << "0. Done\n";
 }
 
-void menu() {
+Character* menu() {
     int choice;
 
     print_menu();
     std::cin >> choice;
-    while (choice != 0) {
-        int x;
-        int y;
-        std::cout << "Please enter an x coordinate: ";
-        std::cin >> x;
-        std::cout << "Please enter a y coordinate: ";
-        std::cin >> y;
 
-        Character* c;
+    /*int x;
+    int y;
+    std::cout << "Please enter an x coordinate: ";
+    std::cin >> x;
+    std::cout << "Please enter a y coordinate: ";
+    std::cin >> y;*/
 
-        if (choice == 1) {
-            c = new Warrior;
-        } else if (choice == 2) {
-            c = new Archer;
-        } else if (choice == 3) {
-            c = new Healer;
-        }
+    Character* c;
 
-        SDL_Surface* image = c->get_image();
-        Util::apply_surface(x * SPRITE_SIZE, y * SPRITE_SIZE, image, screen);
+    if (choice == 1) {
+        c = new Warrior;
+    } else if (choice == 2) {
+        c = new Archer;
+    } else if (choice == 3) {
+        c = new Healer;
+    } else c = NULL;
 
-        SDL_Flip(screen);
+    return c;
+/*
+    SDL_Surface* image = c->get_image();
+    Util::apply_surface(x * SPRITE_SIZE, y * SPRITE_SIZE, image, screen);
 
-        print_menu();
-        std::cin >> choice;
-    }
+    SDL_Flip(screen);
+*/
 }
 
 int main(int argc, char* args[]) {
@@ -85,13 +84,25 @@ int main(int argc, char* args[]) {
     tile_image = grass.get_image();
     if (draw_grid() == -1) return 1;
 
-    menu();
+    Character* c = menu();
 
     while (quit == false) {
+
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 std::cout << "Quit Event";
                 quit = true;
+            } else if (event.type == SDL_MOUSEBUTTONDOWN &&
+                        event.button.button == SDL_BUTTON_LEFT) {
+
+                // integer division -- round down to the nearest multiple of SPRITE_SIZE
+                int x = (event.button.x / SPRITE_SIZE) * SPRITE_SIZE;
+                int y = (event.button.y / SPRITE_SIZE) * SPRITE_SIZE;
+
+                SDL_Surface* image = c->get_image();
+                Util::apply_surface(x, y, image, screen);
+
+                SDL_Flip(screen);
             }
         }
     }
