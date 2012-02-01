@@ -84,15 +84,14 @@ int main(int argc, char* args[]) {
     tile_image = grass.get_image();
     if (draw_grid() == -1) return 1;
 
-    Character* c = menu();
+    while (true) {
+        Character* c = menu();
+        if (c == NULL) {
+            break;
+        }
 
-    while (quit == false) {
-
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                std::cout << "Quit Event";
-                quit = true;
-            } else if (event.type == SDL_MOUSEBUTTONDOWN &&
+        while (SDL_WaitEvent(&event)) {
+            if (event.type == SDL_MOUSEBUTTONDOWN &&
                         event.button.button == SDL_BUTTON_LEFT) {
 
                 // integer division -- round down to the nearest multiple of SPRITE_SIZE
@@ -103,6 +102,17 @@ int main(int argc, char* args[]) {
                 Util::apply_surface(x, y, image, screen);
 
                 SDL_Flip(screen);
+
+                break;
+            }
+        }
+    }
+
+    while (quit == false) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                std::cout << "Quit Event";
+                quit = true;
             }
         }
     }
