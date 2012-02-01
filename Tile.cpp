@@ -1,7 +1,7 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
-#include "Tile.h"
 #include "Util.h"
+#include "Tile.h"
 
 Tile::Tile() {
     image = Util::load_image("sprites/grass.png");

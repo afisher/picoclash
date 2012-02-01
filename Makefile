@@ -5,13 +5,13 @@ all: srpg
 srpg: SRPG.o Util.o Tile.o
 	g++ -o srpg SRPG.o Util.o Tile.o ${LIBS}
 
-SRPG.o: Util.h Tile.h
+SRPG.o:
 	g++ -c SRPG.cpp
 
-Util.o: Util.h
+Util.o:
 	g++ -c Util.cpp
 
-Tile.o: Tile.h
+Tile.o:
 	g++ -c Tile.cpp
 
 clean:

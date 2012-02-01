@@ -9,8 +9,8 @@ const int SCREEN_WIDTH  = 640;
 const int SCREEN_HEIGHT = 480;
 const int SCREEN_BPP    = 32;
 
-const int GRID_WIDTH  = 10;
-const int GRID_HEIGHT = 20;
+const int GRID_WIDTH  = 20;
+const int GRID_HEIGHT = 15;
 
 const int SPRITE_SIZE = 16;
 
@@ -21,27 +21,24 @@ SDL_Event event;
 int main(int argc, char* args[]) {
     bool quit = false;
 
-    screen = Util::init_screen(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP); 
+    screen = Util::init_screen(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP);
 
     if (screen == NULL) {
         printf("Failed on screen");
         return 1;
     }
 
-    Tile* grass;
-    SDL_Surface* image = grass->get_image();
+    Tile grass;
+    SDL_Surface* image = grass.get_image();
 
     for (int x = 0; x < GRID_WIDTH*SPRITE_SIZE; x += SPRITE_SIZE) {
         for (int y = 0; y < GRID_HEIGHT*SPRITE_SIZE; y += SPRITE_SIZE) {
-            Util::apply_surface(x, y, image, screen);
+          Util::apply_surface(x, y, image, screen);
         }
     }
 
-    if (SDL_Flip(screen) == -1) {
-        printf("Failed on flip");
-        return 1;
-    }
-    
+    if (SDL_Flip(screen) == -1) return 1;
+
     while (quit == false) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
@@ -52,7 +49,7 @@ int main(int argc, char* args[]) {
     }
 
     // TODO create cleanup function to free ALL the surfaces
-    SDL_FreeSurface(grass->get_image());
+    SDL_FreeSurface(image);
     SDL_Quit();
 
     return 0;
