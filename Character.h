@@ -25,5 +25,5 @@ class Character {
         int get_strength();       
         int get_range();          
         std::string get_name();   
-        SDL_Surface* get_image(); 
+        virtual SDL_Surface* get_image(); 
 };

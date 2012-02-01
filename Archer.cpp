@@ -18,5 +18,5 @@ void Archer::set_values(int lvl) {
     strength = 3  * level;
     range    = 6;
 
-    image = Util::load_image("sprites/archer-blue.cpp");
+    image = Util::load_image("sprites/archer-blue.png");
 }

@@ -18,5 +18,5 @@ void Warrior::set_values(int lvl) {
     strength = 5  * level;
     range    = 1;
 
-    image = Util::load_image("sprites/warrior-blue.cpp");
+    image = Util::load_image("sprites/warrior-blue.png");
 }
