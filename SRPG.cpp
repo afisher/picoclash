@@ -23,17 +23,24 @@ int main(int argc, char* args[]) {
 
     screen = Util::init_screen(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP); 
 
-    if (screen == NULL) return 1;
+    if (screen == NULL) {
+        printf("Failed on screen");
+        return 1;
+    }
 
     Tile* grass;
+    SDL_Surface* image = grass->get_image();
 
     for (int x = 0; x < GRID_WIDTH*SPRITE_SIZE; x += SPRITE_SIZE) {
         for (int y = 0; y < GRID_HEIGHT*SPRITE_SIZE; y += SPRITE_SIZE) {
-            Util::apply_surface(x, y, grass->get_image(), screen);
+            Util::apply_surface(x, y, image, screen);
         }
     }
 
-    if (SDL_Flip(screen) == -1) return 1;
+    if (SDL_Flip(screen) == -1) {
+        printf("Failed on flip");
+        return 1;
+    }
     
     while (quit == false) {
         while (SDL_PollEvent(&event)) {

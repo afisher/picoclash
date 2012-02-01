@@ -1,20 +1,13 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
+#include "Healer.h"
+#include "Util.h"
 
-class Healer: public Character {
-    private:
-        int magic;
-        void set_values(int lvl);
-
-    public:
-        int get_magic();
-};
-
-Healer::Healer() {
+Healer::Healer() : Character() {
     set_values(1);
 }
 
-Healer::Healer(int lvl) {
+Healer::Healer(int lvl) : Character() {
     set_values(lvl);
 }
 
@@ -29,4 +22,4 @@ void Healer::set_values(int lvl) {
     image = Util::load_image("sprites/healer-blue.png");
 }
 
-int Healer:;get_magic() { return magic; }
+int Healer::get_magic() { return magic; }

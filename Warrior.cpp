@@ -1,16 +1,13 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
+#include "Warrior.h"
+#include "Util.h"
 
-class Warrior: public Character {
-    private:
-        void set_values(int lvl);
-};
-
-Warrior::Warrior() {
+Warrior::Warrior() : Character() {
     set_values(1);
 }
 
-Warrior::Warrior(int lvl) {
+Warrior::Warrior(int lvl) : Character() {
     set_values(lvl);
 }
 

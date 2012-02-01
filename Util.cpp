@@ -1,22 +1,16 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include <string>
-
-class Util {
-    public:
-        static SDL_Surface* init_screen(int width, int height, int bpp); 
-        static SDL_Surface* load_image(std::string filename); 
-        static void apply_surface(int x, int y, SDL_Surface* source, SDL_Surface* destination);
-};
+#include "Util.h"
 
 // intitializes the screen and returns it (returns null if something went wrong)
-SDL_Surface* Util::initScreen(int width, int height, int bpp) {
+SDL_Surface* Util::init_screen(int width, int height, int bpp) {
     //Initialize all SDL subsystems
     if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
         return NULL;
     }
 
-    screen = SDL_SetVideoMode(width, height, bpp, SDL_SWSURFACE);
+    SDL_Surface* screen = SDL_SetVideoMode(width, height, bpp, SDL_SWSURFACE);
 
     SDL_WM_SetCaption("Someday soon I'll be a game!", NULL);
 
