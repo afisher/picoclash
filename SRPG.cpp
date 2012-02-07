@@ -91,8 +91,8 @@ void load_file() {
 bool draw_grid() {
     for (int i = 0; i < GRID_HEIGHT; i++) {
         for (int j = 0; j < GRID_WIDTH; j++) {
-            int x = i * SPRITE_SIZE;
-            int y = j * SPRITE_SIZE;
+            int x = j * SPRITE_SIZE;
+            int y = i * SPRITE_SIZE;
 
             Util::apply_surface(x, y, grid[i][j]->get_image(), screen);
 
