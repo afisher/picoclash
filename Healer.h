@@ -3,7 +3,7 @@
 #include "Character.h"
 
 class Healer : public Character {
-    private:
+    protected:
         int magic;
         void set_values(int lvl);
 

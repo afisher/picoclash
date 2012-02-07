@@ -3,7 +3,7 @@
 #include "Character.h"
 
 class Warrior : public Character {
-    private:
+    protected:
         void set_values(int lvl);
 
     public:

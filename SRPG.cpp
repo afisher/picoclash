@@ -2,43 +2,36 @@
 #include "SDL/SDL_image.h"
 #include <string>
 #include <iostream>
+#include <fstream>
 
 #include "Util.h"
 #include "Tile.h"
-#include "Warrior.h"
-#include "Archer.h"
-#include "Healer.h"
+#include "PlayerWarrior.h"
+#include "PlayerArcher.h"
+#include "PlayerHealer.h"
 
 const int SCREEN_WIDTH  = 640;
 const int SCREEN_HEIGHT = 480;
 const int SCREEN_BPP    = 32;
 
-const int GRID_WIDTH  = 20;
-const int GRID_HEIGHT = 15;
-
 const int SPRITE_SIZE = 16;
 
+const int GRID_WIDTH  = 30;
+const int GRID_HEIGHT = 30;
+
 SDL_Surface* screen = NULL;
-SDL_Surface* tile_image = NULL;
+
+Tile* grid [GRID_HEIGHT][GRID_WIDTH];
 
 SDL_Event event;
 
-bool draw_grid() {
-    for (int x = 0; x < GRID_WIDTH*SPRITE_SIZE; x += SPRITE_SIZE) {
-        for (int y = 0; y < GRID_HEIGHT*SPRITE_SIZE; y += SPRITE_SIZE) {
-          Util::apply_surface(x, y, tile_image, screen);
-        }
-    }
-
-    return SDL_Flip(screen);
-}
-
+/*
 void print_menu() {
-    std::cout << "Please choose a character type to place.\n";
-    std::cout << "1. Warrior\n";
-    std::cout << "2. Archer\n";
-    std::cout << "3. Healer\n";
-    std::cout << "0. Done\n";
+    std::cout << "Please choose a character type to place.\n"
+              << "1. Warrior\n"
+              << "2. Archer\n"
+              << "3. Healer\n"
+              << "0. Done\n";
 }
 
 Character* menu() {
@@ -47,30 +40,69 @@ Character* menu() {
     print_menu();
     std::cin >> choice;
 
-    /*int x;
-    int y;
-    std::cout << "Please enter an x coordinate: ";
-    std::cin >> x;
-    std::cout << "Please enter a y coordinate: ";
-    std::cin >> y;*/
-
     Character* c;
 
     if (choice == 1) {
-        c = new Warrior;
+        c = new PlayerWarrior;
     } else if (choice == 2) {
-        c = new Archer;
+        c = new PlayerArcher;
     } else if (choice == 3) {
-        c = new Healer;
+        c = new PlayerHealer;
     } else c = NULL;
 
     return c;
-/*
-    SDL_Surface* image = c->get_image();
-    Util::apply_surface(x * SPRITE_SIZE, y * SPRITE_SIZE, image, screen);
+}*/
 
-    SDL_Flip(screen);
-*/
+// loads the test map into the grid
+void load_file() {
+    std::ifstream file("testmap.txt");
+    std::string line;
+
+    for (int i = 0; i < GRID_HEIGHT; i++) {
+        std::getline(file, line);    
+        for (int j = 0; j < GRID_WIDTH; j++) {
+            char c = line.at(j);
+            std::cout << c;
+
+            switch(c) {
+                case 'w':
+                    grid[i][j] = new Tile(Util::PLAYER_WARRIOR); break;
+                case 'a':
+                    grid[i][j] = new Tile(Util::PLAYER_ARCHER); break;
+                case 'h':
+                    grid[i][j] = new Tile(Util::PLAYER_HEALER); break;
+                case 'W':
+                    grid[i][j] = new Tile(Util::ENEMY_WARRIOR); break;
+                case 'A':
+                    grid[i][j] = new Tile(Util::ENEMY_ARCHER); break;
+                case 'H':
+                    grid[i][j] = new Tile(Util::ENEMY_HEALER); break;
+                default:
+                    grid[i][j] = new Tile();
+            }
+        }
+        std::cout << "\n";
+    }
+
+    file.close();
+}
+
+// draw the grid -- assumes the file has been loaded
+bool draw_grid() {
+    for (int i = 0; i < GRID_HEIGHT; i++) {
+        for (int j = 0; j < GRID_WIDTH; j++) {
+            int x = i * SPRITE_SIZE;
+            int y = j * SPRITE_SIZE;
+
+            Util::apply_surface(x, y, grid[i][j]->get_image(), screen);
+
+            if (grid[i][j]->get_character() != NULL) {
+                Util::apply_surface(x, y, grid[i][j]->get_character()->get_image(), screen);
+            }
+        }
+    }
+
+    return SDL_Flip(screen);
 }
 
 int main(int argc, char* args[]) {
@@ -80,11 +112,16 @@ int main(int argc, char* args[]) {
 
     if (screen == NULL) return 1;
 
-    Tile grass;
+    /*Tile grass;
     tile_image = grass.get_image();
-    if (draw_grid() == -1) return 1;
+    if (draw_grid() == -1) return 1;*/
 
-    while (true) {
+    load_file();
+    draw_grid();
+
+
+/*    while (true) {
+
         Character* c = menu();
         if (c == NULL) {
             break;
@@ -107,7 +144,7 @@ int main(int argc, char* args[]) {
             }
         }
     }
-
+*/
     while (quit == false) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {

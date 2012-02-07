@@ -17,6 +17,4 @@ void Warrior::set_values(int lvl) {
     health   = 10 * level;
     strength = 5  * level;
     range    = 1;
-
-    image = Util::load_image("sprites/warrior-blue.png");
 }
