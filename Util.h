@@ -13,7 +13,12 @@ class Util {
         static const int ENEMY_ARCHER   = 5;
         static const int ENEMY_HEALER   = 6;
 
-        static SDL_Surface* init_screen(int width, int height, int bpp); 
-        static SDL_Surface* load_image(std::string filename); 
+        static const int GRID_WIDTH  = 30;
+        static const int GRID_HEIGHT = 30;
+
+        static const int SPRITE_SIZE = 16;
+
+        static SDL_Surface* init_screen(int width, int height, int bpp);
+        static SDL_Surface* load_image(std::string filename);
         static void apply_surface(int x, int y, SDL_Surface* source, SDL_Surface* destination);
 };
