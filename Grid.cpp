@@ -65,7 +65,7 @@ Tile* Grid::get(int i, int j) {
     return grid[i][j];
 }
 
-void Grid::show_move_tiles(int i, int j, SDL_Surface* screen) {
+bool Grid::show_move_tiles(int i, int j, SDL_Surface* screen) {
     Character* selected_character = grid[i][j]->get_character();
     int mobility = 0;
     if (selected_character != NULL) {
@@ -80,9 +80,11 @@ void Grid::show_move_tiles(int i, int j, SDL_Surface* screen) {
                 }
             }
         }
-    }
+    } else return false;
     draw_grid(screen);
     SDL_Flip(screen);
+
+    return true;
 }
 
 bool Grid::move(int i, int j, int x, int y, SDL_Surface* screen) {

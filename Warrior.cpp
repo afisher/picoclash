@@ -12,9 +12,10 @@ Warrior::Warrior(int lvl) : Character() {
 }
 
 void Warrior::set_values(int lvl) {
-    level    = lvl;
-    mobility = 3;
-    health   = 10 * level;
-    strength = 5  * level;
-    range    = 1;
+    level     = lvl;
+    mobility  = 3;
+    increment = 10;
+    health    = increment * level;
+    strength  = 5  * level;
+    range     = 1;
 }

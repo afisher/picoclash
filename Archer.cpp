@@ -12,11 +12,12 @@ Archer::Archer(int lvl) : Character() {
 }
 
 void Archer::set_values(int lvl) {
-    level    = lvl;
-    mobility = 3;
-    health   = 8 * level;
-    strength = 3  * level;
-    range    = 6;
+    level     = lvl;
+    mobility  = 3;
+    increment = 8;
+    health    = increment * level;
+    strength  = 3  * level;
+    range     = 6;
 
     image = Util::load_image("sprites/archer-blue.png");
 }

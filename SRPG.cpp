@@ -47,7 +47,7 @@ int main(int argc, char* args[]) {
     SDL_Flip(screen);
 
     SDL_Surface* sidebar = Util::load_image("sprites/sidebar-bg.png"); 
-    int x, y; // current selected position
+    int x = 0, y = 0; // current selected position
 
     while (quit == false) {
         while (SDL_PollEvent(&event)) {
@@ -65,6 +65,9 @@ int main(int argc, char* args[]) {
                     Character* selected_character = selected_tile->get_character();
 
                     if (selected_character != NULL) {
+                        selected_tile->set_selected(true);
+                        grid.draw_grid(screen);
+
                         Util::apply_surface(480, 0, sidebar, screen);
                         SDL_Flip(screen);
 
@@ -73,7 +76,8 @@ int main(int argc, char* args[]) {
                         stringstream mobility;
                         stringstream range;
 
-                        health   << "Health: "   << selected_character->get_health();   
+                        health   << "Health: "   << selected_character->get_health() 
+                                 << " / "        << selected_character->get_max_health();   
                         strength << "Strength: " << selected_character->get_strength(); 
                         mobility << "Mobility: " << selected_character->get_mobility(); 
                         range    << "Range: "    << selected_character->get_range();    
@@ -89,7 +93,7 @@ int main(int argc, char* args[]) {
                         Util::apply_surface(500, 70, range_stats, screen);
                         SDL_Flip(screen);
 
-                        state = Util::ACTING_STATE;
+                        selected_tile->set_selected(false);
 
                     }
                 } else if (state == Util::MOVING_STATE) {
@@ -99,12 +103,10 @@ int main(int argc, char* args[]) {
                     bool success = grid.move(y, x, new_y, new_x, screen);
                     if (success) state = Util::SELECTING_STATE;
                 }
-            } else if (event.type == SDL_KEYDOWN && state == Util::ACTING_STATE) {
-                switch (event.key.keysym.sym) {
-                    case SDLK_m: 
-                        grid.show_move_tiles(y, x, screen);
-                        state = Util::MOVING_STATE;
-                        break;
+            } else if (event.type == SDL_KEYDOWN) {
+                if (event.key.keysym.sym == SDLK_m) { 
+                        bool success = grid.show_move_tiles(y, x, screen);
+                        if (success) state = Util::MOVING_STATE;
                 }
             }
         }
