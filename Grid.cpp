@@ -1,8 +1,11 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <cmath>
 
 #include "Grid.h"
+
+using namespace std;
 
 Grid::Grid() {
     load_file();
@@ -60,4 +63,58 @@ void Grid::draw_grid(SDL_Surface* screen) {
 
 Tile* Grid::get(int i, int j) {
     return grid[i][j];
+}
+
+void Grid::show_move_tiles(int i, int j, SDL_Surface* screen) {
+    Character* selected_character = grid[i][j]->get_character();
+    int mobility = 0;
+    if (selected_character != NULL) {
+        mobility = selected_character->get_mobility();
+
+        // interate over the mobility*mobility square 
+        for (int x = i - mobility; x <= i + mobility; x++) {
+            for (int y = j - mobility; y <= j + mobility; y++) {
+                // if the tile is within the mobility, light it up
+                if (distance(i, j, x, y) <= mobility) {
+                    grid[x][y]->set_selected(true);
+                }
+            }
+        }
+    }
+    draw_grid(screen);
+    SDL_Flip(screen);
+}
+
+bool Grid::move(int i, int j, int x, int y, SDL_Surface* screen) {
+    int mobility = 0;
+    
+    if (grid[i][j]->get_character() != NULL) {
+        mobility = grid[i][j]->get_character()->get_mobility();
+    }
+
+    // don't do anything if we try to move outside our mobility
+    if (distance(i, j, x, y) > mobility) return false;
+
+    Tile* selected_tile = grid[x][y];
+    Character* selected_character = selected_tile->get_character();
+
+    if (selected_character == NULL) {
+        grid[x][y] = grid[i][j];
+        grid[i][j] = new Tile();
+    } else return false; 
+
+    // interate over the mobility*mobility square 
+    for (int a = i - mobility; a <= i + mobility; a++) {
+        for (int b = j - mobility; b <= j + mobility; b++) {
+            grid[a][b]->set_selected(false);
+        }
+    }
+    draw_grid(screen);
+    SDL_Flip(screen);
+
+    return true;
+}
+
+int Grid::distance(int i, int j, int x, int y) {
+    return abs(i - x) + abs(j - y); 
 }
