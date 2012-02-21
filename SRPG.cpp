@@ -58,8 +58,8 @@ int main(int argc, char* args[]) {
                     event.button.button == SDL_BUTTON_LEFT) {
                 if (state == Util::SELECTING_STATE) {
                     // integer division -- round down to the nearest multiple of SPRITE_SIZE
-                    x = (event.button.x / Util::SPRITE_SIZE);
-                    y = (event.button.y / Util::SPRITE_SIZE);
+                    x = event.button.x / Util::SPRITE_SIZE;
+                    y = event.button.y / Util::SPRITE_SIZE;
 
                     Tile* selected_tile = grid.get(y, x);
                     Character* selected_character = selected_tile->get_character();
@@ -94,19 +94,27 @@ int main(int argc, char* args[]) {
                         SDL_Flip(screen);
 
                         selected_tile->set_selected(false);
-
                     }
                 } else if (state == Util::MOVING_STATE) {
-                    int new_x = (event.button.x / Util::SPRITE_SIZE);
-                    int new_y = (event.button.y / Util::SPRITE_SIZE);
+                    int new_x = event.button.x / Util::SPRITE_SIZE;
+                    int new_y = event.button.y / Util::SPRITE_SIZE;
 
                     bool success = grid.move(y, x, new_y, new_x, screen);
+                    if (success) state = Util::SELECTING_STATE;
+                } else if (state == Util::ATTACKING_STATE) {
+                    int new_x = event.button.x / Util::SPRITE_SIZE;
+                    int new_y = event.button.y / Util::SPRITE_SIZE;
+
+                    bool success = grid.attack(y, x, new_y, new_x, screen);
                     if (success) state = Util::SELECTING_STATE;
                 }
             } else if (event.type == SDL_KEYDOWN) {
                 if (event.key.keysym.sym == SDLK_m) { 
-                        bool success = grid.show_move_tiles(y, x, screen);
-                        if (success) state = Util::MOVING_STATE;
+                    bool success = grid.show_move_tiles(y, x, screen);
+                    if (success) state = Util::MOVING_STATE;
+                } else if (event.key.keysym.sym == SDLK_k) {
+                    bool success = grid.show_attack_tiles(y, x, screen); 
+                    if (success) state = Util::ATTACKING_STATE;
                 }
             }
         }

@@ -19,5 +19,6 @@ int Character::get_health()         { return health;            }
 int Character::get_strength()       { return strength;          }
 int Character::get_range()          { return range;             }
 int Character::get_max_health()     { return increment * level; }
+void Character::take_damage(int d)  { health -= d;              }
 std::string Character::get_name()   { return name;              }
 SDL_Surface* Character::get_image() { return image;             }

@@ -27,6 +27,7 @@ class Character {
         int get_range();          
 
         int get_max_health();
+        void take_damage(int d);
 
         std::string get_name();   
         virtual SDL_Surface* get_image(); 

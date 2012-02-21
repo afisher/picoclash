@@ -21,6 +21,7 @@ class Util {
         static const int SELECTING_STATE = 1;
         static const int ACTING_STATE = 2;
         static const int MOVING_STATE = 3;
+        static const int ATTACKING_STATE = 4;
 
         static SDL_Surface* init_screen(int width, int height, int bpp);
         static SDL_Surface* load_image(std::string filename);
