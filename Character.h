@@ -11,6 +11,7 @@ class Character {
         int health;
         int strength;
         int range;
+        int increment;
 
         std::string name;
 
@@ -24,6 +25,10 @@ class Character {
         int get_health();         
         int get_strength();       
         int get_range();          
+
+        int get_max_health();
+        void take_damage(int d);
+
         std::string get_name();   
         virtual SDL_Surface* get_image(); 
 };

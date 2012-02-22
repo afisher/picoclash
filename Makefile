@@ -1,4 +1,4 @@
-LIBS = -lSDL -lSDL_image
+LIBS = -lSDL -lSDL_image -lSDL_ttf
 
 all: srpg
 

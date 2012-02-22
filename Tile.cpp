@@ -9,13 +9,16 @@
 #include "EnemyArcher.h"
 #include "EnemyHealer.h"
 
+SDL_Surface* Tile::default_image  = NULL;
+SDL_Surface* Tile::selected_image = NULL;
+
 Tile::Tile() {
-    image = Util::load_image("sprites/grass2.png");
     character = NULL;
+
+    set_selected(false);
 }
 
 Tile::Tile(int type) {
-    image = Util::load_image("sprites/grass2.png");
     
     switch(type) {
         case Util::PLAYER_WARRIOR:
@@ -32,6 +35,25 @@ Tile::Tile(int type) {
             character = new EnemyHealer(); break;
         default:
             character = NULL;
+    }
+
+    set_selected(false);
+}
+
+void Tile::set_selected(bool s) {
+    selected = s;
+    update_image();
+}
+
+bool Tile::get_selected() {
+    return selected;
+}
+
+void Tile::update_image() {
+    if (selected) {
+        image = selected_image;
+    } else {
+        image = default_image;
     }
 }
 

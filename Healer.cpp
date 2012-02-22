@@ -12,12 +12,13 @@ Healer::Healer(int lvl) : Character() {
 }
 
 void Healer::set_values(int lvl) {
-    level    = lvl;
-    mobility = 2;
-    health   = 5  * level;
-    strength = 1  * level;
-    range    = 1;
-    magic    = 10 * level;
+    level     = lvl;
+    mobility  = 2;
+    increment = 5;
+    health    = increment  * level;
+    strength  = 1  * level;
+    range     = 1;
+    magic     = 10 * level;
 
     image = Util::load_image("sprites/healer-blue.png");
 }

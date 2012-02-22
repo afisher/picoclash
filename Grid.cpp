@@ -1,8 +1,11 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <cmath>
 
 #include "Grid.h"
+
+using namespace std;
 
 Grid::Grid() {
     load_file();
@@ -60,4 +63,94 @@ void Grid::draw_grid(SDL_Surface* screen) {
 
 Tile* Grid::get(int i, int j) {
     return grid[i][j];
+}
+
+bool Grid::show_move_tiles(int i, int j, SDL_Surface* screen) {
+    Character* selected_character = grid[i][j]->get_character();
+    int mobility = 0;
+
+    if (selected_character != NULL) {
+        mobility = selected_character->get_mobility();
+        select_tiles(i, j, mobility, true);
+    } else return false;
+
+    draw_grid(screen);
+    SDL_Flip(screen);
+
+    return true;
+}
+
+bool Grid::show_attack_tiles(int i, int j, SDL_Surface* screen) {
+    Character* selected_character = grid[i][j]->get_character();
+    int range = 0;
+
+    if (selected_character != NULL) {
+        range = selected_character->get_range();
+        select_tiles(i, j, range, true);
+    } else return false;
+
+    draw_grid(screen);
+    SDL_Flip(screen);
+
+    return true;
+}
+
+void Grid::select_tiles(int i, int j, int range, bool show) {
+    // interate over the range*range square 
+    for (int x = i - range; x <= i + range; x++) {
+        for (int y = j - range; y <= j + range; y++) {
+            // if the tile is within the range, light it up
+            if (distance(i, j, x, y) <= range && x < Util::GRID_WIDTH && y < Util::GRID_HEIGHT) {
+                grid[x][y]->set_selected(show);
+            }
+        }
+    }
+}
+
+bool Grid::move(int i, int j, int x, int y, SDL_Surface* screen) {
+    int mobility = 0;
+    
+    if (grid[i][j]->get_character() != NULL) {
+        mobility = grid[i][j]->get_character()->get_mobility();
+    }
+
+    // don't do anything if we try to move outside our mobility
+    if (distance(i, j, x, y) > mobility) return false;
+
+    Tile* selected_tile = grid[x][y];
+    Character* selected_character = selected_tile->get_character();
+
+    if (selected_character == NULL) {
+        grid[x][y] = grid[i][j];
+        grid[i][j] = new Tile();
+    } else return false; 
+
+    select_tiles(i, j, mobility, false);
+
+    draw_grid(screen);
+    SDL_Flip(screen);
+
+    return true;
+}
+
+bool Grid::attack(int i, int j, int x, int y, SDL_Surface* screen) {
+    Character* character1 = grid[i][j]->get_character();
+    Character* character2 = grid[x][y]->get_character();
+
+    if (character1 == NULL || character2 == NULL) return false;
+
+    int range = character1->get_range();
+
+    if (distance(i, j, x, y) <= range) {
+        character2->take_damage(character1->get_strength());
+        select_tiles(i, j, range, false);
+
+        draw_grid(screen);
+        SDL_Flip(screen);
+        return true;
+    } else return false;
+}
+
+int Grid::distance(int i, int j, int x, int y) {
+    return abs(i - x) + abs(j - y); 
 }
