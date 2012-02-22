@@ -48,14 +48,12 @@ int main(int argc, char* args[]) {
 
                 if (selectedCharacter != NULL) {
                     // TODO make this into a sidebar display
-                    std::cout << "Health: " << selectedCharacter->get_health() << "\n";
+                    std::cout << "Health: "   << selectedCharacter->get_health()   << "\n";
                     std::cout << "Strength: " << selectedCharacter->get_strength() << "\n";
                     std::cout << "Mobility: " << selectedCharacter->get_mobility() << "\n";
-                    std::cout << "Range: " << selectedCharacter->get_range() << "\n";
+                    std::cout << "Range: "    << selectedCharacter->get_range()    << "\n\n";
                 }
 
-                std::cout << x << "\n";
-                std::cout << y << "\n";
             }
         }
     }

@@ -2,8 +2,8 @@ LIBS = -lSDL -lSDL_image
 
 all: srpg
 
-srpg: SRPG.o Util.o Tile.o Character.o Warrior.o Archer.o Healer.o PlayerWarrior.o PlayerArcher.o PlayerHealer.o EnemyWarrior.o EnemyArcher.o EnemyHealer.o
-	g++ -o srpg SRPG.o Util.o Tile.o Character.o Warrior.o Archer.o Healer.o PlayerWarrior.o PlayerArcher.o PlayerHealer.o EnemyWarrior.o EnemyArcher.o EnemyHealer.o ${LIBS}
+srpg: SRPG.o Util.o Tile.o Character.o Warrior.o Archer.o Healer.o PlayerWarrior.o PlayerArcher.o PlayerHealer.o EnemyWarrior.o EnemyArcher.o EnemyHealer.o Grid.o
+	g++ -o srpg SRPG.o Util.o Tile.o Character.o Warrior.o Archer.o Healer.o PlayerWarrior.o PlayerArcher.o PlayerHealer.o EnemyWarrior.o EnemyArcher.o EnemyHealer.o Grid.o ${LIBS}
 
 SRPG.o:
 	g++ -c SRPG.cpp
@@ -43,6 +43,9 @@ EnemyArcher.o:
 
 EnemyHealer.o:
 	g++ -c EnemyHealer.cpp
+
+Grid.o:
+	g++ -c Grid.cpp
 
 clean:
 	rm -f srpg *.o
