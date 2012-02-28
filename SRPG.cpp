@@ -40,7 +40,6 @@ using namespace std;
 
 void draw_sidebar() {
     Util::apply_surface(480, 0, sidebar, screen);
-    SDL_Flip(screen);
 
     if (selected_character != NULL) {
         stringstream health;
@@ -48,23 +47,49 @@ void draw_sidebar() {
         stringstream mobility;
         stringstream range;
 
-        health   << "Health: "   << selected_character->get_health() 
-                 << " / "        << selected_character->get_max_health();   
-        strength << "Strength: " << selected_character->get_strength(); 
-        mobility << "Mobility: " << selected_character->get_mobility(); 
-        range    << "Range: "    << selected_character->get_range();    
+        health   << "Health: "   << selected_character->get_health()
+                 << " / "        << selected_character->get_max_health();
+        strength << "Strength: " << selected_character->get_strength();
+        mobility << "Mobility: " << selected_character->get_mobility();
+        range    << "Range: "    << selected_character->get_range();
 
-        SDL_Surface* health_stats   = TTF_RenderText_Solid(font, health.str().c_str(), textColor); 
-        SDL_Surface* strength_stats = TTF_RenderText_Solid(font, strength.str().c_str(), textColor); 
-        SDL_Surface* mobility_stats = TTF_RenderText_Solid(font, mobility.str().c_str(), textColor); 
-        SDL_Surface* range_stats    = TTF_RenderText_Solid(font, range.str().c_str(), textColor); 
+        SDL_Surface* health_stats   = TTF_RenderText_Solid(font, health.str().c_str(), textColor);
+        SDL_Surface* strength_stats = TTF_RenderText_Solid(font, strength.str().c_str(), textColor);
+        SDL_Surface* mobility_stats = TTF_RenderText_Solid(font, mobility.str().c_str(), textColor);
+        SDL_Surface* range_stats    = TTF_RenderText_Solid(font, range.str().c_str(), textColor);
 
-        Util::apply_surface(500, 10, health_stats, screen);
-        Util::apply_surface(500, 30, strength_stats, screen);
-        Util::apply_surface(500, 50, mobility_stats, screen);
-        Util::apply_surface(500, 70, range_stats, screen);
-        SDL_Flip(screen);
+        Util::apply_surface(486, 10, health_stats, screen);
+        Util::apply_surface(486, 30, strength_stats, screen);
+        Util::apply_surface(486, 50, mobility_stats, screen);
+        Util::apply_surface(486, 70, range_stats, screen);
     }
+
+    string state_str = "";
+    switch (state) {
+        case IDLE:
+            state_str = "Select a character";
+            break;
+        case SELECTED:
+            state_str = "Choose an action";
+            break;
+        case MOVING:
+            state_str = "Select a square";
+            break;
+        case MOVED:
+            state_str = "Select a character";
+            break;
+        case ATTACKING:
+            state_str = "Select a victim";
+            break;
+        case ATTACKED:
+            state_str = "Select a character";
+            break;
+        default: break;
+    }
+    SDL_Surface* state_info = TTF_RenderText_Solid(font, state_str.c_str(), textColor);
+    Util::apply_surface(486, 360, state_info, screen);
+
+    SDL_Flip(screen);
 }
 
 void select_single(Grid grid) {
@@ -78,7 +103,7 @@ void select_single(Grid grid) {
         selected_tile->set_selected(true);
         grid.draw_grid(screen);
 
-        draw_sidebar(); 
+        draw_sidebar();
 
         SDL_Flip(screen);
     }
@@ -94,7 +119,7 @@ int main(int argc, char* args[]) {
     if (screen == NULL)   return 1;
     if (TTF_Init() == -1) return 1;
 
-    font = TTF_OpenFont("fonts/04B-03/04B_03__.TTF", 16);
+    font = TTF_OpenFont("fonts/04B-03/04B_03__.TTF", 14);
     if (font == NULL) return 1;
 
     //load_file();
@@ -102,18 +127,21 @@ int main(int argc, char* args[]) {
     grid.draw_grid(screen);
     SDL_Flip(screen);
 
-    sidebar = Util::load_image("sprites/sidebar-bg.png"); 
+    sidebar = Util::load_image("sprites/sidebar-bg.png");
+    draw_sidebar();
 
     bool success;
 
     while (quit == false) {
+
         while (SDL_PollEvent(&event)) {
+            draw_sidebar();
+
             if (event.type == SDL_QUIT) {
                 cout << "Quit Event" << endl;
                 quit = true;
             } else if (event.type == SDL_MOUSEBUTTONDOWN &&
                     event.button.button == SDL_BUTTON_LEFT) {
-
 
                 switch (state) {
                     case IDLE:
@@ -157,7 +185,6 @@ int main(int argc, char* args[]) {
                         state = SELECTED;
                         break;
                     default: break; 
-                        
                 }
             } else if (event.type == SDL_KEYDOWN) {
                 if (event.key.keysym.sym == SDLK_m) { 
