@@ -17,16 +17,72 @@ const int SCREEN_WIDTH  = 640;
 const int SCREEN_HEIGHT = 480;
 const int SCREEN_BPP    = 32;
 
-SDL_Surface* screen = NULL;
+SDL_Surface* screen  = NULL;
+SDL_Surface* sidebar = NULL;
 
 TTF_Font* font = NULL;
 SDL_Color textColor = { 255, 255, 255 };
 
 SDL_Event event;
 
-int state = Util::SELECTING_STATE;
+int x = 0, y = 0; // current selected position
+int new_x = 0, new_y = 0; // position for moving/attacking
+
+Tile* selected_tile = NULL;
+Character* selected_character = NULL;
+
+// temporary home for the possible states
+enum States { IDLE, SELECTED, MOVING, MOVED, ATTACKING, ATTACKED };
+
+int state = IDLE;
 
 using namespace std;
+
+void draw_sidebar() {
+    Util::apply_surface(480, 0, sidebar, screen);
+    SDL_Flip(screen);
+
+    if (selected_character != NULL) {
+        stringstream health;
+        stringstream strength;
+        stringstream mobility;
+        stringstream range;
+
+        health   << "Health: "   << selected_character->get_health() 
+                 << " / "        << selected_character->get_max_health();   
+        strength << "Strength: " << selected_character->get_strength(); 
+        mobility << "Mobility: " << selected_character->get_mobility(); 
+        range    << "Range: "    << selected_character->get_range();    
+
+        SDL_Surface* health_stats   = TTF_RenderText_Solid(font, health.str().c_str(), textColor); 
+        SDL_Surface* strength_stats = TTF_RenderText_Solid(font, strength.str().c_str(), textColor); 
+        SDL_Surface* mobility_stats = TTF_RenderText_Solid(font, mobility.str().c_str(), textColor); 
+        SDL_Surface* range_stats    = TTF_RenderText_Solid(font, range.str().c_str(), textColor); 
+
+        Util::apply_surface(500, 10, health_stats, screen);
+        Util::apply_surface(500, 30, strength_stats, screen);
+        Util::apply_surface(500, 50, mobility_stats, screen);
+        Util::apply_surface(500, 70, range_stats, screen);
+        SDL_Flip(screen);
+    }
+}
+
+void select_single(Grid grid) {
+    x = event.button.x / Util::SPRITE_SIZE;
+    y = event.button.y / Util::SPRITE_SIZE;
+    selected_tile = grid.get(y, x);
+    selected_character = selected_tile->get_character();
+
+    // highlight the character
+    if (selected_character != NULL) {
+        selected_tile->set_selected(true);
+        grid.draw_grid(screen);
+
+        draw_sidebar(); 
+
+        SDL_Flip(screen);
+    }
+}
 
 int main(int argc, char* args[]) {
     bool quit = false;
@@ -46,8 +102,9 @@ int main(int argc, char* args[]) {
     grid.draw_grid(screen);
     SDL_Flip(screen);
 
-    SDL_Surface* sidebar = Util::load_image("sprites/sidebar-bg.png"); 
-    int x = 0, y = 0; // current selected position
+    sidebar = Util::load_image("sprites/sidebar-bg.png"); 
+
+    bool success;
 
     while (quit == false) {
         while (SDL_PollEvent(&event)) {
@@ -56,65 +113,78 @@ int main(int argc, char* args[]) {
                 quit = true;
             } else if (event.type == SDL_MOUSEBUTTONDOWN &&
                     event.button.button == SDL_BUTTON_LEFT) {
-                if (state == Util::SELECTING_STATE) {
-                    // integer division -- round down to the nearest multiple of SPRITE_SIZE
-                    x = event.button.x / Util::SPRITE_SIZE;
-                    y = event.button.y / Util::SPRITE_SIZE;
 
-                    Tile* selected_tile = grid.get(y, x);
-                    Character* selected_character = selected_tile->get_character();
 
-                    if (selected_character != NULL) {
-                        selected_tile->set_selected(true);
-                        grid.draw_grid(screen);
+                switch (state) {
+                    case IDLE:
+                        select_single(grid);
+                        state = SELECTED;
+                        break;
+                    case SELECTED:
+                        // this happens if we change our character selection
+                        selected_tile = grid.get(y, x);
+                        selected_character = selected_tile->get_character();
 
-                        Util::apply_surface(480, 0, sidebar, screen);
-                        SDL_Flip(screen);
+                        // unhighlight the old selected character
+                        if (selected_character != NULL) {
+                            selected_tile->set_selected(false);
+                            grid.draw_grid(screen);
+                            SDL_Flip(screen);
+                        }
 
-                        stringstream health;
-                        stringstream strength;
-                        stringstream mobility;
-                        stringstream range;
+                        select_single(grid);
+                        break;
+                    case MOVING:
+                        new_x = event.button.x / Util::SPRITE_SIZE;
+                        new_y = event.button.y / Util::SPRITE_SIZE;
 
-                        health   << "Health: "   << selected_character->get_health() 
-                                 << " / "        << selected_character->get_max_health();   
-                        strength << "Strength: " << selected_character->get_strength(); 
-                        mobility << "Mobility: " << selected_character->get_mobility(); 
-                        range    << "Range: "    << selected_character->get_range();    
+                        success = grid.move(y, x, new_y, new_x, screen);
+                        if (success) state = MOVED;
+                        break;
+                    case MOVED:
+                        select_single(grid);
+                        state = SELECTED;
+                        break;
+                    case ATTACKING:
+                        new_x = event.button.x / Util::SPRITE_SIZE;
+                        new_y = event.button.y / Util::SPRITE_SIZE;
 
-                        SDL_Surface* health_stats   = TTF_RenderText_Solid(font, health.str().c_str(), textColor); 
-                        SDL_Surface* strength_stats = TTF_RenderText_Solid(font, strength.str().c_str(), textColor); 
-                        SDL_Surface* mobility_stats = TTF_RenderText_Solid(font, mobility.str().c_str(), textColor); 
-                        SDL_Surface* range_stats    = TTF_RenderText_Solid(font, range.str().c_str(), textColor); 
-
-                        Util::apply_surface(500, 10, health_stats, screen);
-                        Util::apply_surface(500, 30, strength_stats, screen);
-                        Util::apply_surface(500, 50, mobility_stats, screen);
-                        Util::apply_surface(500, 70, range_stats, screen);
-                        SDL_Flip(screen);
-
-                        selected_tile->set_selected(false);
-                    }
-                } else if (state == Util::MOVING_STATE) {
-                    int new_x = event.button.x / Util::SPRITE_SIZE;
-                    int new_y = event.button.y / Util::SPRITE_SIZE;
-
-                    bool success = grid.move(y, x, new_y, new_x, screen);
-                    if (success) state = Util::SELECTING_STATE;
-                } else if (state == Util::ATTACKING_STATE) {
-                    int new_x = event.button.x / Util::SPRITE_SIZE;
-                    int new_y = event.button.y / Util::SPRITE_SIZE;
-
-                    bool success = grid.attack(y, x, new_y, new_x, screen);
-                    if (success) state = Util::SELECTING_STATE;
+                        success = grid.attack(y, x, new_y, new_x, screen);
+                        if (success) state = ATTACKED;
+                        break;
+                    case ATTACKED:
+                        select_single(grid);
+                        state = SELECTED;
+                        break;
+                    default: break; 
+                        
                 }
             } else if (event.type == SDL_KEYDOWN) {
                 if (event.key.keysym.sym == SDLK_m) { 
-                    bool success = grid.show_move_tiles(y, x, screen);
-                    if (success) state = Util::MOVING_STATE;
+                    switch (state) {
+                        case SELECTED:
+                            success = grid.show_move_tiles(y, x, screen);
+                            if (success) state = MOVING;
+                            break;
+                        case ATTACKED:
+                            success = grid.show_move_tiles(y, x, screen);
+                            if (success) state = MOVING;
+                            break;
+                        default: break;
+                    }
                 } else if (event.key.keysym.sym == SDLK_k) {
-                    bool success = grid.show_attack_tiles(y, x, screen); 
-                    if (success) state = Util::ATTACKING_STATE;
+                    switch (state) {
+                        case SELECTED:
+                            success = grid.show_attack_tiles(y, x, screen); 
+                            if (success) state = ATTACKING;
+                            break;
+                        case MOVED:
+                            success = grid.show_attack_tiles(y, x, screen); 
+                            if (success) state = ATTACKING;
+                            break;
+                        default: break;
+                    }
+
                 }
             }
         }
