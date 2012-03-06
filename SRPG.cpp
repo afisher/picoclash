@@ -187,7 +187,7 @@ int main(int argc, char* args[]) {
                     default: break; 
                 }
             } else if (event.type == SDL_KEYDOWN) {
-                if (event.key.keysym.sym == SDLK_z) { 
+                if (event.key.keysym.sym == SDLK_z) {
                     switch (state) {
                         case SELECTED:
                             if (!grid.get(y, x)->get_character()->get_moved_this_turn()) {

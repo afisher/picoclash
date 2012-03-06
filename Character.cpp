@@ -24,8 +24,8 @@ int  Character::get_max_health()         { return increment * level;  }
 bool Character::get_moved_this_turn()    { return moved_this_turn;    }
 bool Character::get_attacked_this_turn() { return attacked_this_turn; }
 
-std::string Character::get_name()   { return name;              }
-SDL_Surface* Character::get_image() { return image;             }
+std::string  Character::get_name()   { return name;  }
+SDL_Surface* Character::get_image()  { return image; }
 
 void Character::set_moved_this_turn(bool moved)       { moved_this_turn = moved;       }
 void Character::set_attacked_this_turn(bool attacked) { attacked_this_turn = attacked; }

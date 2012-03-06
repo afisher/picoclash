@@ -96,7 +96,7 @@ bool Grid::show_attack_tiles(int i, int j, SDL_Surface* screen, bool show) {
 }
 
 void Grid::select_tiles(int i, int j, int range, bool show) {
-    // interate over the range*range square 
+    // interate over the range*range square
     for (int x = i - range; x <= i + range; x++) {
         for (int y = j - range; y <= j + range; y++) {
             // if the tile is within the range, light it up
