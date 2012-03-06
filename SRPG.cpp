@@ -25,7 +25,7 @@ SDL_Color textColor = { 255, 255, 255 };
 
 SDL_Event event;
 
-int x = 0, y = 0; // current selected position
+int x = 0, y = 0; // current selected position;
 int new_x = 0, new_y = 0; // position for moving/attacking
 
 Tile* selected_tile = NULL;
@@ -39,7 +39,7 @@ int state = IDLE;
 using namespace std;
 
 void draw_sidebar() {
-    Util::apply_surface(480, 0, sidebar, screen);
+    Util::apply_surface(480, 0, sidebar, screen);;
 
     if (selected_character != NULL) {
         stringstream health;
@@ -52,7 +52,7 @@ void draw_sidebar() {
         strength << "Strength: " << selected_character->get_strength();
         mobility << "Mobility: " << selected_character->get_mobility();
         range    << "Range: "    << selected_character->get_range();
-
+;
         SDL_Surface* health_stats   = TTF_RenderText_Solid(font, health.str().c_str(), textColor);
         SDL_Surface* strength_stats = TTF_RenderText_Solid(font, strength.str().c_str(), textColor);
         SDL_Surface* mobility_stats = TTF_RenderText_Solid(font, mobility.str().c_str(), textColor);
@@ -69,6 +69,138 @@ void draw_sidebar() {
         case IDLE:
             state_str = "Select a character";
             break;
+        case ATTACKING:
+            state_str = "Select a victim";
+            break;
+    grid.draw_grid(screen);
+    grid.draw_grid(screen);
+            break;
+        case ATTACKING:
+            state_str = "Select a victim";
+            break;
+        case ATTACKED:
+            state_str = "Select a character";
+            break;
+    SDL_Flip(screen);
+
+    sidebar = Util::load_image("sprites/sidebar-bg.png");
+    draw_sidebar();
+    Grid grid;
+    grid.draw_grid(screen);
+            break;
+        case ATTACKING:
+            state_str = "Select a victim";
+            break;
+        case ATTACKED:
+            state_str = "Select a character";
+            break;
+    SDL_Flip(screen);
+
+    sidebar = Util::load_image("sprites/sidebar-bg.png");
+    draw_sidebar();
+    Grid grid;
+    grid.draw_grid(screen);
+        case ATTACKED:
+            state_str = "Select a character";
+            break;
+        case ATTACKING:
+            state_str = "Select a victim";
+            break;
+        case ATTACKED:
+            state_str = "Select a character";
+            break;
+    SDL_Flip(screen);
+
+    sidebar = Util::load_image("sprites/sidebar-bg.png");
+    draw_sidebar();
+    Grid grid;
+    grid.draw_grid(screen);
+            break;
+        case ATTACKING:
+            state_str = "Select a victim";
+            break;
+        case ATTACKED:
+            state_str = "Select a character";
+            break;
+    SDL_Flip(screen);
+
+    sidebar = Util::load_image("sprites/sidebar-bg.png");
+    draw_sidebar();
+    Grid grid;
+    grid.draw_grid(screen);
+            break;
+        case ATTACKING:
+            state_str = "Select a victim";
+            break;
+        case ATTACKED:
+            state_str = "Select a character";
+            break;
+    SDL_Flip(screen);
+
+    sidebar = Util::load_image("sprites/sidebar-bg.png");
+    draw_sidebar();
+    Grid grid;
+    grid.draw_grid(screen);
+            break;
+        case ATTACKING:
+            state_str = "Select a victim";
+            break;
+        case ATTACKED:
+            state_str = "Select a character";
+            break;
+    SDL_Flip(screen);
+
+    sidebar = Util::load_image("sprites/sidebar-bg.png");
+    draw_sidebar();
+    Grid grid;
+    grid.draw_grid(screen);
+            break;
+        case ATTACKING:
+            state_str = "Select a victim";
+            break;
+        case ATTACKED:
+            state_str = "Select a character";
+            break;
+    SDL_Flip(screen);
+
+    sidebar = Util::load_image("sprites/sidebar-bg.png");
+    draw_sidebar();
+    Grid grid;
+    grid.draw_grid(screen);
+            break;
+        case ATTACKING:
+            state_str = "Select a victim";
+            break;
+        case ATTACKED:
+            state_str = "Select a character";
+            break;
+    SDL_Flip(screen);
+
+    sidebar = Util::load_image("sprites/sidebar-bg.png");
+    draw_sidebar();
+    Grid grid;
+    grid.draw_grid(screen);
+            break;
+        case ATTACKING:
+            state_str = "Select a victim";
+            break;
+        case ATTACKED:
+            state_str = "Select a character";
+            break;
+    SDL_Flip(screen);
+
+    sidebar = Util::load_image("sprites/sidebar-bg.png");
+    draw_sidebar();
+    Grid grid;
+    grid.draw_grid(screen);
+            break;
+    SDL_Flip(screen);
+
+    sidebar = Util::load_image("sprites/sidebar-bg.png");
+    draw_sidebar();
+    Grid grid;
+    grid.draw_grid(screen);
+            break;
         case SELECTED:
             state_str = "Choose an action";
             break;
@@ -84,26 +216,42 @@ void draw_sidebar() {
         case ATTACKED:
             state_str = "Select a character";
             break;
+    SDL_Flip(screen);
+
+    sidebar = Util::load_image("sprites/sidebar-bg.png");
+    draw_sidebar();
+    Grid grid;
+    grid.draw_grid(screen);
         default: break;
     }
     SDL_Surface* state_info = TTF_RenderText_Solid(font, state_str.c_str(), textColor);
     Util::apply_surface(486, 360, state_info, screen);
 
     SDL_Flip(screen);
+    SDL_Flip(screen);
+
+    sidebar = Util::load_image("sprites/sidebar-bg.png");
+    draw_sidebar();
+    Grid grid;
+    grid.draw_grid(screen);
 }
 
 void select_single(Grid grid) {
     x = event.button.x / Util::SPRITE_SIZE;
     y = event.button.y / Util::SPRITE_SIZE;
     selected_tile = grid.get(y, x);
+    SDL_Flip(screen);
+
+    sidebar = Util::load_image("sprites/sidebar-bg.png");
+    draw_sidebar();
+    Grid grid;
+    grid.draw_grid(screen);
     selected_character = selected_tile->get_character();
 
     // highlight the character
     if (selected_character != NULL) {
         selected_tile->set_selected(true);
         grid.draw_grid(screen);
-
-        draw_sidebar();
 
         SDL_Flip(screen);
     }
@@ -116,6 +264,12 @@ int main(int argc, char* args[]) {
     Tile::default_image  = Util::load_image("sprites/grass2.png");
     Tile::selected_image = Util::load_image("sprites/grass2-selected.png");
 
+    SDL_Flip(screen);
+
+    sidebar = Util::load_image("sprites/sidebar-bg.png");
+    draw_sidebar();
+    Grid grid;
+    grid.draw_grid(screen);
     if (screen == NULL)   return 1;
     if (TTF_Init() == -1) return 1;
 
@@ -129,6 +283,8 @@ int main(int argc, char* args[]) {
 
     sidebar = Util::load_image("sprites/sidebar-bg.png");
     draw_sidebar();
+    Grid grid;
+    grid.draw_grid(screen);
 
     bool success;
 
@@ -184,10 +340,10 @@ int main(int argc, char* args[]) {
                         select_single(grid);
                         state = SELECTED;
                         break;
-                    default: break; 
+                    default: break;
                 }
             } else if (event.type == SDL_KEYDOWN) {
-                if (event.key.keysym.sym == SDLK_m) { 
+                if (event.key.keysym.sym == SDLK_m) {
                     switch (state) {
                         case SELECTED:
                             success = grid.show_move_tiles(y, x, screen);
@@ -202,16 +358,15 @@ int main(int argc, char* args[]) {
                 } else if (event.key.keysym.sym == SDLK_k) {
                     switch (state) {
                         case SELECTED:
-                            success = grid.show_attack_tiles(y, x, screen); 
+                            success = grid.show_attack_tiles(y, x, screen);
                             if (success) state = ATTACKING;
                             break;
                         case MOVED:
-                            success = grid.show_attack_tiles(y, x, screen); 
+                            success = grid.show_attack_tiles(y, x, screen);
                             if (success) state = ATTACKING;
                             break;
                         default: break;
                     }
-
                 }
             }
         }
