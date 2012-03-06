@@ -65,13 +65,13 @@ Tile* Grid::get(int i, int j) {
     return grid[i][j];
 }
 
-bool Grid::show_move_tiles(int i, int j, SDL_Surface* screen) {
+bool Grid::show_move_tiles(int i, int j, SDL_Surface* screen, bool show) {
     Character* selected_character = grid[i][j]->get_character();
     int mobility = 0;
 
     if (selected_character != NULL) {
         mobility = selected_character->get_mobility();
-        select_tiles(i, j, mobility, true);
+        select_tiles(i, j, mobility, show);
     } else return false;
 
     draw_grid(screen);
@@ -80,13 +80,13 @@ bool Grid::show_move_tiles(int i, int j, SDL_Surface* screen) {
     return true;
 }
 
-bool Grid::show_attack_tiles(int i, int j, SDL_Surface* screen) {
+bool Grid::show_attack_tiles(int i, int j, SDL_Surface* screen, bool show) {
     Character* selected_character = grid[i][j]->get_character();
     int range = 0;
 
     if (selected_character != NULL) {
         range = selected_character->get_range();
-        select_tiles(i, j, range, true);
+        select_tiles(i, j, range, show);
     } else return false;
 
     draw_grid(screen);
@@ -109,7 +109,7 @@ void Grid::select_tiles(int i, int j, int range, bool show) {
 
 bool Grid::move(int i, int j, int x, int y, SDL_Surface* screen) {
     int mobility = 0;
-    
+
     if (grid[i][j]->get_character() != NULL) {
         mobility = grid[i][j]->get_character()->get_mobility();
     }
@@ -118,12 +118,13 @@ bool Grid::move(int i, int j, int x, int y, SDL_Surface* screen) {
     if (distance(i, j, x, y) > mobility) return false;
 
     Tile* selected_tile = grid[x][y];
-    Character* selected_character = selected_tile->get_character();
 
-    if (selected_character == NULL) {
+    // move if we picked an empty square
+    if (selected_tile->get_character() == NULL) {
         grid[x][y] = grid[i][j];
         grid[i][j] = new Tile();
-    } else return false; 
+        grid[x][y]->get_character()->set_moved_this_turn(true);
+    } else return false;
 
     select_tiles(i, j, mobility, false);
 
@@ -145,6 +146,8 @@ bool Grid::attack(int i, int j, int x, int y, SDL_Surface* screen) {
         character2->take_damage(character1->get_strength());
         select_tiles(i, j, range, false);
 
+        character1->set_attacked_this_turn(true);
+
         draw_grid(screen);
         SDL_Flip(screen);
         return true;
@@ -152,5 +155,5 @@ bool Grid::attack(int i, int j, int x, int y, SDL_Surface* screen) {
 }
 
 int Grid::distance(int i, int j, int x, int y) {
-    return abs(i - x) + abs(j - y); 
+    return abs(i - x) + abs(j - y);
 }
