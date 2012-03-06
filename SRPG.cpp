@@ -160,7 +160,7 @@ int main(int argc, char* args[]) {
                         
                 }
             } else if (event.type == SDL_KEYDOWN) {
-                if (event.key.keysym.sym == SDLK_m) { 
+                if (event.key.keysym.sym == SDLK_z) { 
                     switch (state) {
                         case SELECTED:
                             success = grid.show_move_tiles(y, x, screen);
@@ -172,7 +172,7 @@ int main(int argc, char* args[]) {
                             break;
                         default: break;
                     }
-                } else if (event.key.keysym.sym == SDLK_k) {
+                } else if (event.key.keysym.sym == SDLK_x) {
                     switch (state) {
                         case SELECTED:
                             success = grid.show_attack_tiles(y, x, screen); 
@@ -184,7 +184,17 @@ int main(int argc, char* args[]) {
                             break;
                         default: break;
                     }
-
+                } else if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    switch (state) {
+                        case MOVING:
+                            // TODO unselect the move squares
+                            state = SELECTED;
+                            break;
+                        case ATTACKING:
+                            // TODO unselect the attack squares
+                            state = SELECTED;
+                            break;
+                    }
                 }
             }
         }
