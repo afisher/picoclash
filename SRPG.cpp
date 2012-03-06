@@ -190,11 +190,11 @@ int main(int argc, char* args[]) {
                 if (event.key.keysym.sym == SDLK_z) { 
                     switch (state) {
                         case SELECTED:
-                            success = grid.show_move_tiles(y, x, screen);
+                            success = grid.show_move_tiles(y, x, screen, true);
                             if (success) state = MOVING;
                             break;
                         case ATTACKED:
-                            success = grid.show_move_tiles(y, x, screen);
+                            success = grid.show_move_tiles(y, x, screen, true);
                             if (success) state = MOVING;
                             break;
                         default: break;
@@ -202,11 +202,11 @@ int main(int argc, char* args[]) {
                 } else if (event.key.keysym.sym == SDLK_x) {
                     switch (state) {
                         case SELECTED:
-                            success = grid.show_attack_tiles(y, x, screen); 
+                            success = grid.show_attack_tiles(y, x, screen, true); 
                             if (success) state = ATTACKING;
                             break;
                         case MOVED:
-                            success = grid.show_attack_tiles(y, x, screen); 
+                            success = grid.show_attack_tiles(y, x, screen, true); 
                             if (success) state = ATTACKING;
                             break;
                         default: break;
@@ -214,12 +214,16 @@ int main(int argc, char* args[]) {
                 } else if (event.key.keysym.sym == SDLK_ESCAPE) {
                     switch (state) {
                         case MOVING:
-                            // TODO unselect the move squares
-                            state = SELECTED;
+                            success = grid.show_move_tiles(y, x, screen, false);
+                            grid.get(y, x)->set_selected(true);
+                            grid.draw_grid(screen);
+                            if (success) state = SELECTED;
                             break;
                         case ATTACKING:
-                            // TODO unselect the attack squares
-                            state = SELECTED;
+                            success = grid.show_attack_tiles(y, x, screen, false);
+                            grid.get(y, x)->set_selected(true);
+                            grid.draw_grid(screen);
+                            if (success) state = SELECTED;
                             break;
                     }
                 }

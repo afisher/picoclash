@@ -65,13 +65,13 @@ Tile* Grid::get(int i, int j) {
     return grid[i][j];
 }
 
-bool Grid::show_move_tiles(int i, int j, SDL_Surface* screen) {
+bool Grid::show_move_tiles(int i, int j, SDL_Surface* screen, bool show) {
     Character* selected_character = grid[i][j]->get_character();
     int mobility = 0;
 
     if (selected_character != NULL) {
         mobility = selected_character->get_mobility();
-        select_tiles(i, j, mobility, true);
+        select_tiles(i, j, mobility, show);
     } else return false;
 
     draw_grid(screen);
@@ -80,13 +80,13 @@ bool Grid::show_move_tiles(int i, int j, SDL_Surface* screen) {
     return true;
 }
 
-bool Grid::show_attack_tiles(int i, int j, SDL_Surface* screen) {
+bool Grid::show_attack_tiles(int i, int j, SDL_Surface* screen, bool show) {
     Character* selected_character = grid[i][j]->get_character();
     int range = 0;
 
     if (selected_character != NULL) {
         range = selected_character->get_range();
-        select_tiles(i, j, range, true);
+        select_tiles(i, j, range, show);
     } else return false;
 
     draw_grid(screen);
