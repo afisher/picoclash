@@ -109,6 +109,13 @@ void select_single(Grid grid) {
     }
 }
 
+void clean_up() {
+    SDL_FreeSurface(Tile::default_image);
+    SDL_FreeSurface(Tile::selected_image);
+    SDL_FreeSurface(sidebar);
+    SDL_FreeSurface(screen);
+}
+
 int main(int argc, char* args[]) {
     bool quit = false;
 
@@ -231,8 +238,7 @@ int main(int argc, char* args[]) {
         }
     }
 
-    // TODO create cleanup function to free ALL the surfaces
-    //SDL_FreeSurface(image);
+    clean_up();
     SDL_Quit();
 
     return 0;

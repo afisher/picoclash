@@ -19,6 +19,7 @@ class Character {
 
     public:
         Character();
+        ~Character();
 
         int get_level();          
         int get_mobility();       

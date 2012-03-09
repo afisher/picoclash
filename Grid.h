@@ -16,8 +16,8 @@ class Grid {
         void draw_grid(SDL_Surface* screen);
         Tile* get(int i, int j);
 
-        bool show_move_tiles  (int i, int j, SDL_Surface* screen);
-        bool show_attack_tiles(int i, int j, SDL_Surface* screen);
+        bool show_move_tiles  (int i, int j, SDL_Surface* screen, bool show);
+        bool show_attack_tiles(int i, int j, SDL_Surface* screen, bool show);
 
         bool move(int i, int j, int x, int y, SDL_Surface* screen);
         bool attack(int i, int j, int x, int y, SDL_Surface* screen);

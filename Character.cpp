@@ -1,4 +1,5 @@
 #include "Character.h"
+#include "SDL/SDL.h"
 
 Character::Character() {
     level     = 0;
@@ -22,3 +23,7 @@ int Character::get_max_health()     { return increment * level; }
 void Character::take_damage(int d)  { health -= d;              }
 std::string Character::get_name()   { return name;              }
 SDL_Surface* Character::get_image() { return image;             }
+
+Character::~Character() {
+    SDL_FreeSurface(image);
+}
