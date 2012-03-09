@@ -194,27 +194,35 @@ int main(int argc, char* args[]) {
                     default: break; 
                 }
             } else if (event.type == SDL_KEYDOWN) {
-                if (event.key.keysym.sym == SDLK_z) { 
+                if (event.key.keysym.sym == SDLK_z) {
                     switch (state) {
                         case SELECTED:
-                            success = grid.show_move_tiles(y, x, screen, true);
-                            if (success) state = MOVING;
+                            if (!grid.get(y, x)->get_character()->get_moved_this_turn()) {
+                                success = grid.show_move_tiles(y, x, screen, true);
+                                if (success) state = MOVING;
+                            }
                             break;
                         case ATTACKED:
-                            success = grid.show_move_tiles(y, x, screen, true);
-                            if (success) state = MOVING;
+                            if (!grid.get(y, x)->get_character()->get_moved_this_turn()) {
+                                success = grid.show_move_tiles(y, x, screen, true);
+                                if (success) state = MOVING;
+                            }
                             break;
                         default: break;
                     }
                 } else if (event.key.keysym.sym == SDLK_x) {
                     switch (state) {
                         case SELECTED:
-                            success = grid.show_attack_tiles(y, x, screen, true); 
-                            if (success) state = ATTACKING;
+                            if (!grid.get(y, x)->get_character()->get_attacked_this_turn()) {
+                                success = grid.show_attack_tiles(y, x, screen, true);
+                                if (success) state = ATTACKING;
+                            }
                             break;
                         case MOVED:
-                            success = grid.show_attack_tiles(y, x, screen, true); 
-                            if (success) state = ATTACKING;
+                            if (!grid.get(y, x)->get_character()->get_attacked_this_turn()) {
+                                success = grid.show_attack_tiles(y, x, screen, true);
+                                if (success) state = ATTACKING;
+                            }
                             break;
                         default: break;
                     }
