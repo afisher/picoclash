@@ -253,6 +253,7 @@ int main(int argc, char* args[]) {
                 }
             } else if (event.key.keysym.sym == SDLK_v) {
                 grid.new_turn();
+                grid.draw_grid(screen);
             }
         }
         draw_sidebar(grid);

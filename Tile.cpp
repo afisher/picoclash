@@ -58,3 +58,5 @@ void Tile::update_image() {
 
 SDL_Surface* Tile::get_image()     { return image;     }
 Character*   Tile::get_character() { return character; }
+
+void Tile::character_died() { character = NULL; }

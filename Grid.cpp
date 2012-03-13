@@ -152,6 +152,10 @@ bool Grid::attack(int i, int j, int x, int y, SDL_Surface* screen) {
 
     if (distance(i, j, x, y) <= range) {
         character2->take_damage(character1->get_strength());
+        if (character2->get_health() <= 0) {
+            grid[x][y]->character_died();
+        }
+
         select_tiles(i, j, range, false);
 
         character1->set_attacked_this_turn(true);

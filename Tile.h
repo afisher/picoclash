@@ -22,4 +22,5 @@ class Tile {
         static SDL_Surface* selected_image; 
         static SDL_Surface* default_image;  
 
+        void character_died();
 };
