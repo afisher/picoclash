@@ -6,10 +6,12 @@
 EnemyWarrior::EnemyWarrior() : Warrior() {
     set_values(1);
     image = Util::load_image("sprites/warrior-red.png");
+    grey_image = Util::load_image("sprites/warrior-red-desat.png");
 }
 
 EnemyWarrior::EnemyWarrior(int lvl) : Warrior(lvl) {
     set_values(lvl);
     image = Util::load_image("sprites/warrior-red.png");
+    grey_image = Util::load_image("sprites/warrior-red-desat.png");
 }
 

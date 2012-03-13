@@ -14,6 +14,7 @@ Character::Character() {
 
     name = "";
     image = NULL;
+    grey_image = NULL;
 }
 
 int  Character::get_level()              { return level;              }
@@ -26,12 +27,19 @@ bool Character::get_moved_this_turn()    { return moved_this_turn;    }
 bool Character::get_attacked_this_turn() { return attacked_this_turn; }
 
 std::string  Character::get_name()   { return name;  }
-SDL_Surface* Character::get_image()  { return image; }
+
+SDL_Surface* Character::get_image() {
+    if (moved_this_turn && attacked_this_turn) {
+        return grey_image;
+    }
+
+    return image;
+}
 
 void Character::set_moved_this_turn(bool moved)       { moved_this_turn = moved;       }
 void Character::set_attacked_this_turn(bool attacked) { attacked_this_turn = attacked; }
 
-void Character::take_damage(int d)  { health -= d;              }
+void Character::take_damage(int d)  { health -= d; }
 
 Character::~Character() {
     SDL_FreeSurface(image);

@@ -19,6 +19,7 @@ class Character {
         std::string name;
 
         SDL_Surface* image;
+        SDL_Surface* grey_image;
 
     public:
         Character();

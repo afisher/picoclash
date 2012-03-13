@@ -6,9 +6,11 @@
 PlayerArcher::PlayerArcher() : Archer() {
     set_values(1);
     image = Util::load_image("sprites/archer-blue.png");
+    grey_image = Util::load_image("sprites/archer-blue-desat.png");
 }
 
 PlayerArcher::PlayerArcher(int lvl) : Archer(lvl) {
     set_values(lvl);
     image = Util::load_image("sprites/archer-blue.png");
+    grey_image = Util::load_image("sprites/archer-blue-desat.png");
 }
