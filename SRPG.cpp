@@ -184,6 +184,7 @@ int main(int argc, char* args[]) {
 
                         success = grid.move(y, x, new_y, new_x, screen);
                         if (success) state = MOVED;
+                        selected_character = NULL;
                         break;
                     case MOVED:
                         select_single(grid);
@@ -195,6 +196,7 @@ int main(int argc, char* args[]) {
 
                         success = grid.attack(y, x, new_y, new_x, screen);
                         if (success) state = ATTACKED;
+                        selected_character = NULL;
                         break;
                     case ATTACKED:
                         select_single(grid);

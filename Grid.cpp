@@ -14,7 +14,8 @@ Grid::Grid() {
 
 // loads the test map into the grid
 void Grid::load_file() {
-    std::ifstream file("testmap.txt");
+    //std::ifstream file("testmap.txt");
+    std::ifstream file("offensemap.txt");
     std::string line;
 
     for (int i = 0; i < Util::GRID_HEIGHT; i++) {
