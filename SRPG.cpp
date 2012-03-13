@@ -38,7 +38,7 @@ int state = IDLE;
 
 using namespace std;
 
-void draw_sidebar() {
+void draw_sidebar(Grid grid) {
     Util::apply_surface(480, 0, sidebar, screen);
 
     if (selected_character != NULL) {
@@ -63,6 +63,17 @@ void draw_sidebar() {
         Util::apply_surface(486, 50, mobility_stats, screen);
         Util::apply_surface(486, 70, range_stats, screen);
     }
+
+    string turn_str = "";
+    int current_player = grid.get_current_player();
+    if (current_player == 1) {
+        turn_str = "Blue turn";
+    } else {
+        turn_str = "Red turn";
+    }
+    SDL_Surface* turn_info = TTF_RenderText_Solid(font, turn_str.c_str(), textColor);
+    Util::apply_surface(486, 260, turn_info, screen);
+
 
     string state_str = "";
     switch (state) {
@@ -103,7 +114,7 @@ void select_single(Grid grid) {
         selected_tile->set_selected(true);
         grid.draw_grid(screen);
 
-        draw_sidebar();
+        draw_sidebar(grid);
 
         SDL_Flip(screen);
     }
@@ -129,20 +140,18 @@ int main(int argc, char* args[]) {
     font = TTF_OpenFont("fonts/04B-03/04B_03__.TTF", 14);
     if (font == NULL) return 1;
 
-    //load_file();
     Grid grid;
     grid.draw_grid(screen);
     SDL_Flip(screen);
 
     sidebar = Util::load_image("sprites/sidebar-bg.png");
-    draw_sidebar();
+    draw_sidebar(grid);
 
     bool success;
 
     while (quit == false) {
 
         while (SDL_PollEvent(&event)) {
-            draw_sidebar();
 
             if (event.type == SDL_QUIT) {
                 cout << "Quit Event" << endl;
@@ -197,13 +206,13 @@ int main(int argc, char* args[]) {
                 if (event.key.keysym.sym == SDLK_z) {
                     switch (state) {
                         case SELECTED:
-                            if (!grid.get(y, x)->get_character()->get_moved_this_turn()) {
+                            if (selected_character != NULL && !selected_character->get_moved_this_turn()) {
                                 success = grid.show_move_tiles(y, x, screen, true);
                                 if (success) state = MOVING;
                             }
                             break;
                         case ATTACKED:
-                            if (!grid.get(y, x)->get_character()->get_moved_this_turn()) {
+                            if (selected_character != NULL && !selected_character->get_moved_this_turn()) {
                                 success = grid.show_move_tiles(y, x, screen, true);
                                 if (success) state = MOVING;
                             }
@@ -213,13 +222,13 @@ int main(int argc, char* args[]) {
                 } else if (event.key.keysym.sym == SDLK_x) {
                     switch (state) {
                         case SELECTED:
-                            if (!grid.get(y, x)->get_character()->get_attacked_this_turn()) {
+                            if (selected_character != NULL && !selected_character->get_attacked_this_turn()) {
                                 success = grid.show_attack_tiles(y, x, screen, true);
                                 if (success) state = ATTACKING;
                             }
                             break;
                         case MOVED:
-                            if (!grid.get(y, x)->get_character()->get_attacked_this_turn()) {
+                            if (selected_character != NULL && !selected_character->get_attacked_this_turn()) {
                                 success = grid.show_attack_tiles(y, x, screen, true);
                                 if (success) state = ATTACKING;
                             }
@@ -242,8 +251,11 @@ int main(int argc, char* args[]) {
                             break;
                     }
                 }
+            } else if (event.key.keysym.sym == SDLK_v) {
+                grid.new_turn();
             }
         }
+        draw_sidebar(grid);
     }
 
     clean_up();

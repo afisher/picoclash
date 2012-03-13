@@ -7,10 +7,12 @@ EnemyArcher::EnemyArcher() : Archer() {
     set_values(1);
     image = Util::load_image("sprites/archer-red.png");
     grey_image = Util::load_image("sprites/archer-red-desat.png");
+    player = 2;
 }
 
 EnemyArcher::EnemyArcher(int lvl) : Archer(lvl) {
     set_values(lvl);
     image = Util::load_image("sprites/archer-red.png");
     grey_image = Util::load_image("sprites/archer-red-desat.png");
+    player = 2;
 }

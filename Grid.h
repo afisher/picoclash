@@ -7,6 +7,7 @@
 class Grid {
     private:
         Tile* grid[Util::GRID_HEIGHT][Util::GRID_WIDTH];
+        int current_player;
         void load_file();
         int distance(int i, int j, int x, int y);
         void select_tiles(int i, int j, int range, bool show);
@@ -16,9 +17,13 @@ class Grid {
         void draw_grid(SDL_Surface* screen);
         Tile* get(int i, int j);
 
+        int get_current_player();
+
         bool show_move_tiles  (int i, int j, SDL_Surface* screen, bool show);
         bool show_attack_tiles(int i, int j, SDL_Surface* screen, bool show);
 
         bool move(int i, int j, int x, int y, SDL_Surface* screen);
         bool attack(int i, int j, int x, int y, SDL_Surface* screen);
+
+        void new_turn();
 };

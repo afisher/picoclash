@@ -15,6 +15,8 @@ Character::Character() {
     name = "";
     image = NULL;
     grey_image = NULL;
+
+    player = 0;
 }
 
 int  Character::get_level()              { return level;              }
@@ -23,6 +25,7 @@ int  Character::get_health()             { return health;             }
 int  Character::get_strength()           { return strength;           }
 int  Character::get_range()              { return range;              }
 int  Character::get_max_health()         { return increment * level;  }
+int  Character::get_player()             { return player;             }
 bool Character::get_moved_this_turn()    { return moved_this_turn;    }
 bool Character::get_attacked_this_turn() { return attacked_this_turn; }
 

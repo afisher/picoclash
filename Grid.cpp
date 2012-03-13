@@ -9,6 +9,7 @@ using namespace std;
 
 Grid::Grid() {
     load_file();
+    current_player = 1;
 }
 
 // loads the test map into the grid
@@ -61,12 +62,13 @@ void Grid::draw_grid(SDL_Surface* screen) {
     }
 }
 
-Tile* Grid::get(int i, int j) {
-    return grid[i][j];
-}
+Tile* Grid::get(int i, int j) { return grid[i][j]; }
+int Grid::get_current_player() { return current_player; }
 
 bool Grid::show_move_tiles(int i, int j, SDL_Surface* screen, bool show) {
     Character* selected_character = grid[i][j]->get_character();
+    if (selected_character->get_player() != current_player) return false;
+
     int mobility = 0;
 
     if (selected_character != NULL) {
@@ -82,6 +84,8 @@ bool Grid::show_move_tiles(int i, int j, SDL_Surface* screen, bool show) {
 
 bool Grid::show_attack_tiles(int i, int j, SDL_Surface* screen, bool show) {
     Character* selected_character = grid[i][j]->get_character();
+    if (selected_character->get_player() != current_player) return false;
+
     int range = 0;
 
     if (selected_character != NULL) {
@@ -108,10 +112,13 @@ void Grid::select_tiles(int i, int j, int range, bool show) {
 }
 
 bool Grid::move(int i, int j, int x, int y, SDL_Surface* screen) {
+    Character* curChar = grid[i][j]->get_character();
+    if (curChar->get_player() != current_player) return false;
+
     int mobility = 0;
 
-    if (grid[i][j]->get_character() != NULL) {
-        mobility = grid[i][j]->get_character()->get_mobility();
+    if (curChar != NULL) {
+        mobility = curChar->get_mobility();
     }
 
     // don't do anything if we try to move outside our mobility
@@ -138,6 +145,7 @@ bool Grid::attack(int i, int j, int x, int y, SDL_Surface* screen) {
     Character* character1 = grid[i][j]->get_character();
     Character* character2 = grid[x][y]->get_character();
 
+    if (character1->get_player() != current_player) return false;
     if (character1 == NULL || character2 == NULL) return false;
 
     int range = character1->get_range();
@@ -156,4 +164,20 @@ bool Grid::attack(int i, int j, int x, int y, SDL_Surface* screen) {
 
 int Grid::distance(int i, int j, int x, int y) {
     return abs(i - x) + abs(j - y);
+}
+
+void Grid::new_turn() {
+    for (int j = 0; j < Util::GRID_HEIGHT; j++) {
+        for (int i = 0; i < Util::GRID_WIDTH; i++) {
+            Character* curChar = grid[j][i]->get_character();
+
+            if (curChar != NULL) {
+                curChar->set_moved_this_turn(false);
+                curChar->set_attacked_this_turn(false);
+            }
+        }
+    }
+
+    if (current_player == 1) current_player = 2;
+    else current_player = 1;
 }
