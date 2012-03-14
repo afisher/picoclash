@@ -62,6 +62,11 @@ void draw_sidebar(Grid grid) {
         Util::apply_surface(486, 30, strength_stats, screen);
         Util::apply_surface(486, 50, mobility_stats, screen);
         Util::apply_surface(486, 70, range_stats, screen);
+
+        SDL_FreeSurface(health_stats);
+        SDL_FreeSurface(strength_stats);
+        SDL_FreeSurface(mobility_stats);
+        SDL_FreeSurface(range_stats);
     }
 
     string turn_str = "";
@@ -73,7 +78,7 @@ void draw_sidebar(Grid grid) {
     }
     SDL_Surface* turn_info = TTF_RenderText_Solid(font, turn_str.c_str(), textColor);
     Util::apply_surface(486, 260, turn_info, screen);
-
+    SDL_FreeSurface(turn_info);
 
     string state_str = "";
     switch (state) {
@@ -99,6 +104,7 @@ void draw_sidebar(Grid grid) {
     }
     SDL_Surface* state_info = TTF_RenderText_Solid(font, state_str.c_str(), textColor);
     Util::apply_surface(486, 360, state_info, screen);
+    SDL_FreeSurface(state_info);
 
     SDL_Flip(screen);
 }
