@@ -82,24 +82,12 @@ void draw_sidebar(Grid grid) {
 
     string state_str = "";
     switch (state) {
-        case IDLE:
-            state_str = "Select a character";
-            break;
-        case SELECTED:
-            state_str = "Choose an action";
-            break;
-        case MOVING:
-            state_str = "Select a square";
-            break;
-        case MOVED:
-            state_str = "Select a character";
-            break;
-        case ATTACKING:
-            state_str = "Select a victim";
-            break;
-        case ATTACKED:
-            state_str = "Select a character";
-            break;
+        case IDLE:      state_str = "Select a character";   break;
+        case SELECTED:  state_str = "Choose an action";     break;
+        case MOVING:    state_str = "Select a square";      break;
+        case MOVED:     state_str = "Select a character";   break;
+        case ATTACKING: state_str = "Select a victim";      break;
+        case ATTACKED:  state_str = "Select a character";   break;
         default: break;
     }
     SDL_Surface* state_info = TTF_RenderText_Solid(font, state_str.c_str(), textColor);
@@ -185,6 +173,7 @@ int main(int argc, char* args[]) {
                         select_single(grid);
                         break;
                     case MOVING:
+                        // this happens if we select a place to move to
                         new_x = event.button.x / Util::SPRITE_SIZE;
                         new_y = event.button.y / Util::SPRITE_SIZE;
 
@@ -193,10 +182,12 @@ int main(int argc, char* args[]) {
                         selected_character = NULL;
                         break;
                     case MOVED:
+                        // this happens if we make another character selection after moving
                         select_single(grid);
                         state = SELECTED;
                         break;
                     case ATTACKING:
+                        // this happens if we select a character to attack 
                         new_x = event.button.x / Util::SPRITE_SIZE;
                         new_y = event.button.y / Util::SPRITE_SIZE;
 
@@ -205,6 +196,7 @@ int main(int argc, char* args[]) {
                         selected_character = NULL;
                         break;
                     case ATTACKED:
+                        // this happens if we make another character selection after attacking 
                         select_single(grid);
                         state = SELECTED;
                         break;
@@ -214,12 +206,14 @@ int main(int argc, char* args[]) {
                 if (event.key.keysym.sym == SDLK_z) {
                     switch (state) {
                         case SELECTED:
+                            // this happens if we choose to move a selected character
                             if (selected_character != NULL && !selected_character->get_moved_this_turn()) {
                                 success = grid.show_move_tiles(y, x, screen, true);
                                 if (success) state = MOVING;
                             }
                             break;
                         case ATTACKED:
+                            // this happens if we choose to move after attacking TODO redundant? 
                             if (selected_character != NULL && !selected_character->get_moved_this_turn()) {
                                 success = grid.show_move_tiles(y, x, screen, true);
                                 if (success) state = MOVING;
@@ -230,12 +224,14 @@ int main(int argc, char* args[]) {
                 } else if (event.key.keysym.sym == SDLK_x) {
                     switch (state) {
                         case SELECTED:
+                            // this happens if we choose to attack with a selected character 
                             if (selected_character != NULL && !selected_character->get_attacked_this_turn()) {
                                 success = grid.show_attack_tiles(y, x, screen, true);
                                 if (success) state = ATTACKING;
                             }
                             break;
                         case MOVED:
+                            // this happens if we choose to attack after moving TODO redundant?
                             if (selected_character != NULL && !selected_character->get_attacked_this_turn()) {
                                 success = grid.show_attack_tiles(y, x, screen, true);
                                 if (success) state = ATTACKING;
@@ -246,12 +242,14 @@ int main(int argc, char* args[]) {
                 } else if (event.key.keysym.sym == SDLK_ESCAPE) {
                     switch (state) {
                         case MOVING:
+                            // this happens if we cancel a move
                             success = grid.show_move_tiles(y, x, screen, false);
                             grid.get(y, x)->set_selected(true);
                             grid.draw_grid(screen);
                             if (success) state = SELECTED;
                             break;
                         case ATTACKING:
+                            // this happens if we cancel an attack
                             success = grid.show_attack_tiles(y, x, screen, false);
                             grid.get(y, x)->set_selected(true);
                             grid.draw_grid(screen);
@@ -260,6 +258,7 @@ int main(int argc, char* args[]) {
                     }
                 }
             } else if (event.key.keysym.sym == SDLK_v) {
+                // this happens if we choose to end the turn
                 grid.new_turn();
                 grid.draw_grid(screen);
             }
