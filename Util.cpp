@@ -23,10 +23,14 @@ SDL_Surface* Util::init_screen(int width, int height, int bpp) {
 
 void Util::update_screen(SDL_Surface* source, SDL_Surface* destination) {
     //apply_surface(0, 0, source, destination);
-    scale(source, destination);
+    SDL_Surface* scaled2x = scale2x(source);
+    scale(scaled2x, destination);
+    SDL_FreeSurface(scaled2x);
     SDL_Flip(destination);
 }
 
+// uses nearest-neighbor algorithm found here:
+// http://tech-algorithm.com/articles/nearest-neighbor-image-scaling/
 void Util::scale(SDL_Surface* source, SDL_Surface* destination) {
     SDL_LockSurface(source);
     SDL_LockSurface(destination);
@@ -53,6 +57,57 @@ void Util::scale(SDL_Surface* source, SDL_Surface* destination) {
 
     SDL_UnlockSurface(source);
     SDL_UnlockSurface(destination);
+}
+
+SDL_Surface* Util::scale2x(SDL_Surface* source) {
+
+    int w1 = source->w;
+    int h1 = source->h;
+
+    SDL_Surface* ret = SDL_CreateRGBSurface(SDL_SWSURFACE, w1*2, h1*2, 32, 0, 0, 0, 0);
+    int w2 = ret->w;
+    int h2 = ret->h;
+
+    SDL_LockSurface(source);
+    SDL_LockSurface(ret);
+
+    Uint32* source_pixels = (Uint32*)source->pixels;
+    Uint32* ret_pixels    = (Uint32*)ret->pixels;
+
+    for (int i = 0; i < h1; i++) {
+        for (int j = 0; j < w1; j++) {
+            Uint32 a = i > 0      ? (Uint32)source_pixels[(i-1) * w1 + j] : 0; 
+            Uint32 b = j < w1 - 1 ? (Uint32)source_pixels[i * w1 + (j+1)] : 0; 
+            Uint32 c = j > 0      ? (Uint32)source_pixels[i * w1 + (j-1)] : 0; 
+            Uint32 d = i < h1 - 1 ? (Uint32)source_pixels[(i+1) * w1 + j] : 0; 
+
+            ret_pixels[(i*2) * w2 + (j*2)]         = (Uint32)source_pixels[i * w1 +j];
+            ret_pixels[(i*2) * w2 + (j*2 + 1)]     = (Uint32)source_pixels[i * w1 +j];
+            ret_pixels[(i*2 + 1) * w2 + (j*2 + 1)] = (Uint32)source_pixels[i * w1 +j];
+            ret_pixels[(i*2 + 1) * w2 + (j*2)]     = (Uint32)source_pixels[i * w1 +j];
+
+            if (c == a && c != d && a != b) {
+                ret_pixels[(i*2) * w2 + (j*2)] = a;
+            }
+
+            if (a == b && a != c && b != d) {
+                ret_pixels[(i*2) * w2 + (j*2 + 1)] = b;
+            }
+
+            if (b == d && b != a && d != c) {
+                ret_pixels[(i*2 + 1) * w2 + (j*2 + 1)] = d;
+            }
+
+            if (d == c && d != b && c != a) {
+                ret_pixels[(i*2 + 1) * w2 + (j*2)] = c;
+            }
+        }
+    }
+
+    SDL_UnlockSurface(source);
+    SDL_UnlockSurface(ret);
+
+    return ret;
 }
 
 // loads an image from a file name and returns it as a surface
