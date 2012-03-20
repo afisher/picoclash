@@ -14,8 +14,8 @@ Grid::Grid() {
 
 // loads the test map into the grid
 void Grid::load_file() {
-    //std::ifstream file("testmap.txt");
-    std::ifstream file("offensemap.txt");
+    std::ifstream file("testmap.txt");
+    //std::ifstream file("offensemap.txt");
     std::string line;
 
     for (int i = 0; i < Util::GRID_HEIGHT; i++) {
@@ -48,16 +48,16 @@ void Grid::load_file() {
 }
 
 // draw the grid -- assumes the file has been loaded
-void Grid::draw_grid(SDL_Surface* screen) {
+void Grid::draw_grid(SDL_Surface* surface) {
     for (int i = 0; i < Util::GRID_HEIGHT; i++) {
         for (int j = 0; j < Util::GRID_WIDTH; j++) {
             int x = j * Util::SPRITE_SIZE;
             int y = i * Util::SPRITE_SIZE;
 
-            Util::apply_surface(x, y, grid[i][j]->get_image(), screen);
+            Util::apply_surface(x, y, grid[i][j]->get_image(), surface);
 
             if (grid[i][j]->get_character() != NULL) {
-                Util::apply_surface(x, y, grid[i][j]->get_character()->get_image(), screen);
+                Util::apply_surface(x, y, grid[i][j]->get_character()->get_image(), surface);
             }
         }
     }
@@ -66,7 +66,7 @@ void Grid::draw_grid(SDL_Surface* screen) {
 Tile* Grid::get(int i, int j) { return grid[i][j]; }
 int Grid::get_current_player() { return current_player; }
 
-bool Grid::show_move_tiles(int i, int j, SDL_Surface* screen, bool show) {
+bool Grid::show_move_tiles(int i, int j, SDL_Surface* surface, bool show) {
     Character* selected_character = grid[i][j]->get_character();
     if (selected_character->get_player() != current_player) return false;
 
@@ -77,8 +77,8 @@ bool Grid::show_move_tiles(int i, int j, SDL_Surface* screen, bool show) {
         select_tiles(i, j, mobility, show);
     } else return false;
 
-    draw_grid(screen);
-    SDL_Flip(screen);
+    draw_grid(surface);
+    //SDL_Flip(screen);
 
     return true;
 }
