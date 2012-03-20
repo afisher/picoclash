@@ -5,6 +5,8 @@
 #include <string>
 
 class Util {
+    private:
+        static void scale(SDL_Surface* source, SDL_Surface* destination);
     public:
         static const int PLAYER_WARRIOR = 1;
         static const int PLAYER_ARCHER  = 2;
@@ -19,6 +21,8 @@ class Util {
         static const int SPRITE_SIZE = 16;
 
         static SDL_Surface* init_screen(int width, int height, int bpp);
+        static void update_screen(SDL_Surface* source, SDL_Surface* destination);
+
         static SDL_Surface* load_image(std::string filename);
         static void apply_surface(int x, int y, SDL_Surface* source, SDL_Surface* destination);
 };

@@ -78,12 +78,11 @@ bool Grid::show_move_tiles(int i, int j, SDL_Surface* surface, bool show) {
     } else return false;
 
     draw_grid(surface);
-    //SDL_Flip(screen);
 
     return true;
 }
 
-bool Grid::show_attack_tiles(int i, int j, SDL_Surface* screen, bool show) {
+bool Grid::show_attack_tiles(int i, int j, SDL_Surface* surface, bool show) {
     Character* selected_character = grid[i][j]->get_character();
     if (selected_character->get_player() != current_player) return false;
 
@@ -94,8 +93,7 @@ bool Grid::show_attack_tiles(int i, int j, SDL_Surface* screen, bool show) {
         select_tiles(i, j, range, show);
     } else return false;
 
-    draw_grid(screen);
-    SDL_Flip(screen);
+    draw_grid(surface);
 
     return true;
 }
@@ -112,7 +110,7 @@ void Grid::select_tiles(int i, int j, int range, bool show) {
     }
 }
 
-bool Grid::move(int i, int j, int x, int y, SDL_Surface* screen) {
+bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
     Character* curChar = grid[i][j]->get_character();
     if (curChar->get_player() != current_player) return false;
 
@@ -136,13 +134,12 @@ bool Grid::move(int i, int j, int x, int y, SDL_Surface* screen) {
 
     select_tiles(i, j, mobility, false);
 
-    draw_grid(screen);
-    SDL_Flip(screen);
+    draw_grid(surface);
 
     return true;
 }
 
-bool Grid::attack(int i, int j, int x, int y, SDL_Surface* screen) {
+bool Grid::attack(int i, int j, int x, int y, SDL_Surface* surface) {
     Character* character1 = grid[i][j]->get_character();
     Character* character2 = grid[x][y]->get_character();
 
@@ -161,8 +158,8 @@ bool Grid::attack(int i, int j, int x, int y, SDL_Surface* screen) {
 
         character1->set_attacked_this_turn(true);
 
-        draw_grid(screen);
-        SDL_Flip(screen);
+        draw_grid(surface);
+
         return true;
     } else return false;
 }

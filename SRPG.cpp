@@ -13,9 +13,15 @@
 #include "PlayerArcher.h"
 #include "PlayerHealer.h"
 
-const int SCREEN_WIDTH  = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH  = 1280;
+const int SCREEN_HEIGHT = 960;
 const int SCREEN_BPP    = 32;
+
+const int WIDTH  = 640;
+const int HEIGHT = 480;
+
+const double X_RATIO = WIDTH  / (double)SCREEN_WIDTH;
+const double Y_RATIO = HEIGHT / (double)SCREEN_HEIGHT;
 
 SDL_Surface* screen  = NULL;
 SDL_Surface* surface = NULL;
@@ -95,13 +101,13 @@ void draw_sidebar(Grid grid) {
     Util::apply_surface(486, 360, state_info, surface);
     SDL_FreeSurface(state_info);
 
-    Util::apply_surface(0, 0, surface, screen);
-    SDL_Flip(screen);
+    Util::update_screen(surface, screen);
 }
 
 void select_single(Grid grid) {
-    x = event.button.x / Util::SPRITE_SIZE;
-    y = event.button.y / Util::SPRITE_SIZE;
+    x = X_RATIO * event.button.x / Util::SPRITE_SIZE;
+    y = Y_RATIO * event.button.y / Util::SPRITE_SIZE;
+
     selected_tile = grid.get(y, x);
     selected_character = selected_tile->get_character();
 
@@ -126,7 +132,7 @@ int main(int argc, char* args[]) {
     bool quit = false;
 
     screen = Util::init_screen(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP);
-    surface = SDL_CreateRGBSurface(SDL_SWSURFACE, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, 0, 0, 0, 0);
+    surface = SDL_CreateRGBSurface(SDL_SWSURFACE, WIDTH, HEIGHT, SCREEN_BPP, 0, 0, 0, 0);
 
     Tile::default_image  = Util::load_image("sprites/grass2.png");
     Tile::selected_image = Util::load_image("sprites/grass2-selected.png");
@@ -139,10 +145,7 @@ int main(int argc, char* args[]) {
 
     Grid grid;
     grid.draw_grid(surface);
-    Util::apply_surface(0, 0, surface, screen);
-    SDL_Flip(screen);
-    //grid.draw_grid(screen);
-    //SDL_Flip(screen);
+    Util::update_screen(surface, screen);
 
     sidebar = Util::load_image("sprites/sidebar-bg.png");
     draw_sidebar(grid);
@@ -173,18 +176,20 @@ int main(int argc, char* args[]) {
                         if (selected_character != NULL) {
                             selected_tile->set_selected(false);
                             grid.draw_grid(surface);
-                            Util::apply_surface(0, 0, surface, screen);
-                            SDL_Flip(screen);
+
+                            Util::update_screen(surface, screen);
                         }
 
                         select_single(grid);
                         break;
                     case MOVING:
                         // this happens if we select a place to move to
-                        new_x = event.button.x / Util::SPRITE_SIZE;
-                        new_y = event.button.y / Util::SPRITE_SIZE;
+                        new_x = X_RATIO * event.button.x / Util::SPRITE_SIZE;
+                        new_y = Y_RATIO * event.button.y / Util::SPRITE_SIZE;
 
                         success = grid.move(y, x, new_y, new_x, surface);
+                        Util::update_screen(surface, screen);
+
                         if (success) state = MOVED;
                         selected_character = NULL;
                         break;
@@ -195,10 +200,12 @@ int main(int argc, char* args[]) {
                         break;
                     case ATTACKING:
                         // this happens if we select a character to attack 
-                        new_x = event.button.x / Util::SPRITE_SIZE;
-                        new_y = event.button.y / Util::SPRITE_SIZE;
+                        new_x = X_RATIO * event.button.x / Util::SPRITE_SIZE;
+                        new_y = Y_RATIO * event.button.y / Util::SPRITE_SIZE;
 
                         success = grid.attack(y, x, new_y, new_x, surface);
+                        Util::update_screen(surface, screen);
+
                         if (success) state = ATTACKED;
                         selected_character = NULL;
                         break;
@@ -216,8 +223,7 @@ int main(int argc, char* args[]) {
                             // this happens if we choose to move a selected character
                             if (selected_character != NULL && !selected_character->get_moved_this_turn()) {
                                 success = grid.show_move_tiles(y, x, surface, true);
-                                Util::apply_surface(0, 0, surface, screen);
-                                SDL_Flip(screen);
+                                Util::update_screen(surface, screen);
                                 if (success) state = MOVING;
                             }
                             break;
@@ -225,8 +231,7 @@ int main(int argc, char* args[]) {
                             // this happens if we choose to move after attacking TODO redundant? 
                             if (selected_character != NULL && !selected_character->get_moved_this_turn()) {
                                 success = grid.show_move_tiles(y, x, surface, true);
-                                Util::apply_surface(0, 0, surface, screen);
-                                SDL_Flip(screen);
+                                Util::update_screen(surface, screen);
                                 if (success) state = MOVING;
                             }
                             break;
@@ -238,8 +243,7 @@ int main(int argc, char* args[]) {
                             // this happens if we choose to attack with a selected character 
                             if (selected_character != NULL && !selected_character->get_attacked_this_turn()) {
                                 success = grid.show_attack_tiles(y, x, surface, true);
-                                Util::apply_surface(0, 0, surface, screen);
-                                SDL_Flip(screen);
+                                Util::update_screen(surface, screen);
                                 if (success) state = ATTACKING;
                             }
                             break;
@@ -247,8 +251,7 @@ int main(int argc, char* args[]) {
                             // this happens if we choose to attack after moving TODO redundant?
                             if (selected_character != NULL && !selected_character->get_attacked_this_turn()) {
                                 success = grid.show_attack_tiles(y, x, surface, true);
-                                Util::apply_surface(0, 0, surface, screen);
-                                SDL_Flip(screen);
+                                Util::update_screen(surface, screen);
                                 if (success) state = ATTACKING;
                             }
                             break;
@@ -259,8 +262,7 @@ int main(int argc, char* args[]) {
                         case MOVING:
                             // this happens if we cancel a move
                             success = grid.show_move_tiles(y, x, surface, false);
-                            Util::apply_surface(0, 0, surface, screen);
-                            SDL_Flip(screen);
+                            Util::update_screen(surface, screen);
 
                             grid.get(y, x)->set_selected(true);
                             grid.draw_grid(surface);
@@ -269,8 +271,7 @@ int main(int argc, char* args[]) {
                         case ATTACKING:
                             // this happens if we cancel an attack
                             success = grid.show_attack_tiles(y, x, surface, false);
-                            Util::apply_surface(0, 0, surface, screen);
-                            SDL_Flip(screen);
+                            Util::update_screen(surface, screen);
 
                             grid.get(y, x)->set_selected(true);
                             grid.draw_grid(surface);
