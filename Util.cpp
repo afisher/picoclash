@@ -22,7 +22,6 @@ SDL_Surface* Util::init_screen(int width, int height, int bpp) {
 }
 
 void Util::update_screen(SDL_Surface* source, SDL_Surface* destination) {
-    //apply_surface(0, 0, source, destination);
     SDL_Surface* scaled2x = scale2x(source);
     scale(scaled2x, destination);
     SDL_FreeSurface(scaled2x);
@@ -59,8 +58,9 @@ void Util::scale(SDL_Surface* source, SDL_Surface* destination) {
     SDL_UnlockSurface(destination);
 }
 
+// uses scale 2x algorithm to create a smoother-looking result
+// https://secure.wikimedia.org/wikipedia/en/wiki/Pixel_art_scaling_algorithms
 SDL_Surface* Util::scale2x(SDL_Surface* source) {
-
     int w1 = source->w;
     int h1 = source->h;
 
