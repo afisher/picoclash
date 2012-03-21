@@ -95,6 +95,8 @@ void draw_sidebar(Grid grid) {
         case MOVED:     state_str = "Select a character";   break;
         case ATTACKING: state_str = "Select a victim";      break;
         case ATTACKED:  state_str = "Select a character";   break;
+        case HEALING:   state_str = "Select an ally";       break;
+        case HEALED:    state_str = "Select a character";   break;
         default: break;
     }
     SDL_Surface* state_info = TTF_RenderText_Solid(font, state_str.c_str(), textColor);
@@ -111,13 +113,11 @@ void select_single(Grid grid) {
     selected_tile = grid.get(y, x);
     selected_character = selected_tile->get_character();
 
-    // highlight the character
-    if (selected_character != NULL) {
-        selected_tile->set_selected(true);
-        grid.draw_grid(surface);
+    // highlight the tile
+    selected_tile->set_selected(true);
+    grid.draw_grid(surface);
 
-        draw_sidebar(grid);
-    }
+    draw_sidebar(grid);
 }
 
 void clean_up() {
@@ -170,15 +170,12 @@ int main(int argc, char* args[]) {
                     case SELECTED:
                         // this happens if we change our character selection
                         selected_tile = grid.get(y, x);
-                        selected_character = selected_tile->get_character();
 
-                        // unhighlight the old selected character
-                        if (selected_character != NULL) {
-                            selected_tile->set_selected(false);
-                            grid.draw_grid(surface);
+                        // unhighlight the old selected tile
+                        selected_tile->set_selected(false);
+                        grid.draw_grid(surface);
 
-                            Util::update_screen(surface, screen);
-                        }
+                        Util::update_screen(surface, screen);
 
                         select_single(grid);
                         break;
