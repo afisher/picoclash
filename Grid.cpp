@@ -4,6 +4,7 @@
 #include <cmath>
 
 #include "Grid.h"
+#include "Healer.h"
 
 using namespace std;
 
@@ -164,6 +165,29 @@ bool Grid::attack(int i, int j, int x, int y, SDL_Surface* surface) {
     } else return false;
 }
 
+bool Grid::heal(int i, int j, int x, int y, SDL_Surface* surface) {
+    Healer* character1 = (Healer*)(grid[i][j]->get_character());
+    Character* character2 = grid[x][y]->get_character();
+
+    if (character1->get_player() != current_player) return false;
+    if (character1 == NULL || character2 == NULL) return false;
+
+    int range = character1->get_range();
+
+    if (distance(i, j, x, y) <= range) {
+        character2->gain_health(character1->get_magic());
+        character1->set_healed_this_turn(true); // tell the first character that it just healed
+
+        select_tiles(i, j, range, false);
+
+        character1->set_attacked_this_turn(true);
+
+        draw_grid(surface);
+
+        return true;
+    } else return false;
+}
+
 int Grid::distance(int i, int j, int x, int y) {
     return abs(i - x) + abs(j - y);
 }
@@ -176,6 +200,9 @@ void Grid::new_turn() {
             if (curChar != NULL) {
                 curChar->set_moved_this_turn(false);
                 curChar->set_attacked_this_turn(false);
+                if (curChar->can_heal()) {
+                    ((Healer*)curChar)->set_healed_this_turn(false);
+                }
             }
         }
     }

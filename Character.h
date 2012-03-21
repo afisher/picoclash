@@ -34,12 +34,17 @@ class Character {
         int get_range();
 
         int get_max_health();
+
         void take_damage(int d);
+        void gain_health(int h);
 
         int get_player();
 
         bool get_moved_this_turn();
         bool get_attacked_this_turn();
+        virtual bool get_healed_this_turn();
+
+        virtual bool can_heal();
 
         std::string get_name();
         virtual SDL_Surface* get_image();

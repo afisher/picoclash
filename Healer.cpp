@@ -20,7 +20,16 @@ void Healer::set_values(int lvl) {
     range     = 1;
     magic     = 10 * level;
 
+    healed_this_turn = false;
+
     image = Util::load_image("sprites/healer-blue.png");
 }
 
 int Healer::get_magic() { return magic; }
+bool Healer::can_heal() { return true; }
+
+bool Healer::get_healed_this_turn() { return healed_this_turn; }
+
+void Healer::set_healed_this_turn(bool h) {
+    healed_this_turn = h;
+}

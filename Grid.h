@@ -24,6 +24,7 @@ class Grid {
 
         bool move  (int i, int j, int x, int y, SDL_Surface* surface);
         bool attack(int i, int j, int x, int y, SDL_Surface* surface);
+        bool heal  (int i, int j, int x, int y, SDL_Surface* surface);
 
         void new_turn();
 };

@@ -1,5 +1,7 @@
 #include "Character.h"
+#include "Healer.h"
 #include "SDL/SDL.h"
+#include <algorithm>
 
 Character::Character() {
     level     = 0;
@@ -28,11 +30,13 @@ int  Character::get_max_health()         { return increment * level;  }
 int  Character::get_player()             { return player;             }
 bool Character::get_moved_this_turn()    { return moved_this_turn;    }
 bool Character::get_attacked_this_turn() { return attacked_this_turn; }
+bool Character::get_healed_this_turn()   { return false;              }
+bool Character::can_heal()               { return false;              }
 
 std::string  Character::get_name()   { return name;  }
 
 SDL_Surface* Character::get_image() {
-    if (moved_this_turn && attacked_this_turn) {
+    if (moved_this_turn && (attacked_this_turn || get_healed_this_turn())) {
         return grey_image;
     }
 
@@ -43,6 +47,7 @@ void Character::set_moved_this_turn(bool moved)       { moved_this_turn = moved;
 void Character::set_attacked_this_turn(bool attacked) { attacked_this_turn = attacked; }
 
 void Character::take_damage(int d)  { health -= d; }
+void Character::gain_health(int h)  { health = std::min(health + h, get_max_health()); }
 
 Character::~Character() {
     SDL_FreeSurface(image);

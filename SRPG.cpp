@@ -13,8 +13,8 @@
 #include "PlayerArcher.h"
 #include "PlayerHealer.h"
 
-const int SCREEN_WIDTH  = 1280;
-const int SCREEN_HEIGHT = 960;
+const int SCREEN_WIDTH  = 800;
+const int SCREEN_HEIGHT = 600;
 const int SCREEN_BPP    = 32;
 
 const int WIDTH  = 640;
@@ -39,7 +39,7 @@ Tile* selected_tile = NULL;
 Character* selected_character = NULL;
 
 // temporary home for the possible states
-enum States { IDLE, SELECTED, MOVING, MOVED, ATTACKING, ATTACKED };
+enum States { IDLE, SELECTED, MOVING, MOVED, ATTACKING, ATTACKED, HEALING, HEALED };
 
 int state = IDLE;
 
@@ -199,7 +199,7 @@ int main(int argc, char* args[]) {
                         state = SELECTED;
                         break;
                     case ATTACKING:
-                        // this happens if we select a character to attack 
+                        // this happens if we select a character to attack
                         new_x = X_RATIO * event.button.x / Util::SPRITE_SIZE;
                         new_y = Y_RATIO * event.button.y / Util::SPRITE_SIZE;
 
@@ -210,73 +210,71 @@ int main(int argc, char* args[]) {
                         selected_character = NULL;
                         break;
                     case ATTACKED:
-                        // this happens if we make another character selection after attacking 
+                        // this happens if we make another character selection after attacking
                         select_single(grid);
                         state = SELECTED;
                         break;
-                    default: break; 
+                    case HEALING:
+                        // this happens if we select a character to heal
+                        new_x = X_RATIO * event.button.x / Util::SPRITE_SIZE;
+                        new_y = Y_RATIO * event.button.y / Util::SPRITE_SIZE;
+
+                        success = grid.heal(y, x, new_y, new_x, surface);
+                        Util::update_screen(surface, screen);
+
+                        if (success) state = HEALED;
+                        selected_character = NULL;
+                        break;
+                    case HEALED:
+                        // this happens if we make another character selection after healing
+                        select_single(grid);
+                        state = SELECTED;
+                        break;
+                    default: break;
                 }
             } else if (event.type == SDL_KEYDOWN) {
                 if (event.key.keysym.sym == SDLK_z) {
-                    switch (state) {
-                        case SELECTED:
-                            // this happens if we choose to move a selected character
-                            if (selected_character != NULL && !selected_character->get_moved_this_turn()) {
-                                success = grid.show_move_tiles(y, x, surface, true);
-                                Util::update_screen(surface, screen);
-                                if (success) state = MOVING;
-                            }
-                            break;
-                        case ATTACKED:
-                            // this happens if we choose to move after attacking TODO redundant? 
-                            if (selected_character != NULL && !selected_character->get_moved_this_turn()) {
-                                success = grid.show_move_tiles(y, x, surface, true);
-                                Util::update_screen(surface, screen);
-                                if (success) state = MOVING;
-                            }
-                            break;
-                        default: break;
+                    if (state == SELECTED || state == ATTACKED || state == HEALED) {
+                        // this happens if we choose to move after another action
+                        if (selected_character != NULL && !selected_character->get_moved_this_turn()) {
+                            success = grid.show_move_tiles(y, x, surface, true);
+                            Util::update_screen(surface, screen);
+                            if (success) state = MOVING;
+                        }
                     }
                 } else if (event.key.keysym.sym == SDLK_x) {
-                    switch (state) {
-                        case SELECTED:
-                            // this happens if we choose to attack with a selected character 
-                            if (selected_character != NULL && !selected_character->get_attacked_this_turn()) {
-                                success = grid.show_attack_tiles(y, x, surface, true);
-                                Util::update_screen(surface, screen);
-                                if (success) state = ATTACKING;
-                            }
-                            break;
-                        case MOVED:
-                            // this happens if we choose to attack after moving TODO redundant?
-                            if (selected_character != NULL && !selected_character->get_attacked_this_turn()) {
-                                success = grid.show_attack_tiles(y, x, surface, true);
-                                Util::update_screen(surface, screen);
-                                if (success) state = ATTACKING;
-                            }
-                            break;
-                        default: break;
+                    if (state == SELECTED || state == MOVED || state == HEALED) {
+                        // this happens if we choose to attack after another action
+                        if (selected_character != NULL && !selected_character->get_attacked_this_turn()) {
+                            success = grid.show_attack_tiles(y, x, surface, true);
+                            Util::update_screen(surface, screen);
+                            if (success) state = ATTACKING;
+                        }
+                    }
+                } else if (event.key.keysym.sym == SDLK_c) {
+                    if (state == SELECTED || state == MOVED || state == ATTACKED) {
+                        // this happens if we choose to heal after another action
+                        if (selected_character != NULL && selected_character->can_heal()
+                                                       && !((Healer*)selected_character)->get_healed_this_turn()) {
+                            // just use the attack range for now
+                            success = grid.show_attack_tiles(y, x, surface, true);
+                            Util::update_screen(surface, screen);
+                            if (success) state = HEALING;
+                        }
                     }
                 } else if (event.key.keysym.sym == SDLK_ESCAPE) {
-                    switch (state) {
-                        case MOVING:
-                            // this happens if we cancel a move
+                    if (state == MOVING || state == ATTACKING || state == HEALING) {
+                        // this happens if we cancel
+                        if (state == MOVING) {
                             success = grid.show_move_tiles(y, x, surface, false);
-                            Util::update_screen(surface, screen);
-
-                            grid.get(y, x)->set_selected(true);
-                            grid.draw_grid(surface);
-                            if (success) state = SELECTED;
-                            break;
-                        case ATTACKING:
-                            // this happens if we cancel an attack
+                        } else {
                             success = grid.show_attack_tiles(y, x, surface, false);
-                            Util::update_screen(surface, screen);
+                        }
+                        Util::update_screen(surface, screen);
 
-                            grid.get(y, x)->set_selected(true);
-                            grid.draw_grid(surface);
-                            if (success) state = SELECTED;
-                            break;
+                        grid.get(y, x)->set_selected(true);
+                        grid.draw_grid(surface);
+                        if (success) state = SELECTED;
                     }
                 }
             } else if (event.key.keysym.sym == SDLK_v) {
