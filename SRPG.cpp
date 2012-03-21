@@ -102,8 +102,6 @@ void draw_sidebar(Grid grid) {
     SDL_Surface* state_info = TTF_RenderText_Solid(font, state_str.c_str(), textColor);
     Util::apply_surface(486, 360, state_info, surface);
     SDL_FreeSurface(state_info);
-
-    Util::update_screen(surface, screen);
 }
 
 void select_single(Grid grid) {
@@ -114,10 +112,10 @@ void select_single(Grid grid) {
     selected_character = selected_tile->get_character();
 
     // highlight the tile
-    selected_tile->set_selected(true);
-    grid.draw_grid(surface);
+        selected_tile->set_selected(true);
+        grid.draw_grid(surface);
 
-    draw_sidebar(grid);
+        draw_sidebar(grid);
 }
 
 void clean_up() {
@@ -175,8 +173,6 @@ int main(int argc, char* args[]) {
                         selected_tile->set_selected(false);
                         grid.draw_grid(surface);
 
-                        Util::update_screen(surface, screen);
-
                         select_single(grid);
                         break;
                     case MOVING:
@@ -185,7 +181,6 @@ int main(int argc, char* args[]) {
                         new_y = Y_RATIO * event.button.y / Util::SPRITE_SIZE;
 
                         success = grid.move(y, x, new_y, new_x, surface);
-                        Util::update_screen(surface, screen);
 
                         if (success) state = MOVED;
                         selected_character = NULL;
@@ -201,7 +196,6 @@ int main(int argc, char* args[]) {
                         new_y = Y_RATIO * event.button.y / Util::SPRITE_SIZE;
 
                         success = grid.attack(y, x, new_y, new_x, surface);
-                        Util::update_screen(surface, screen);
 
                         if (success) state = ATTACKED;
                         selected_character = NULL;
@@ -217,7 +211,6 @@ int main(int argc, char* args[]) {
                         new_y = Y_RATIO * event.button.y / Util::SPRITE_SIZE;
 
                         success = grid.heal(y, x, new_y, new_x, surface);
-                        Util::update_screen(surface, screen);
 
                         if (success) state = HEALED;
                         selected_character = NULL;
@@ -235,7 +228,6 @@ int main(int argc, char* args[]) {
                         // this happens if we choose to move after another action
                         if (selected_character != NULL && !selected_character->get_moved_this_turn()) {
                             success = grid.show_move_tiles(y, x, surface, true);
-                            Util::update_screen(surface, screen);
                             if (success) state = MOVING;
                         }
                     }
@@ -244,7 +236,6 @@ int main(int argc, char* args[]) {
                         // this happens if we choose to attack after another action
                         if (selected_character != NULL && !selected_character->get_attacked_this_turn()) {
                             success = grid.show_attack_tiles(y, x, surface, true);
-                            Util::update_screen(surface, screen);
                             if (success) state = ATTACKING;
                         }
                     }
@@ -255,7 +246,6 @@ int main(int argc, char* args[]) {
                                                        && !((Healer*)selected_character)->get_healed_this_turn()) {
                             // just use the attack range for now
                             success = grid.show_attack_tiles(y, x, surface, true);
-                            Util::update_screen(surface, screen);
                             if (success) state = HEALING;
                         }
                     }
@@ -267,7 +257,6 @@ int main(int argc, char* args[]) {
                         } else {
                             success = grid.show_attack_tiles(y, x, surface, false);
                         }
-                        Util::update_screen(surface, screen);
 
                         grid.get(y, x)->set_selected(true);
                         grid.draw_grid(surface);
@@ -281,6 +270,8 @@ int main(int argc, char* args[]) {
             }
         }
         draw_sidebar(grid);
+
+        Util::update_screen(surface, screen);
     }
 
     clean_up();
