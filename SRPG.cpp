@@ -13,6 +13,8 @@
 #include "PlayerArcher.h"
 #include "PlayerHealer.h"
 
+const int FRAMES_PER_SECOND = 20;
+
 const int SCREEN_WIDTH  = 800;
 const int SCREEN_HEIGHT = 600;
 const int SCREEN_BPP    = 32;
@@ -152,6 +154,8 @@ int main(int argc, char* args[]) {
 
     while (quit == false) {
 
+        int start_ticks = SDL_GetTicks();
+
         while (SDL_PollEvent(&event)) {
 
             if (event.type == SDL_QUIT) {
@@ -270,6 +274,11 @@ int main(int argc, char* args[]) {
             }
         }
         draw_sidebar(grid);
+
+        int ticks = SDL_GetTicks() - start_ticks;
+        if (ticks < 1000 / FRAMES_PER_SECOND) {
+            SDL_Delay((1000 / FRAMES_PER_SECOND) - ticks);
+        }
 
         Util::update_screen(surface, screen);
     }
