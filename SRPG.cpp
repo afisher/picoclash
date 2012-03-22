@@ -8,22 +8,11 @@
 #include <sstream>
 
 #include "Util.h"
+#include "Constants.h"
 #include "Grid.h"
 #include "PlayerWarrior.h"
 #include "PlayerArcher.h"
 #include "PlayerHealer.h"
-
-const int FRAMES_PER_SECOND = 20;
-
-const int SCREEN_WIDTH  = 800;
-const int SCREEN_HEIGHT = 600;
-const int SCREEN_BPP    = 32;
-
-const int WIDTH  = 640;
-const int HEIGHT = 480;
-
-const double X_RATIO = WIDTH  / (double)SCREEN_WIDTH;
-const double Y_RATIO = HEIGHT / (double)SCREEN_HEIGHT;
 
 SDL_Surface* screen  = NULL;
 SDL_Surface* surface = NULL;
@@ -107,8 +96,8 @@ void draw_sidebar(Grid grid) {
 }
 
 void select_single(Grid grid) {
-    x = X_RATIO * event.button.x / Util::SPRITE_SIZE;
-    y = Y_RATIO * event.button.y / Util::SPRITE_SIZE;
+    x = Constants::X_RATIO * event.button.x / Util::SPRITE_SIZE;
+    y = Constants::Y_RATIO * event.button.y / Util::SPRITE_SIZE;
 
     selected_tile = grid.get(y, x);
     selected_character = selected_tile->get_character();
@@ -131,8 +120,14 @@ void clean_up() {
 int main(int argc, char* args[]) {
     bool quit = false;
 
-    screen = Util::init_screen(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP);
-    surface = SDL_CreateRGBSurface(SDL_SWSURFACE, WIDTH, HEIGHT, SCREEN_BPP, 0, 0, 0, 0);
+    screen = Util::init_screen(Constants::SCREEN_WIDTH,
+                               Constants::SCREEN_HEIGHT,
+                               Constants::SCREEN_BPP);
+
+    surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+                                   Constants::WIDTH,
+                                   Constants::HEIGHT,
+                                   Constants::SCREEN_BPP, 0, 0, 0, 0);
 
     Tile::default_image  = Util::load_image("sprites/grass2.png");
     Tile::selected_image = Util::load_image("sprites/grass2-selected.png");
@@ -181,8 +176,8 @@ int main(int argc, char* args[]) {
                         break;
                     case MOVING:
                         // this happens if we select a place to move to
-                        new_x = X_RATIO * event.button.x / Util::SPRITE_SIZE;
-                        new_y = Y_RATIO * event.button.y / Util::SPRITE_SIZE;
+                        new_x = Constants::X_RATIO * event.button.x / Util::SPRITE_SIZE;
+                        new_y = Constants::Y_RATIO * event.button.y / Util::SPRITE_SIZE;
 
                         success = grid.move(y, x, new_y, new_x, surface);
 
@@ -196,8 +191,8 @@ int main(int argc, char* args[]) {
                         break;
                     case ATTACKING:
                         // this happens if we select a character to attack
-                        new_x = X_RATIO * event.button.x / Util::SPRITE_SIZE;
-                        new_y = Y_RATIO * event.button.y / Util::SPRITE_SIZE;
+                        new_x = Constants::X_RATIO * event.button.x / Util::SPRITE_SIZE;
+                        new_y = Constants::Y_RATIO * event.button.y / Util::SPRITE_SIZE;
 
                         success = grid.attack(y, x, new_y, new_x, surface);
 
@@ -211,8 +206,8 @@ int main(int argc, char* args[]) {
                         break;
                     case HEALING:
                         // this happens if we select a character to heal
-                        new_x = X_RATIO * event.button.x / Util::SPRITE_SIZE;
-                        new_y = Y_RATIO * event.button.y / Util::SPRITE_SIZE;
+                        new_x = Constants::X_RATIO * event.button.x / Util::SPRITE_SIZE;
+                        new_y = Constants::Y_RATIO * event.button.y / Util::SPRITE_SIZE;
 
                         success = grid.heal(y, x, new_y, new_x, surface);
 
@@ -276,8 +271,8 @@ int main(int argc, char* args[]) {
         draw_sidebar(grid);
 
         int ticks = SDL_GetTicks() - start_ticks;
-        if (ticks < 1000 / FRAMES_PER_SECOND) {
-            SDL_Delay((1000 / FRAMES_PER_SECOND) - ticks);
+        if (ticks < 1000 / Constants::FRAMES_PER_SECOND) {
+            SDL_Delay((1000 / Constants::FRAMES_PER_SECOND) - ticks);
         }
 
         Util::update_screen(surface, screen);
