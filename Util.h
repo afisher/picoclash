@@ -7,6 +7,7 @@
 class Util {
     private:
         static void scale  (SDL_Surface* source, SDL_Surface* destination);
+        static void bilinear_scale  (SDL_Surface* source, SDL_Surface* destination);
         static SDL_Surface* scale2x(SDL_Surface* source);
     public:
         static const int PLAYER_WARRIOR = 1;

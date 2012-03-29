@@ -23,7 +23,7 @@ SDL_Surface* Util::init_screen(int width, int height, int bpp) {
 
 void Util::update_screen(SDL_Surface* source, SDL_Surface* destination) {
     SDL_Surface* scaled2x = scale2x(source);
-    scale(scaled2x, destination);
+    bilinear_scale(scaled2x, destination);
     SDL_FreeSurface(scaled2x);
     SDL_Flip(destination);
 }
@@ -51,6 +51,81 @@ void Util::scale(SDL_Surface* source, SDL_Surface* destination) {
             int py = floor(i*y_ratio);
 
             destination_pixels[i*w2 + j] = source_pixels[(int)(py*w1 + px)];
+        }
+    }
+
+    SDL_UnlockSurface(source);
+    SDL_UnlockSurface(destination);
+}
+
+void Util::bilinear_scale(SDL_Surface* source, SDL_Surface* destination) {
+    SDL_LockSurface(source);
+    SDL_LockSurface(destination);
+
+    Uint32* source_pixels      = (Uint32*)source->pixels;
+    Uint32* destination_pixels = (Uint32*)destination->pixels;
+
+    int w1 = source->w;
+    int h1 = source->h;
+    int w2 = destination->w;
+    int h2 = destination->h;
+
+    double x_ratio = w1 / (double)w2;
+    double y_ratio = h1 / (double)h2;
+
+    SDL_PixelFormat* format = source->format;
+
+    for (int i = 0; i < h2; i++) {
+        for (int j = 0; j < w2; j++) {
+            int px = floor(j*x_ratio);
+            int py = floor(i*y_ratio);
+
+            int num_nbrs = 0;
+            int red = 0;
+            int green = 0;
+            int blue = 0;
+
+            if (py > 0) {
+                num_nbrs++;
+
+                Uint32 pixel = source_pixels[(int)((py-1)*w1 + px)];
+
+                red   += (pixel & format->Rmask) >> format->Rshift;
+                green += (pixel & format->Gmask) >> format->Gshift; 
+                blue  += (pixel & format->Bmask) >> format->Bshift; 
+            }
+
+            if (py < h1-1) {
+                num_nbrs++;
+
+                Uint32 pixel =  source_pixels[(int)((py+1)*w1 + px)];
+
+                red   += (pixel & format->Rmask) >> format->Rshift;
+                green += (pixel & format->Gmask) >> format->Gshift; 
+                blue  += (pixel & format->Bmask) >> format->Bshift; 
+            }
+
+            if (px > 0) {
+                num_nbrs++;
+
+                Uint32 pixel =  source_pixels[(int)(py*w1 + (px-1))];
+
+                red   += (pixel & format->Rmask) >> format->Rshift;
+                green += (pixel & format->Gmask) >> format->Gshift; 
+                blue  += (pixel & format->Bmask) >> format->Bshift; 
+            }
+
+            if (px < w1-1) {
+                num_nbrs++;
+
+                Uint32 pixel = source_pixels[(int)(py*w1 + (px+1))];
+
+                red   += (pixel & format->Rmask) >> format->Rshift;
+                green += (pixel & format->Gmask) >> format->Gshift; 
+                blue  += (pixel & format->Bmask) >> format->Bshift; 
+            }
+
+            destination_pixels[i*w2 + j] = SDL_MapRGB(format, red / num_nbrs, green / num_nbrs, blue / num_nbrs); 
         }
     }
 
