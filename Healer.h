@@ -6,11 +6,11 @@ class Healer : public Character {
     protected:
         int magic;
         bool healed_this_turn;
-        void set_values(int lvl);
+        void set_values(int p, int lvl);
 
     public:
-        Healer();
-        Healer(int lvl);
+        Healer(int p);
+        Healer(int p, int lvl);
 
         int get_magic();
 

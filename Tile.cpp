@@ -21,17 +21,17 @@ Tile::Tile() {
 Tile::Tile(int type) {
     switch(type) {
         case Util::PLAYER_WARRIOR:
-            character = new PlayerWarrior(); break;
+            character = new Warrior(1); break;
         case Util::PLAYER_ARCHER:
-            character = new PlayerArcher();  break;
+            character = new Archer(1);  break;
         case Util::PLAYER_HEALER:
-            character = new PlayerHealer();  break;
+            character = new Healer(1);  break;
         case Util::ENEMY_WARRIOR:
-            character = new EnemyWarrior();  break;
+            character = new Warrior(2);  break;
         case Util::ENEMY_ARCHER:
-            character = new EnemyArcher();   break;
+            character = new Archer(2);   break;
         case Util::ENEMY_HEALER:
-            character = new EnemyHealer();   break;
+            character = new Healer(2);   break;
         default:
             character = NULL;
     }

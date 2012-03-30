@@ -6,6 +6,7 @@
 
 class Character {
     protected:
+        int player;
         int level;
         int mobility;
         int health;
@@ -21,12 +22,11 @@ class Character {
         SDL_Surface* image;
         SDL_Surface* grey_image;
 
-        int player;
-
     public:
         Character();
         ~Character();
 
+        int get_player();
         int get_level();
         int get_mobility();
         int get_health();
@@ -37,8 +37,6 @@ class Character {
 
         void take_damage(int d);
         void gain_health(int h);
-
-        int get_player();
 
         bool get_moved_this_turn();
         bool get_attacked_this_turn();

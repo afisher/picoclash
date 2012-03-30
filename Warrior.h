@@ -4,9 +4,9 @@
 
 class Warrior : public Character {
     protected:
-        void set_values(int lvl);
+        void set_values(int p, int lvl);
 
     public:
-        Warrior();
-        Warrior(int lvl);
+        Warrior(int p);
+        Warrior(int p, int lvl);
 };

@@ -23,8 +23,10 @@ SDL_Surface* Util::init_screen(int width, int height, int bpp) {
 
 void Util::update_screen(SDL_Surface* source, SDL_Surface* destination) {
     SDL_Surface* scaled2x = scale2x(source);
-    bilinear_scale(scaled2x, destination);
+    scale(scaled2x, destination);
     SDL_FreeSurface(scaled2x);
+    
+    //scale(source, destination);
     SDL_Flip(destination);
 }
 

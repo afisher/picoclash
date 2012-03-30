@@ -3,15 +3,16 @@
 #include "Archer.h"
 #include "Util.h"
 
-Archer::Archer() : Character() {
-    set_values(1);
+Archer::Archer(int p) : Character() {
+    set_values(p, 1);
 }
 
-Archer::Archer(int lvl) : Character() {
-    set_values(lvl);
+Archer::Archer(int p, int lvl) : Character() {
+    set_values(p, lvl);
 }
 
-void Archer::set_values(int lvl) {
+void Archer::set_values(int p, int lvl) {
+    player    = p;
     level     = lvl;
     mobility  = 3;
     increment = 8;
@@ -19,5 +20,11 @@ void Archer::set_values(int lvl) {
     strength  = 3  * level;
     range     = 6;
 
-    image = Util::load_image("sprites/archer-blue.png");
+    if (player == 1) {
+        image      = Util::load_image("sprites/archer-blue.png");
+        grey_image = Util::load_image("sprites/archer-blue-desat.png");
+    } else {
+        image      = Util::load_image("sprites/archer-red.png");
+        grey_image = Util::load_image("sprites/archer-red-desat.png");
+    }
 }
