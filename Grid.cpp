@@ -19,25 +19,25 @@ void Grid::load_file() {
     //std::ifstream file("offensemap.txt");
     std::string line;
 
-    for (int i = 0; i < Util::GRID_HEIGHT; i++) {
+    for (int i = 0; i < Constants::GRID_HEIGHT; i++) {
         std::getline(file, line);
-        for (int j = 0; j < Util::GRID_WIDTH; j++) {
+        for (int j = 0; j < Constants::GRID_WIDTH; j++) {
             char c = line.at(j);
             std::cout << c;
 
             switch(c) {
                 case 'w':
-                    grid[i][j] = new Tile(Util::PLAYER_WARRIOR); break;
+                    grid[i][j] = new Tile(Constants::PLAYER_WARRIOR); break;
                 case 'a':
-                    grid[i][j] = new Tile(Util::PLAYER_ARCHER); break;
+                    grid[i][j] = new Tile(Constants::PLAYER_ARCHER); break;
                 case 'h':
-                    grid[i][j] = new Tile(Util::PLAYER_HEALER); break;
+                    grid[i][j] = new Tile(Constants::PLAYER_HEALER); break;
                 case 'W':
-                    grid[i][j] = new Tile(Util::ENEMY_WARRIOR); break;
+                    grid[i][j] = new Tile(Constants::ENEMY_WARRIOR); break;
                 case 'A':
-                    grid[i][j] = new Tile(Util::ENEMY_ARCHER); break;
+                    grid[i][j] = new Tile(Constants::ENEMY_ARCHER); break;
                 case 'H':
-                    grid[i][j] = new Tile(Util::ENEMY_HEALER); break;
+                    grid[i][j] = new Tile(Constants::ENEMY_HEALER); break;
                 default:
                     grid[i][j] = new Tile();
             }
@@ -50,10 +50,10 @@ void Grid::load_file() {
 
 // draw the grid -- assumes the file has been loaded
 void Grid::draw_grid(SDL_Surface* surface) {
-    for (int i = 0; i < Util::GRID_HEIGHT; i++) {
-        for (int j = 0; j < Util::GRID_WIDTH; j++) {
-            int x = j * Util::SPRITE_SIZE;
-            int y = i * Util::SPRITE_SIZE;
+    for (int i = 0; i < Constants::GRID_HEIGHT; i++) {
+        for (int j = 0; j < Constants::GRID_WIDTH; j++) {
+            int x = j * Constants::SPRITE_SIZE;
+            int y = i * Constants::SPRITE_SIZE;
 
             Util::apply_surface(x, y, grid[i][j]->get_image(), surface);
 
@@ -104,7 +104,7 @@ void Grid::select_tiles(int i, int j, int range, bool show) {
     for (int x = i - range; x <= i + range; x++) {
         for (int y = j - range; y <= j + range; y++) {
             // if the tile is within the range, light it up
-            if (distance(i, j, x, y) <= range && x < Util::GRID_WIDTH && y < Util::GRID_HEIGHT) {
+            if (distance(i, j, x, y) <= range && x < Constants::GRID_WIDTH && y < Constants::GRID_HEIGHT) {
                 grid[x][y]->set_selected(show);
             }
         }
@@ -193,8 +193,8 @@ int Grid::distance(int i, int j, int x, int y) {
 }
 
 void Grid::new_turn() {
-    for (int j = 0; j < Util::GRID_HEIGHT; j++) {
-        for (int i = 0; i < Util::GRID_WIDTH; i++) {
+    for (int j = 0; j < Constants::GRID_HEIGHT; j++) {
+        for (int i = 0; i < Constants::GRID_WIDTH; i++) {
             Character* curChar = grid[j][i]->get_character();
 
             if (curChar != NULL) {

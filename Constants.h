@@ -7,6 +7,19 @@ namespace Constants {
     const int SCREEN_HEIGHT = 740;
     const int SCREEN_BPP    = 32;
 
+    const int PLAYER_WARRIOR = 1;
+    const int PLAYER_ARCHER  = 2;
+    const int PLAYER_HEALER  = 3;
+    const int ENEMY_WARRIOR  = 4;
+    const int ENEMY_ARCHER   = 5;
+    const int ENEMY_HEALER   = 6;
+
+    const int GRID_WIDTH  = 30;
+    const int GRID_HEIGHT = 30;
+
+    const int SPRITE_SIZE = 16;
+
+
     const int WIDTH  = 640;
     const int HEIGHT = 480;
     const double fWIDTH  = 640;

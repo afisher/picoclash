@@ -10,9 +10,7 @@
 #include "Util.h"
 #include "Constants.h"
 #include "Grid.h"
-#include "PlayerWarrior.h"
-#include "PlayerArcher.h"
-#include "PlayerHealer.h"
+#include "Healer.h"
 
 SDL_Surface* screen  = NULL;
 SDL_Surface* surface = NULL;
@@ -96,8 +94,8 @@ void draw_sidebar(Grid grid) {
 }
 
 void select_single(Grid grid) {
-    x = Constants::X_RATIO * event.button.x / Util::SPRITE_SIZE;
-    y = Constants::Y_RATIO * event.button.y / Util::SPRITE_SIZE;
+    x = Constants::X_RATIO * event.button.x / Constants::SPRITE_SIZE;
+    y = Constants::Y_RATIO * event.button.y / Constants::SPRITE_SIZE;
 
     selected_tile = grid.get(y, x);
     selected_character = selected_tile->get_character();
@@ -176,8 +174,8 @@ int main(int argc, char* args[]) {
                         break;
                     case MOVING:
                         // this happens if we select a place to move to
-                        new_x = Constants::X_RATIO * event.button.x / Util::SPRITE_SIZE;
-                        new_y = Constants::Y_RATIO * event.button.y / Util::SPRITE_SIZE;
+                        new_x = Constants::X_RATIO * event.button.x / Constants::SPRITE_SIZE;
+                        new_y = Constants::Y_RATIO * event.button.y / Constants::SPRITE_SIZE;
 
                         success = grid.move(y, x, new_y, new_x, surface);
 
@@ -191,8 +189,8 @@ int main(int argc, char* args[]) {
                         break;
                     case ATTACKING:
                         // this happens if we select a character to attack
-                        new_x = Constants::X_RATIO * event.button.x / Util::SPRITE_SIZE;
-                        new_y = Constants::Y_RATIO * event.button.y / Util::SPRITE_SIZE;
+                        new_x = Constants::X_RATIO * event.button.x / Constants::SPRITE_SIZE;
+                        new_y = Constants::Y_RATIO * event.button.y / Constants::SPRITE_SIZE;
 
                         success = grid.attack(y, x, new_y, new_x, surface);
 
@@ -206,8 +204,8 @@ int main(int argc, char* args[]) {
                         break;
                     case HEALING:
                         // this happens if we select a character to heal
-                        new_x = Constants::X_RATIO * event.button.x / Util::SPRITE_SIZE;
-                        new_y = Constants::Y_RATIO * event.button.y / Util::SPRITE_SIZE;
+                        new_x = Constants::X_RATIO * event.button.x / Constants::SPRITE_SIZE;
+                        new_y = Constants::Y_RATIO * event.button.y / Constants::SPRITE_SIZE;
 
                         success = grid.heal(y, x, new_y, new_x, surface);
 

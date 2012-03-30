@@ -1,13 +1,11 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include "Util.h"
+#include "Constants.h"
 #include "Tile.h"
-#include "PlayerWarrior.h"
-#include "PlayerArcher.h"
-#include "PlayerHealer.h"
-#include "EnemyWarrior.h"
-#include "EnemyArcher.h"
-#include "EnemyHealer.h"
+#include "Warrior.h"
+#include "Archer.h"
+#include "Healer.h"
 
 SDL_Surface* Tile::default_image  = NULL;
 SDL_Surface* Tile::selected_image = NULL;
@@ -20,18 +18,18 @@ Tile::Tile() {
 
 Tile::Tile(int type) {
     switch(type) {
-        case Util::PLAYER_WARRIOR:
+        case Constants::PLAYER_WARRIOR:
             character = new Warrior(1); break;
-        case Util::PLAYER_ARCHER:
+        case Constants::PLAYER_ARCHER:
             character = new Archer(1);  break;
-        case Util::PLAYER_HEALER:
+        case Constants::PLAYER_HEALER:
             character = new Healer(1);  break;
-        case Util::ENEMY_WARRIOR:
-            character = new Warrior(2);  break;
-        case Util::ENEMY_ARCHER:
-            character = new Archer(2);   break;
-        case Util::ENEMY_HEALER:
-            character = new Healer(2);   break;
+        case Constants::ENEMY_WARRIOR:
+            character = new Warrior(2); break;
+        case Constants::ENEMY_ARCHER:
+            character = new Archer(2);  break;
+        case Constants::ENEMY_HEALER:
+            character = new Healer(2);  break;
         default:
             character = NULL;
     }

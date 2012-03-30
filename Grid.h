@@ -3,10 +3,11 @@
 #include "SDL/SDL.h"
 #include "Tile.h"
 #include "Util.h"
+#include "Constants.h"
 
 class Grid {
     private:
-        Tile* grid[Util::GRID_HEIGHT][Util::GRID_WIDTH];
+        Tile* grid[Constants::GRID_HEIGHT][Constants::GRID_WIDTH];
         int current_player;
         void load_file();
         int distance(int i, int j, int x, int y);
