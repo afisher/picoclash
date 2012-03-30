@@ -4,8 +4,6 @@
 #include "SDL/SDL_image.h"
 #include <string>
 
-class Tile;
-
 class Character {
     protected:
         int player;
@@ -23,8 +21,6 @@ class Character {
 
         SDL_Surface* image;
         SDL_Surface* grey_image;
-
-        Tile* tile;
 
     public:
         Character();
@@ -46,8 +42,6 @@ class Character {
         bool get_attacked_this_turn();
         virtual bool get_healed_this_turn();
 
-        Tile* get_tile();
-
         virtual bool can_heal();
 
         std::string get_name();
@@ -55,5 +49,6 @@ class Character {
 
         void set_moved_this_turn(bool moved);
         void set_attacked_this_turn(bool attacked);
-        void set_tile(Tile* t);
+
+        bool move(int i, int j, int x, int y, SDL_Surface* surface);
 };

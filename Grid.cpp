@@ -3,15 +3,15 @@
 #include <fstream>
 #include <cmath>
 
+#include "Util.h"
 #include "Grid.h"
+#include "Tile.h"
 #include "Healer.h"
 
 using namespace std;
 
-Grid::Grid() {
-    load_file();
-    current_player = 1;
-}
+Tile* grid[Constants::GRID_HEIGHT][Constants::GRID_WIDTH];
+int current_player = 1;
 
 // loads the test map into the grid
 void Grid::load_file() {
@@ -27,19 +27,19 @@ void Grid::load_file() {
 
             switch(c) {
                 case 'w':
-                    grid[i][j] = new Tile(this, j, i, Constants::PLAYER_WARRIOR); break;
+                    grid[i][j] = new Tile(j, i, Constants::PLAYER_WARRIOR); break;
                 case 'a':
-                    grid[i][j] = new Tile(this, j, i, Constants::PLAYER_ARCHER); break;
+                    grid[i][j] = new Tile(j, i, Constants::PLAYER_ARCHER); break;
                 case 'h':
-                    grid[i][j] = new Tile(this, j, i, Constants::PLAYER_HEALER); break;
+                    grid[i][j] = new Tile(j, i, Constants::PLAYER_HEALER); break;
                 case 'W':
-                    grid[i][j] = new Tile(this, j, i, Constants::ENEMY_WARRIOR); break;
+                    grid[i][j] = new Tile(j, i, Constants::ENEMY_WARRIOR); break;
                 case 'A':
-                    grid[i][j] = new Tile(this, j, i, Constants::ENEMY_ARCHER); break;
+                    grid[i][j] = new Tile(j, i, Constants::ENEMY_ARCHER); break;
                 case 'H':
-                    grid[i][j] = new Tile(this, j, i, Constants::ENEMY_HEALER); break;
+                    grid[i][j] = new Tile(j, i, Constants::ENEMY_HEALER); break;
                 default:
-                    grid[i][j] = new Tile(this, j, i);
+                    grid[i][j] = new Tile(j, i);
             }
         }
         std::cout << "\n";
@@ -112,13 +112,13 @@ void Grid::select_tiles(int i, int j, int range, bool show) {
 }
 
 bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
-    Character* curChar = grid[i][j]->get_character();
-    if (curChar->get_player() != current_player) return false;
+    Character* cur_char = grid[i][j]->get_character();
+    if (cur_char->get_player() != current_player) return false;
 
     int mobility = 0;
 
-    if (curChar != NULL) {
-        mobility = curChar->get_mobility();
+    if (cur_char != NULL) {
+        mobility = cur_char->get_mobility();
     }
 
     // don't do anything if we try to move outside our mobility
@@ -129,10 +129,9 @@ bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
     // move if we picked an empty square
     if (selected_tile->get_character() == NULL) {
         grid[x][y] = grid[i][j];
-        grid[i][j] = new Tile(this, j, i);
+        grid[i][j] = new Tile(j, i);
 
-        curChar->set_tile(grid[x][y]);
-        curChar->set_moved_this_turn(true);
+        cur_char->set_moved_this_turn(true);
     } else return false;
 
     select_tiles(i, j, mobility, false);
@@ -140,6 +139,8 @@ bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
     draw_grid(surface);
 
     return true;
+
+    //grid[i][j]->get_character()->move(i, j, x, y, surface);
 }
 
 bool Grid::attack(int i, int j, int x, int y, SDL_Surface* surface) {

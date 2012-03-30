@@ -19,7 +19,6 @@ namespace Constants {
 
     const int SPRITE_SIZE = 16;
 
-
     const int WIDTH  = 640;
     const int HEIGHT = 480;
     const double fWIDTH  = 640;

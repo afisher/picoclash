@@ -1,5 +1,8 @@
 #include "Character.h"
+#include "Util.h"
 #include "Healer.h"
+#include "Grid.h"
+#include "Tile.h"
 #include "SDL/SDL.h"
 #include <algorithm>
 
@@ -19,8 +22,6 @@ Character::Character() {
     grey_image = NULL;
 
     player = 0;
-
-    tile = NULL;
 }
 
 int  Character::get_player()             { return player;             }
@@ -35,9 +36,7 @@ bool Character::get_attacked_this_turn() { return attacked_this_turn; }
 bool Character::get_healed_this_turn()   { return false;              }
 bool Character::can_heal()               { return false;              }
 
-std::string  Character::get_name() { return name;  }
-
-Tile* Character::get_tile() { return tile; }
+std::string  Character::get_name() { return name; }
 
 SDL_Surface* Character::get_image() {
     if (moved_this_turn && (attacked_this_turn || get_healed_this_turn())) {
@@ -49,10 +48,35 @@ SDL_Surface* Character::get_image() {
 
 void Character::set_moved_this_turn(bool moved)       { moved_this_turn = moved;       }
 void Character::set_attacked_this_turn(bool attacked) { attacked_this_turn = attacked; }
-void Character::set_tile(Tile* t)                     { tile = t;                      }
 
 void Character::take_damage(int d)  { health -= d; }
 void Character::gain_health(int h)  { health = std::min(health + h, get_max_health()); }
+
+bool Character::move(int i, int j, int x, int y, SDL_Surface* surface) {
+/*
+    Grid* grid = Util::grid;
+
+    if (player != Util::grid->get_current_player()) return false;
+
+    // don't do anything if we try to move outside our mobility
+    if (Util::grid->distance(i, j, x, y) > mobility) return false;
+
+    Tile* selected_tile = grid->get(x,y);
+
+    // move if we picked an empty square
+    if (selected_tile->get_character() == NULL) {
+        grid->get(x, y)->set_character(this);
+        grid->get(i, j)->set_character(NULL);
+
+        set_moved_this_turn(true);
+    } else return false;
+
+    grid->select_tiles(i, j, mobility, false);
+    grid->draw_grid(surface);
+
+    return true;
+*/
+}
 
 Character::~Character() {
     SDL_FreeSurface(image);

@@ -1,9 +1,6 @@
 #pragma once
 
 #include "Character.h"
-//#include "Grid.h"
-
-class Grid;
 
 class Tile {
     private:
@@ -11,22 +8,24 @@ class Tile {
         Character* character;
         bool selected;
 
-        Grid* grid;
         int x;
         int y;
 
         void update_image();
 
     public:
-        Tile(Grid* g, int i, int j);
-        Tile(Grid* g, int i, int j, int type);
+        Tile(int i, int j);
+        Tile(int i, int j, int type);
 
         void set_selected(bool s);
-        bool get_selected();
+        void set_character(Character* c);
 
+        bool         get_selected();
         SDL_Surface* get_image();
         Character*   get_character();
-        Grid*        get_grid();
+
+        int get_x();
+        int get_y();
 
         static SDL_Surface* selected_image; 
         static SDL_Surface* default_image;  

@@ -6,12 +6,13 @@
 #include "Warrior.h"
 #include "Archer.h"
 #include "Healer.h"
+#include "Grid.h"
+#include "Character.h"
 
 SDL_Surface* Tile::default_image  = NULL;
 SDL_Surface* Tile::selected_image = NULL;
 
-Tile::Tile(Grid* g, int i, int j) {
-    grid = g;
+Tile::Tile(int i, int j) {
     x = i;
     y = j;
 
@@ -20,8 +21,7 @@ Tile::Tile(Grid* g, int i, int j) {
     set_selected(false);
 }
 
-Tile::Tile(Grid* g, int i, int j, int type) {
-    grid = g;
+Tile::Tile(int i, int j, int type) {
     x = i;
     y = j;
 
@@ -43,10 +43,6 @@ Tile::Tile(Grid* g, int i, int j, int type) {
     }
 
     set_selected(false);
-
-    if (character != NULL) {
-        character->set_tile(this);
-    }
 }
 
 void Tile::set_selected(bool s) {
@@ -54,9 +50,14 @@ void Tile::set_selected(bool s) {
     update_image();
 }
 
+void Tile::set_character(Character* c) { character = c; }
+
 bool Tile::get_selected() {
     return selected;
 }
+
+int Tile::get_x() { return x; }
+int Tile::get_y() { return y; }
 
 void Tile::update_image() {
     if (selected) {
@@ -68,6 +69,5 @@ void Tile::update_image() {
 
 SDL_Surface* Tile::get_image()     { return image;     }
 Character*   Tile::get_character() { return character; }
-Grid*        Tile::get_grid()      { return grid;      }
 
 void Tile::character_died() { character = NULL; }
