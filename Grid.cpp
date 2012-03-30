@@ -27,19 +27,19 @@ void Grid::load_file() {
 
             switch(c) {
                 case 'w':
-                    grid[i][j] = new Tile(Constants::PLAYER_WARRIOR); break;
+                    grid[i][j] = new Tile(this, j, i, Constants::PLAYER_WARRIOR); break;
                 case 'a':
-                    grid[i][j] = new Tile(Constants::PLAYER_ARCHER); break;
+                    grid[i][j] = new Tile(this, j, i, Constants::PLAYER_ARCHER); break;
                 case 'h':
-                    grid[i][j] = new Tile(Constants::PLAYER_HEALER); break;
+                    grid[i][j] = new Tile(this, j, i, Constants::PLAYER_HEALER); break;
                 case 'W':
-                    grid[i][j] = new Tile(Constants::ENEMY_WARRIOR); break;
+                    grid[i][j] = new Tile(this, j, i, Constants::ENEMY_WARRIOR); break;
                 case 'A':
-                    grid[i][j] = new Tile(Constants::ENEMY_ARCHER); break;
+                    grid[i][j] = new Tile(this, j, i, Constants::ENEMY_ARCHER); break;
                 case 'H':
-                    grid[i][j] = new Tile(Constants::ENEMY_HEALER); break;
+                    grid[i][j] = new Tile(this, j, i, Constants::ENEMY_HEALER); break;
                 default:
-                    grid[i][j] = new Tile();
+                    grid[i][j] = new Tile(this, j, i);
             }
         }
         std::cout << "\n";
@@ -129,7 +129,7 @@ bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
     // move if we picked an empty square
     if (selected_tile->get_character() == NULL) {
         grid[x][y] = grid[i][j];
-        grid[i][j] = new Tile();
+        grid[i][j] = new Tile(this, j, i);
         grid[x][y]->get_character()->set_moved_this_turn(true);
     } else return false;
 

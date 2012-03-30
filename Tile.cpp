@@ -10,13 +10,21 @@
 SDL_Surface* Tile::default_image  = NULL;
 SDL_Surface* Tile::selected_image = NULL;
 
-Tile::Tile() {
+Tile::Tile(Grid* g, int i, int j) {
+    grid = g;
+    x = i;
+    y = j;
+
     character = NULL;
 
     set_selected(false);
 }
 
-Tile::Tile(int type) {
+Tile::Tile(Grid* g, int i, int j, int type) {
+    grid = g;
+    x = i;
+    y = j;
+
     switch(type) {
         case Constants::PLAYER_WARRIOR:
             character = new Warrior(1); break;
