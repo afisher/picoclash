@@ -23,8 +23,10 @@ class Tile {
 
         void set_selected(bool s);
         bool get_selected();
+
         SDL_Surface* get_image();
-        Character* get_character();
+        Character*   get_character();
+        Grid*        get_grid();
 
         static SDL_Surface* selected_image; 
         static SDL_Surface* default_image;  

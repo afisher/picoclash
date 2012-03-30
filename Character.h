@@ -46,6 +46,8 @@ class Character {
         bool get_attacked_this_turn();
         virtual bool get_healed_this_turn();
 
+        Tile* get_tile();
+
         virtual bool can_heal();
 
         std::string get_name();

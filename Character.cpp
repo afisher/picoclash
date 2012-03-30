@@ -19,6 +19,8 @@ Character::Character() {
     grey_image = NULL;
 
     player = 0;
+
+    tile = NULL;
 }
 
 int  Character::get_player()             { return player;             }
@@ -33,7 +35,9 @@ bool Character::get_attacked_this_turn() { return attacked_this_turn; }
 bool Character::get_healed_this_turn()   { return false;              }
 bool Character::can_heal()               { return false;              }
 
-std::string  Character::get_name()   { return name;  }
+std::string  Character::get_name() { return name;  }
+
+Tile* Character::get_tile() { return tile; }
 
 SDL_Surface* Character::get_image() {
     if (moved_this_turn && (attacked_this_turn || get_healed_this_turn())) {
