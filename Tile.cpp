@@ -43,6 +43,10 @@ Tile::Tile(Grid* g, int i, int j, int type) {
     }
 
     set_selected(false);
+
+    if (character != NULL) {
+        character->set_tile(this);
+    }
 }
 
 void Tile::set_selected(bool s) {

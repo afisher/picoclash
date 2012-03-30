@@ -45,6 +45,7 @@ SDL_Surface* Character::get_image() {
 
 void Character::set_moved_this_turn(bool moved)       { moved_this_turn = moved;       }
 void Character::set_attacked_this_turn(bool attacked) { attacked_this_turn = attacked; }
+void Character::set_tile(Tile* t)                     { tile = t;                      }
 
 void Character::take_damage(int d)  { health -= d; }
 void Character::gain_health(int h)  { health = std::min(health + h, get_max_health()); }

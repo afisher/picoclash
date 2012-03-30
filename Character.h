@@ -4,6 +4,8 @@
 #include "SDL/SDL_image.h"
 #include <string>
 
+class Tile;
+
 class Character {
     protected:
         int player;
@@ -21,6 +23,8 @@ class Character {
 
         SDL_Surface* image;
         SDL_Surface* grey_image;
+
+        Tile* tile;
 
     public:
         Character();
@@ -49,4 +53,5 @@ class Character {
 
         void set_moved_this_turn(bool moved);
         void set_attacked_this_turn(bool attacked);
+        void set_tile(Tile* t);
 };

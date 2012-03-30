@@ -130,7 +130,9 @@ bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
     if (selected_tile->get_character() == NULL) {
         grid[x][y] = grid[i][j];
         grid[i][j] = new Tile(this, j, i);
-        grid[x][y]->get_character()->set_moved_this_turn(true);
+
+        curChar->set_tile(grid[x][y]);
+        curChar->set_moved_this_turn(true);
     } else return false;
 
     select_tiles(i, j, mobility, false);
