@@ -264,6 +264,13 @@ int main(int argc, char* args[]) {
                 // this happens if we choose to end the turn
                 Grid::new_turn();
                 Grid::draw_grid(surface);
+                if (Grid::get_current_player() == 2) {
+                    Grid::move_ai(surface);
+                    Grid::new_turn();
+                    Grid::draw_grid(surface);
+                }
+                //Grid::new_turn();
+                //Grid::draw_grid(surface);
             }
         }
         draw_sidebar();

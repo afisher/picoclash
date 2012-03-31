@@ -3,6 +3,7 @@
 #include "SDL/SDL.h"
 #include "Tile.h"
 #include "Constants.h"
+#include <vector>
 
 class Grid {
     public:
@@ -17,6 +18,9 @@ class Grid {
 
         static bool show_move_tiles  (int i, int j, SDL_Surface* surface, bool show);
         static bool show_attack_tiles(int i, int j, SDL_Surface* surface, bool show);
+
+        static std::vector<Tile*> get_character_tiles(int player);
+        static void move_ai(SDL_Surface* surface);
 
         static bool move  (int i, int j, int x, int y, SDL_Surface* surface);
         static bool attack(int i, int j, int x, int y, SDL_Surface* surface);

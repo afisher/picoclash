@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Character.h"
+#include <vector>
 
 class Tile {
     private:
@@ -31,4 +32,6 @@ class Tile {
         static SDL_Surface* default_image;  
 
         void character_died();
+
+        void move_character(std::vector<Tile*> move_tiles, SDL_Surface* surface);
 };

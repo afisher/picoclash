@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Character.h"
+#include <vector>
 
 class Warrior : public Character {
     protected:
@@ -9,4 +10,6 @@ class Warrior : public Character {
     public:
         Warrior(int p);
         Warrior(int p, int lvl);
+
+        virtual void move(int x, int y, std::vector<Tile*> move_tiles, SDL_Surface* surface);
 };

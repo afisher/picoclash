@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <vector>
 
 #include "Util.h"
 #include "Grid.h"
@@ -29,15 +30,15 @@ void Grid::load_file() {
                 case 'w':
                     grid[i][j] = new Tile(j, i, Constants::PLAYER_WARRIOR); break;
                 case 'a':
-                    grid[i][j] = new Tile(j, i, Constants::PLAYER_ARCHER); break;
+                    grid[i][j] = new Tile(j, i, Constants::PLAYER_ARCHER);  break;
                 case 'h':
-                    grid[i][j] = new Tile(j, i, Constants::PLAYER_HEALER); break;
+                    grid[i][j] = new Tile(j, i, Constants::PLAYER_HEALER);  break;
                 case 'W':
-                    grid[i][j] = new Tile(j, i, Constants::ENEMY_WARRIOR); break;
+                    grid[i][j] = new Tile(j, i, Constants::ENEMY_WARRIOR);  break;
                 case 'A':
-                    grid[i][j] = new Tile(j, i, Constants::ENEMY_ARCHER); break;
+                    grid[i][j] = new Tile(j, i, Constants::ENEMY_ARCHER);   break;
                 case 'H':
-                    grid[i][j] = new Tile(j, i, Constants::ENEMY_HEALER); break;
+                    grid[i][j] = new Tile(j, i, Constants::ENEMY_HEALER);   break;
                 default:
                     grid[i][j] = new Tile(j, i);
             }
@@ -64,7 +65,7 @@ void Grid::draw_grid(SDL_Surface* surface) {
     }
 }
 
-Tile* Grid::get(int i, int j) { return grid[i][j]; }
+Tile* Grid::get(int i, int j)  { return grid[i][j];     }
 int Grid::get_current_player() { return current_player; }
 
 bool Grid::show_move_tiles(int i, int j, SDL_Surface* surface, bool show) {
@@ -111,15 +112,58 @@ void Grid::select_tiles(int i, int j, int range, bool show) {
     }
 }
 
+vector<Tile*> Grid::get_character_tiles(int player) {
+    vector<Tile*> ret;
+
+    // find all of the characters that belong to the AI
+    for (int i = 0; i < Constants::GRID_HEIGHT; i++) {
+        for (int j = 0; j < Constants::GRID_WIDTH; j++) {
+            Character* cur_char = grid[i][j]->get_character();
+
+            // if an AI character, add to the list
+            if (cur_char != NULL && cur_char->get_player() == player) {
+                ret.push_back(grid[i][j]);
+            }
+        }
+    }
+
+    return ret;
+}
+
+void Grid::move_ai(SDL_Surface* surface) {
+    vector<Tile*> character_tiles = get_character_tiles(2);
+    vector<Tile*> move_tiles;
+
+    for (int n = 0; n < character_tiles.size(); n++) {
+        int i = character_tiles[n]->get_x();
+        int j = character_tiles[n]->get_y();
+
+        int mobility = character_tiles[n]->get_character()->get_mobility();
+
+        // interate over the range*range square
+        for (int x = i - mobility; x <= i + mobility; x++) {
+            for (int y = j - mobility; y <= j + mobility; y++) {
+                // if the tile is within the range, add it to the list of tiles we can move to
+                if (distance(i, j, x, y) <= mobility && x < Constants::GRID_WIDTH && y < Constants::GRID_HEIGHT) {
+                    move_tiles.push_back(grid[y][x]);
+                }
+            }
+        }
+
+        character_tiles[n]->move_character(move_tiles, surface);
+        move_tiles.clear();
+    }
+}
+
 bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
     Character* cur_char = grid[i][j]->get_character();
+    if (cur_char == NULL) {
+        cout << "NO WHY GOD" << endl; return false;
+    }
+
     if (cur_char->get_player() != current_player) return false;
 
-    int mobility = 0;
-
-    if (cur_char != NULL) {
-        mobility = cur_char->get_mobility();
-    }
+    int mobility = cur_char->get_mobility();
 
     // don't do anything if we try to move outside our mobility
     if (distance(i, j, x, y) > mobility) return false;
@@ -128,8 +172,8 @@ bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
 
     // move if we picked an empty square
     if (selected_tile->get_character() == NULL) {
-        grid[x][y] = grid[i][j];
-        grid[i][j] = new Tile(j, i);
+        selected_tile->set_character(cur_char);
+        grid[i][j]->set_character(NULL);
 
         cur_char->set_moved_this_turn(true);
     } else return false;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Character.h"
+#include <vector>
 
 class Healer : public Character {
     protected:
@@ -18,4 +19,6 @@ class Healer : public Character {
         void set_healed_this_turn(bool h);
 
         virtual bool can_heal();
+
+        virtual void move(int x, int y, std::vector<Tile*> move_tiles, SDL_Surface* surface);
 };

@@ -2,6 +2,10 @@
 #include "SDL/SDL_image.h"
 #include "Warrior.h"
 #include "Util.h"
+#include <iostream>
+#include <vector>
+
+using namespace std;
 
 Warrior::Warrior(int p) : Character() {
     set_values(p, 1);
@@ -26,5 +30,30 @@ void Warrior::set_values(int p, int lvl) {
     } else {
         image      = Util::load_image("sprites/warrior-red.png");
         grey_image = Util::load_image("sprites/warrior-red-desat.png");
+    }
+}
+
+void Warrior::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface) {
+    cout << "Movin on up!" << endl;
+
+    int enemy_player = 1; // since this method is for AI, enemy is player 1
+
+    vector<Tile*> enemy_tiles = Grid::get_character_tiles(enemy_player);
+
+    int min_dist = 9999;
+    Tile* closest_move_tile = NULL;
+
+    for (int i = 0; i < move_tiles.size(); i++) {
+        for (int j = 0; j < enemy_tiles.size(); j++) {
+            int dist = Grid::distance(move_tiles[i]->get_x(), move_tiles[i]->get_y(), enemy_tiles[j]->get_x(), enemy_tiles[j]->get_y());
+            if (dist < min_dist) {
+                min_dist = dist;
+                closest_move_tile = move_tiles[i];
+            }
+        }
+    }
+
+    if (!Grid::move(y, x, closest_move_tile->get_y(), closest_move_tile->get_x(), surface)) {
+        cout << "oops -- couldn't move!" << endl;
     }
 }

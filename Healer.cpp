@@ -2,6 +2,9 @@
 #include "SDL/SDL_image.h"
 #include "Healer.h"
 #include "Util.h"
+#include <vector>
+
+using namespace std;
 
 Healer::Healer(int p) : Character() {
     set_values(p, 1);
@@ -40,3 +43,5 @@ bool Healer::get_healed_this_turn() { return healed_this_turn; }
 void Healer::set_healed_this_turn(bool h) {
     healed_this_turn = h;
 }
+
+void Healer::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface) {}

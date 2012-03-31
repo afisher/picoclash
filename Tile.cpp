@@ -8,6 +8,9 @@
 #include "Healer.h"
 #include "Grid.h"
 #include "Character.h"
+#include <vector>
+
+using namespace std;
 
 SDL_Surface* Tile::default_image  = NULL;
 SDL_Surface* Tile::selected_image = NULL;
@@ -71,3 +74,7 @@ SDL_Surface* Tile::get_image()     { return image;     }
 Character*   Tile::get_character() { return character; }
 
 void Tile::character_died() { character = NULL; }
+
+void Tile::move_character(vector<Tile*> move_tiles, SDL_Surface* surface) {
+    character->move(x, y, move_tiles, surface);    
+}

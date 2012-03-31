@@ -2,6 +2,9 @@
 #include "SDL/SDL_image.h"
 #include "Archer.h"
 #include "Util.h"
+#include <vector>
+
+using namespace std;
 
 Archer::Archer(int p) : Character() {
     set_values(p, 1);
@@ -28,3 +31,5 @@ void Archer::set_values(int p, int lvl) {
         grey_image = Util::load_image("sprites/archer-red-desat.png");
     }
 }
+
+void Archer::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface) {}

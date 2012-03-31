@@ -6,6 +6,8 @@
 #include "SDL/SDL.h"
 #include <algorithm>
 
+using namespace std;
+
 Character::Character() {
     level     = 0;
     mobility  = 0;
@@ -36,7 +38,7 @@ bool Character::get_attacked_this_turn() { return attacked_this_turn; }
 bool Character::get_healed_this_turn()   { return false;              }
 bool Character::can_heal()               { return false;              }
 
-std::string  Character::get_name() { return name; }
+std::string Character::get_name() { return name; }
 
 SDL_Surface* Character::get_image() {
     if (moved_this_turn && (attacked_this_turn || get_healed_this_turn())) {
@@ -77,6 +79,8 @@ bool Character::move(int i, int j, int x, int y, SDL_Surface* surface) {
     return true;
 */
 }
+
+void Character::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface) {}
 
 Character::~Character() {
     SDL_FreeSurface(image);
