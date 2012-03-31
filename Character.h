@@ -54,5 +54,8 @@ class Character {
         void set_attacked_this_turn(bool attacked);
 
         bool move(int i, int j, int x, int y, SDL_Surface* surface);
-        virtual void move(int x, int y, std::vector<Tile*> move_tiles, SDL_Surface* surface);
+
+        // for AI
+        virtual void move  (int x, int y, std::vector<Tile*> move_tiles,   SDL_Surface* surface);
+        virtual void attack(int x, int y, std::vector<Tile*> attack_tiles, SDL_Surface* surface);
 };

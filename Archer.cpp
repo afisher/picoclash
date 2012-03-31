@@ -33,3 +33,4 @@ void Archer::set_values(int p, int lvl) {
 }
 
 void Archer::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface) {}
+void Archer::attack(int x, int y, vector<Tile*> attack_tiles, SDL_Surface* surface) {}

@@ -33,9 +33,8 @@ void Warrior::set_values(int p, int lvl) {
     }
 }
 
+// moves toward the closest enemy
 void Warrior::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface) {
-    cout << "Movin on up!" << endl;
-
     int enemy_player = 1; // since this method is for AI, enemy is player 1
 
     vector<Tile*> enemy_tiles = Grid::get_character_tiles(enemy_player);
@@ -44,16 +43,38 @@ void Warrior::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface)
     Tile* closest_move_tile = NULL;
 
     for (int i = 0; i < move_tiles.size(); i++) {
-        for (int j = 0; j < enemy_tiles.size(); j++) {
-            int dist = Grid::distance(move_tiles[i]->get_x(), move_tiles[i]->get_y(), enemy_tiles[j]->get_x(), enemy_tiles[j]->get_y());
-            if (dist < min_dist) {
-                min_dist = dist;
-                closest_move_tile = move_tiles[i];
+        if (move_tiles[i]->get_character() == NULL) {
+            for (int j = 0; j < enemy_tiles.size(); j++) {
+                int dist = Grid::distance(move_tiles[i]->get_x(), move_tiles[i]->get_y(), enemy_tiles[j]->get_x(), enemy_tiles[j]->get_y());
+                if (dist < min_dist) {
+                    min_dist = dist;
+                    closest_move_tile = move_tiles[i];
+                }
             }
         }
     }
 
-    if (!Grid::move(y, x, closest_move_tile->get_y(), closest_move_tile->get_x(), surface)) {
-        cout << "oops -- couldn't move!" << endl;
+    if (Grid::move(y, x, closest_move_tile->get_y(), closest_move_tile->get_x(), surface)) {
+        cout << "Move!" << endl;
+    } else {
+        cout << "Just chillin" << endl;
+    }
+}
+
+// attacks if there is an enemy within range
+void Warrior::attack(int x, int y, std::vector<Tile*> attack_tiles, SDL_Surface* surface) {
+    int enemy_player = 1; // since this method is for AI, enemy is player 1
+
+    for (int i = 0; i < attack_tiles.size(); i++) {
+        Character* cur_char = attack_tiles[i]->get_character();
+
+        if (cur_char != NULL && cur_char->get_player() == enemy_player) {
+            if (Grid::attack(y, x, attack_tiles[i]->get_y(), attack_tiles[i]->get_x(), surface)) {
+                cout << "Attack!" << endl;
+            } else {
+                cout << "Just chillin" << endl;
+            }
+            return;
+        }
     }
 }

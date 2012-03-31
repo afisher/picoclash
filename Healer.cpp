@@ -45,3 +45,4 @@ void Healer::set_healed_this_turn(bool h) {
 }
 
 void Healer::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface) {}
+void Healer::attack(int x, int y, vector<Tile*> attack_tiles, SDL_Surface* surface) {}

@@ -130,36 +130,54 @@ vector<Tile*> Grid::get_character_tiles(int player) {
     return ret;
 }
 
-void Grid::move_ai(SDL_Surface* surface) {
-    vector<Tile*> character_tiles = get_character_tiles(2);
-    vector<Tile*> move_tiles;
+vector<Tile*> Grid::get_range_tiles(Tile* character_tile, int range) {
+    vector<Tile*> ret;
 
-    for (int n = 0; n < character_tiles.size(); n++) {
-        int i = character_tiles[n]->get_x();
-        int j = character_tiles[n]->get_y();
+    int i = character_tile->get_x();
+    int j = character_tile->get_y();
 
-        int mobility = character_tiles[n]->get_character()->get_mobility();
-
-        // interate over the range*range square
-        for (int x = i - mobility; x <= i + mobility; x++) {
-            for (int y = j - mobility; y <= j + mobility; y++) {
-                // if the tile is within the range, add it to the list of tiles we can move to
-                if (distance(i, j, x, y) <= mobility && x < Constants::GRID_WIDTH && y < Constants::GRID_HEIGHT) {
-                    move_tiles.push_back(grid[y][x]);
-                }
+    // interate over the range*range square
+    for (int x = i - range; x <= i + range; x++) {
+        for (int y = j - range; y <= j + range; y++) {
+            // if the tile is within the range, add it to the list of tiles we can move to
+            if (distance(i, j, x, y) <= range && x < Constants::GRID_WIDTH && y < Constants::GRID_HEIGHT) {
+                ret.push_back(grid[y][x]);
             }
         }
+    }
+
+    return ret;
+}
+
+void Grid::play_ai_turn(SDL_Surface* surface) {
+    vector<Tile*> character_tiles = get_character_tiles(2);
+    vector<Tile*> move_tiles;
+    vector<Tile*> attack_tiles;
+
+    for (int n = 0; n < character_tiles.size(); n++) {
+        move_tiles = get_range_tiles(character_tiles[n],
+                                     character_tiles[n]->get_character()->get_mobility());
 
         character_tiles[n]->move_character(move_tiles, surface);
+        
         move_tiles.clear();
+    }
+
+    character_tiles = get_character_tiles(2);
+
+    for (int n = 0; n < character_tiles.size(); n++) {
+        attack_tiles = get_range_tiles(character_tiles[n],
+                                       character_tiles[n]->get_character()->get_range());
+
+        character_tiles[n]->make_character_attack(attack_tiles, surface);
+        
+        attack_tiles.clear();
     }
 }
 
 bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
     Character* cur_char = grid[i][j]->get_character();
-    if (cur_char == NULL) {
-        cout << "NO WHY GOD" << endl; return false;
-    }
+    if (cur_char == NULL) { return false; }
 
     if (cur_char->get_player() != current_player) return false;
 

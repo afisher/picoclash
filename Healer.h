@@ -21,4 +21,5 @@ class Healer : public Character {
         virtual bool can_heal();
 
         virtual void move(int x, int y, std::vector<Tile*> move_tiles, SDL_Surface* surface);
+        virtual void attack(int x, int y, std::vector<Tile*> attack_tiles, SDL_Surface* surface);
 };

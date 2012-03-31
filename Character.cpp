@@ -81,6 +81,7 @@ bool Character::move(int i, int j, int x, int y, SDL_Surface* surface) {
 }
 
 void Character::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface) {}
+void Character::attack(int x, int y, std::vector<Tile*> attack_tiles, SDL_Surface* surface) {}
 
 Character::~Character() {
     SDL_FreeSurface(image);

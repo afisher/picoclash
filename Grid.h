@@ -20,7 +20,9 @@ class Grid {
         static bool show_attack_tiles(int i, int j, SDL_Surface* surface, bool show);
 
         static std::vector<Tile*> get_character_tiles(int player);
-        static void move_ai(SDL_Surface* surface);
+        static std::vector<Tile*> get_range_tiles(Tile* character_tile, int range);
+
+        static void play_ai_turn(SDL_Surface* surface);
 
         static bool move  (int i, int j, int x, int y, SDL_Surface* surface);
         static bool attack(int i, int j, int x, int y, SDL_Surface* surface);
