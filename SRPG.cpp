@@ -103,10 +103,10 @@ void select_single(Grid grid) {
     selected_character = selected_tile->get_character();
 
     // highlight the tile
-        selected_tile->set_selected(true);
-        grid.draw_grid(surface);
+    selected_tile->set_selected(true);
+    grid.draw_grid(surface);
 
-        draw_sidebar(grid);
+    draw_sidebar(grid);
 }
 
 void clean_up() {
