@@ -140,7 +140,8 @@ vector<Tile*> Grid::get_range_tiles(Tile* character_tile, int range) {
     for (int x = i - range; x <= i + range; x++) {
         for (int y = j - range; y <= j + range; y++) {
             // if the tile is within the range, add it to the list of tiles we can move to
-            if (distance(i, j, x, y) <= range && x < Constants::GRID_WIDTH && y < Constants::GRID_HEIGHT) {
+            if (distance(i, j, x, y) <= range && x < Constants::GRID_WIDTH && y < Constants::GRID_HEIGHT
+                                              && x >= 0 && y >= 0) {
                 ret.push_back(grid[y][x]);
             }
         }

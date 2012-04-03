@@ -45,7 +45,8 @@ void Warrior::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface)
     for (int i = 0; i < move_tiles.size(); i++) {
         if (move_tiles[i]->get_character() == NULL) {
             for (int j = 0; j < enemy_tiles.size(); j++) {
-                int dist = Grid::distance(move_tiles[i]->get_x(), move_tiles[i]->get_y(), enemy_tiles[j]->get_x(), enemy_tiles[j]->get_y());
+                int dist = Grid::distance(move_tiles[i]->get_x(), move_tiles[i]->get_y(), 
+                                          enemy_tiles[j]->get_x(), enemy_tiles[j]->get_y());
                 if (dist < min_dist) {
                     min_dist = dist;
                     closest_move_tile = move_tiles[i];
