@@ -3,6 +3,7 @@
 #include "Healer.h"
 #include "Util.h"
 #include <vector>
+#include <iostream>
 
 using namespace std;
 
@@ -44,5 +45,47 @@ void Healer::set_healed_this_turn(bool h) {
     healed_this_turn = h;
 }
 
-void Healer::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface) {}
-void Healer::attack(int x, int y, vector<Tile*> attack_tiles, SDL_Surface* surface) {}
+// moves toward its closest ally that is not a healer
+void Healer::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface) {
+
+    vector<Tile*> ally_tiles = Grid::get_character_tiles(player);
+
+    int min_dist = 9999;
+    Tile* closest_move_tile = NULL;
+
+    for (int i = 0; i < move_tiles.size(); i++) {
+        if (move_tiles[i]->get_character() == NULL) {
+            for (int j = 0; j < ally_tiles.size(); j++) {
+                int dist = Grid::distance(move_tiles[i]->get_x(), move_tiles[i]->get_y(),
+                                          ally_tiles[j]->get_x(), ally_tiles[j]->get_y());
+                if (dist < min_dist && !ally_tiles[j]->get_character()->can_heal()) {
+                    min_dist = dist;
+                    closest_move_tile = move_tiles[i];
+                }
+            }
+        }
+    }
+
+    if (closest_move_tile != NULL) {
+        if (Grid::move(y, x, closest_move_tile->get_y(), closest_move_tile->get_x(), surface)) {
+            cout << "Move!" << endl;
+        } else {
+            cout << "Just chillin" << endl;
+        }
+    }
+}
+
+// for now, heal code is here -- heals if there's an ally in range, otherwise heals self
+void Healer::attack(int x, int y, vector<Tile*> attack_tiles, SDL_Surface* surface) {
+    for (int i = 0; i < attack_tiles.size(); i++) {
+        Character* cur_char = attack_tiles[i]->get_character();
+
+        if (cur_char != NULL && cur_char->get_player() == player) {
+            if (Grid::heal(y, x, attack_tiles[i]->get_y(), attack_tiles[i]->get_x(), surface)) {
+            } else {
+                Grid::heal(y, x, y, x, surface);
+            }
+            return;
+        }
+    }
+}
