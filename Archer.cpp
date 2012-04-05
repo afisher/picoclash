@@ -78,7 +78,9 @@ void Archer::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface) 
             }
         }
 
-        Grid::move(y, x, closest_move_tile->get_y(), closest_move_tile->get_x(), surface);
+        if (closest_move_tile != NULL) {
+            Grid::move(y, x, closest_move_tile->get_y(), closest_move_tile->get_x(), surface);
+        }
     }
 }
 void Archer::attack(int x, int y, vector<Tile*> attack_tiles, SDL_Surface* surface) {
@@ -89,11 +91,7 @@ void Archer::attack(int x, int y, vector<Tile*> attack_tiles, SDL_Surface* surfa
         Character* cur_char = attack_tiles[i]->get_character();
 
         if (cur_char != NULL && cur_char->get_player() == enemy_player) {
-            if (Grid::attack(y, x, attack_tiles[i]->get_y(), attack_tiles[i]->get_x(), surface)) {
-                cout << "Archer Attack!" << endl;
-            } else {
-                cout << "Archer Just chillin" << endl;
-            }
+            Grid::attack(y, x, attack_tiles[i]->get_y(), attack_tiles[i]->get_x(), surface);
             return;
         }
     }
