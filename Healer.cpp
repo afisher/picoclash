@@ -76,16 +76,15 @@ void Healer::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface) 
 }
 
 // for now, heal code is here -- heals if there's an ally in range, otherwise heals self
-void Healer::attack(int x, int y, vector<Tile*> attack_tiles, SDL_Surface* surface) {
+bool Healer::attack(int x, int y, vector<Tile*> attack_tiles, SDL_Surface* surface) {
     for (int i = 0; i < attack_tiles.size(); i++) {
         Character* cur_char = attack_tiles[i]->get_character();
 
         if (cur_char != NULL && cur_char->get_player() == player) {
-            if (Grid::heal(y, x, attack_tiles[i]->get_y(), attack_tiles[i]->get_x(), surface)) {
-            } else {
-                Grid::heal(y, x, y, x, surface);
-            }
-            return;
+            Grid::heal(y, x, attack_tiles[i]->get_y(), attack_tiles[i]->get_x(), surface);
+            return true;
         }
     }
+
+    return false;
 }
