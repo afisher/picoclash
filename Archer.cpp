@@ -78,7 +78,9 @@ void Archer::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface) 
             }
         }
 
-        Grid::move(y, x, closest_move_tile->get_y(), closest_move_tile->get_x(), surface);
+        if (closest_move_tile != NULL) {
+            Grid::move(y, x, closest_move_tile->get_y(), closest_move_tile->get_x(), surface);
+        }
     }
 }
 

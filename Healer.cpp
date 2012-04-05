@@ -67,11 +67,7 @@ void Healer::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface) 
     }
 
     if (closest_move_tile != NULL) {
-        if (Grid::move(y, x, closest_move_tile->get_y(), closest_move_tile->get_x(), surface)) {
-            cout << "Move!" << endl;
-        } else {
-            cout << "Just chillin" << endl;
-        }
+        Grid::move(y, x, closest_move_tile->get_y(), closest_move_tile->get_x(), surface);
     }
 }
 

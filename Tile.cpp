@@ -79,6 +79,6 @@ void Tile::move_character(vector<Tile*> move_tiles, SDL_Surface* surface) {
     character->move(x, y, move_tiles, surface);    
 }
 
-void Tile::make_character_attack(vector<Tile*> attack_tiles, SDL_Surface* surface) {
-    character->attack(x, y, attack_tiles, surface);    
+bool Tile::make_character_attack(vector<Tile*> attack_tiles, SDL_Surface* surface) {
+    return character->attack(x, y, attack_tiles, surface);    
 }

@@ -54,34 +54,8 @@ void Character::set_attacked_this_turn(bool attacked) { attacked_this_turn = att
 void Character::take_damage(int d)  { health -= d; }
 void Character::gain_health(int h)  { health = std::min(health + h, get_max_health()); }
 
-bool Character::move(int i, int j, int x, int y, SDL_Surface* surface) {
-/*
-    Grid* grid = Util::grid;
-
-    if (player != Util::grid->get_current_player()) return false;
-
-    // don't do anything if we try to move outside our mobility
-    if (Util::grid->distance(i, j, x, y) > mobility) return false;
-
-    Tile* selected_tile = grid->get(x,y);
-
-    // move if we picked an empty square
-    if (selected_tile->get_character() == NULL) {
-        grid->get(x, y)->set_character(this);
-        grid->get(i, j)->set_character(NULL);
-
-        set_moved_this_turn(true);
-    } else return false;
-
-    grid->select_tiles(i, j, mobility, false);
-    grid->draw_grid(surface);
-
-    return true;
-*/
-}
-
 void Character::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface) {}
-void Character::attack(int x, int y, std::vector<Tile*> attack_tiles, SDL_Surface* surface) {}
+bool Character::attack(int x, int y, std::vector<Tile*> attack_tiles, SDL_Surface* surface) {}
 
 Character::~Character() {
     SDL_FreeSurface(image);
