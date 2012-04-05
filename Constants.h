@@ -3,8 +3,8 @@
 namespace Constants {
     const int FRAMES_PER_SECOND = 20;
 
-    const int SCREEN_WIDTH  = 960;
-    const int SCREEN_HEIGHT = 740;
+    const int SCREEN_WIDTH  = 640;
+    const int SCREEN_HEIGHT = 480;
     const int SCREEN_BPP    = 32;
 
     const int PLAYER_WARRIOR = 1;

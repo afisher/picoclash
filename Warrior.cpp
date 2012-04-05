@@ -63,19 +63,18 @@ void Warrior::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface)
 }
 
 // attacks if there is an enemy within range
-void Warrior::attack(int x, int y, std::vector<Tile*> attack_tiles, SDL_Surface* surface) {
+bool Warrior::attack(int x, int y, std::vector<Tile*> attack_tiles, SDL_Surface* surface) {
     int enemy_player = 1; // since this method is for AI, enemy is player 1
 
     for (int i = 0; i < attack_tiles.size(); i++) {
         Character* cur_char = attack_tiles[i]->get_character();
 
         if (cur_char != NULL && cur_char->get_player() == enemy_player) {
-            if (Grid::attack(y, x, attack_tiles[i]->get_y(), attack_tiles[i]->get_x(), surface)) {
-                cout << "Attack!" << endl;
-            } else {
-                cout << "Just chillin" << endl;
-            }
-            return;
+            Grid::attack(y, x, attack_tiles[i]->get_y(), attack_tiles[i]->get_x(), surface);
+
+            return true;
         }
     }
+
+    return false;
 }
