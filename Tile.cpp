@@ -30,22 +30,31 @@ Tile::Tile(int i, int j, int type) {
 
     switch(type) {
         case Constants::PLAYER_WARRIOR:
-            character = new Warrior(1); break;
+            set_character(new Warrior(1)); break;
         case Constants::PLAYER_ARCHER:
-            character = new Archer(1);  break;
+            set_character(new Archer(1));  break;
         case Constants::PLAYER_HEALER:
-            character = new Healer(1);  break;
+            set_character(new Healer(1));  break;
         case Constants::ENEMY_WARRIOR:
-            character = new Warrior(2); break;
+            set_character(new Warrior(2)); break;
         case Constants::ENEMY_ARCHER:
-            character = new Archer(2);  break;
+            set_character(new Archer(2));  break;
         case Constants::ENEMY_HEALER:
-            character = new Healer(2);  break;
+            set_character(new Healer(2));  break;
         default:
             character = NULL;
     }
 
     set_selected(false);
+
+    // add new character to the list of characters in the grid
+    if (character != NULL) {
+        switch (character->get_player()) {
+            case 1: Grid::add_player_character(character); break;
+            case 2: Grid::add_enemy_character(character);  break;
+            default: break;
+        }
+    }
 }
 
 void Tile::set_selected(bool s) {
@@ -53,7 +62,13 @@ void Tile::set_selected(bool s) {
     update_image();
 }
 
-void Tile::set_character(Character* c) { character = c; }
+void Tile::set_character(Character* c) { 
+    character = c;
+    if (character != NULL) {
+        character->set_x(x);
+        character->set_y(y);
+    }
+}
 
 bool Tile::get_selected() {
     return selected;

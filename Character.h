@@ -17,6 +17,9 @@ class Character {
         int range;
         int increment;
 
+        int x;
+        int y;
+
         bool moved_this_turn;
         bool attacked_this_turn;
 
@@ -38,6 +41,11 @@ class Character {
 
         int get_max_health();
 
+        int get_x();
+        int get_y();
+        void set_x(int new_x);
+        void set_y(int new_y);
+
         void take_damage(int d);
         void gain_health(int h);
 
@@ -53,9 +61,7 @@ class Character {
         void set_moved_this_turn(bool moved);
         void set_attacked_this_turn(bool attacked);
 
-        bool move(int i, int j, int x, int y, SDL_Surface* surface);
-
         // for AI
         virtual void move  (int x, int y, std::vector<Tile*> move_tiles,   SDL_Surface* surface);
-        virtual void attack(int x, int y, std::vector<Tile*> attack_tiles, SDL_Surface* surface);
+        virtual bool attack(int x, int y, std::vector<Tile*> attack_tiles, SDL_Surface* surface);
 };

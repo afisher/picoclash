@@ -34,5 +34,5 @@ class Tile {
         void character_died();
 
         void move_character(std::vector<Tile*> move_tiles, SDL_Surface* surface);
-        void make_character_attack(std::vector<Tile*> attack_tiles, SDL_Surface* surface);
+        bool make_character_attack(std::vector<Tile*> attack_tiles, SDL_Surface* surface);
 };

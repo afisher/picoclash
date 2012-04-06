@@ -12,6 +12,8 @@
 using namespace std;
 
 Tile* grid[Constants::GRID_HEIGHT][Constants::GRID_WIDTH];
+vector<Character*> player_characters;
+vector<Character*> enemy_characters;
 int current_player = 1;
 
 // loads the test map into the grid
@@ -20,27 +22,27 @@ void Grid::load_file() {
     //std::ifstream file("offensemap.txt");
     std::string line;
 
-    for (int i = 0; i < Constants::GRID_HEIGHT; i++) {
+    for (int j = 0; j < Constants::GRID_HEIGHT; j++) {
         std::getline(file, line);
-        for (int j = 0; j < Constants::GRID_WIDTH; j++) {
-            char c = line.at(j);
+        for (int i = 0; i < Constants::GRID_WIDTH; i++) {
+            char c = line.at(i);
             std::cout << c;
 
             switch(c) {
                 case 'w':
-                    grid[i][j] = new Tile(j, i, Constants::PLAYER_WARRIOR); break;
+                    grid[j][i] = new Tile(i, j, Constants::PLAYER_WARRIOR); break;
                 case 'a':
-                    grid[i][j] = new Tile(j, i, Constants::PLAYER_ARCHER);  break;
+                    grid[j][i] = new Tile(i, j, Constants::PLAYER_ARCHER);  break;
                 case 'h':
-                    grid[i][j] = new Tile(j, i, Constants::PLAYER_HEALER);  break;
+                    grid[j][i] = new Tile(i, j, Constants::PLAYER_HEALER);  break;
                 case 'W':
-                    grid[i][j] = new Tile(j, i, Constants::ENEMY_WARRIOR);  break;
+                    grid[j][i] = new Tile(i, j, Constants::ENEMY_WARRIOR);  break;
                 case 'A':
-                    grid[i][j] = new Tile(j, i, Constants::ENEMY_ARCHER);   break;
+                    grid[j][i] = new Tile(i, j, Constants::ENEMY_ARCHER);   break;
                 case 'H':
-                    grid[i][j] = new Tile(j, i, Constants::ENEMY_HEALER);   break;
+                    grid[j][i] = new Tile(i, j, Constants::ENEMY_HEALER);   break;
                 default:
-                    grid[i][j] = new Tile(j, i);
+                    grid[j][i] = new Tile(i, j);
             }
         }
         std::cout << "\n";
@@ -51,25 +53,33 @@ void Grid::load_file() {
 
 // draw the grid -- assumes the file has been loaded
 void Grid::draw_grid(SDL_Surface* surface) {
-    for (int i = 0; i < Constants::GRID_HEIGHT; i++) {
-        for (int j = 0; j < Constants::GRID_WIDTH; j++) {
-            int x = j * Constants::SPRITE_SIZE;
-            int y = i * Constants::SPRITE_SIZE;
+    for (int j = 0; j < Constants::GRID_HEIGHT; j++) {
+        for (int i = 0; i < Constants::GRID_WIDTH; i++) {
+            int x = i * Constants::SPRITE_SIZE;
+            int y = j * Constants::SPRITE_SIZE;
 
-            Util::apply_surface(x, y, grid[i][j]->get_image(), surface);
+            Util::apply_surface(x, y, grid[j][i]->get_image(), surface);
 
-            if (grid[i][j]->get_character() != NULL) {
-                Util::apply_surface(x, y, grid[i][j]->get_character()->get_image(), surface);
+            if (grid[j][i]->get_character() != NULL) {
+                Util::apply_surface(x, y, grid[j][i]->get_character()->get_image(), surface);
             }
         }
     }
 }
 
-Tile* Grid::get(int i, int j)  { return grid[i][j];     }
+Tile* Grid::get(int i, int j)  { return grid[j][i];     }
 int Grid::get_current_player() { return current_player; }
 
+void Grid::add_player_character(Character* c) {
+    player_characters.push_back(c);
+}
+
+void Grid::add_enemy_character(Character* c) {
+    enemy_characters.push_back(c);
+}
+
 bool Grid::show_move_tiles(int i, int j, SDL_Surface* surface, bool show) {
-    Character* selected_character = grid[i][j]->get_character();
+    Character* selected_character = grid[j][i]->get_character();
     if (selected_character->get_player() != current_player) return false;
 
     int mobility = 0;
@@ -85,7 +95,7 @@ bool Grid::show_move_tiles(int i, int j, SDL_Surface* surface, bool show) {
 }
 
 bool Grid::show_attack_tiles(int i, int j, SDL_Surface* surface, bool show) {
-    Character* selected_character = grid[i][j]->get_character();
+    Character* selected_character = grid[j][i]->get_character();
     if (selected_character->get_player() != current_player) return false;
 
     int range = 0;
@@ -107,7 +117,7 @@ void Grid::select_tiles(int i, int j, int range, bool show) {
             // if the tile is within the range, light it up
             if (distance(i, j, x, y) <= range && x < Constants::GRID_WIDTH && y < Constants::GRID_HEIGHT
                                               && x >= 0 && y >= 0) {
-                grid[x][y]->set_selected(show);
+                grid[y][x]->set_selected(show);
             }
         }
     }
@@ -117,13 +127,13 @@ vector<Tile*> Grid::get_character_tiles(int player) {
     vector<Tile*> ret;
 
     // find all of the characters that belong to the AI
-    for (int i = 0; i < Constants::GRID_HEIGHT; i++) {
-        for (int j = 0; j < Constants::GRID_WIDTH; j++) {
-            Character* cur_char = grid[i][j]->get_character();
+    for (int j = 0; j < Constants::GRID_HEIGHT; j++) {
+        for (int i = 0; i < Constants::GRID_WIDTH; i++) {
+            Character* cur_char = grid[j][i]->get_character();
 
             // if an AI character, add to the list
             if (cur_char != NULL && cur_char->get_player() == player) {
-                ret.push_back(grid[i][j]);
+                ret.push_back(grid[j][i]);
             }
         }
     }
@@ -178,7 +188,7 @@ void Grid::play_ai_turn(SDL_Surface* surface) {
 }
 
 bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
-    Character* cur_char = grid[i][j]->get_character();
+    Character* cur_char = grid[j][i]->get_character();
     if (cur_char == NULL) { return false; }
 
     if (cur_char->get_player() != current_player) return false;
@@ -188,12 +198,12 @@ bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
     // don't do anything if we try to move outside our mobility
     if (distance(i, j, x, y) > mobility) return false;
 
-    Tile* selected_tile = grid[x][y];
+    Tile* selected_tile = grid[y][x];
 
     // move if we picked an empty square
     if (selected_tile->get_character() == NULL) {
         selected_tile->set_character(cur_char);
-        grid[i][j]->set_character(NULL);
+        grid[j][i]->set_character(NULL);
 
         cur_char->set_moved_this_turn(true);
     } else return false;
@@ -208,8 +218,8 @@ bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
 }
 
 bool Grid::attack(int i, int j, int x, int y, SDL_Surface* surface) {
-    Character* character1 = grid[i][j]->get_character();
-    Character* character2 = grid[x][y]->get_character();
+    Character* character1 = grid[j][i]->get_character();
+    Character* character2 = grid[y][x]->get_character();
 
     if (character1->get_player() != current_player) return false;
     if (character1 == NULL || character2 == NULL) return false;
@@ -219,7 +229,7 @@ bool Grid::attack(int i, int j, int x, int y, SDL_Surface* surface) {
     if (distance(i, j, x, y) <= range) {
         character2->take_damage(character1->get_strength());
         if (character2->get_health() <= 0) {
-            grid[x][y]->character_died();
+            grid[y][x]->character_died();
         }
 
         select_tiles(i, j, range, false);
@@ -233,8 +243,8 @@ bool Grid::attack(int i, int j, int x, int y, SDL_Surface* surface) {
 }
 
 bool Grid::heal(int i, int j, int x, int y, SDL_Surface* surface) {
-    Healer* character1 = (Healer*)(grid[i][j]->get_character());
-    Character* character2 = grid[x][y]->get_character();
+    Healer* character1 = (Healer*)(grid[j][i]->get_character());
+    Character* character2 = grid[y][x]->get_character();
 
     if (character1->get_player() != current_player) return false;
     if (character1 == NULL || character2 == NULL) return false;

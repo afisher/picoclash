@@ -2,6 +2,7 @@
 
 #include "SDL/SDL.h"
 #include "Tile.h"
+#include "Character.h"
 #include "Constants.h"
 #include <vector>
 
@@ -12,6 +13,9 @@ class Grid {
         static Tile* get(int i, int j);
 
         static int get_current_player();
+
+        static void add_player_character(Character* c);
+        static void add_enemy_character(Character* c);
 
         static int distance(int i, int j, int x, int y);
         static void select_tiles(int i, int j, int range, bool show);

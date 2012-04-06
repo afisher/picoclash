@@ -38,6 +38,12 @@ bool Character::get_attacked_this_turn() { return attacked_this_turn; }
 bool Character::get_healed_this_turn()   { return false;              }
 bool Character::can_heal()               { return false;              }
 
+int Character::get_x() { return x; }
+int Character::get_y() { return y; }
+
+void Character::set_x(int new_x) { x = new_x; }
+void Character::set_y(int new_y) { y = new_y; }
+
 std::string Character::get_name() { return name; }
 
 SDL_Surface* Character::get_image() {

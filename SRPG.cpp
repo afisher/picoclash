@@ -97,7 +97,7 @@ void select_single() {
     x = Constants::X_RATIO * event.button.x / Constants::SPRITE_SIZE;
     y = Constants::Y_RATIO * event.button.y / Constants::SPRITE_SIZE;
 
-    selected_tile = Grid::get(y, x);
+    selected_tile = Grid::get(x, y);
     selected_character = selected_tile->get_character();
 
     // highlight the tile
@@ -164,7 +164,7 @@ int main(int argc, char* args[]) {
                         break;
                     case SELECTED:
                         // this happens if we change our character selection
-                        selected_tile = Grid::get(y, x);
+                        selected_tile = Grid::get(x, y);
 
                         // unhighlight the old selected tile
                         selected_tile->set_selected(false);
@@ -177,7 +177,7 @@ int main(int argc, char* args[]) {
                         new_x = Constants::X_RATIO * event.button.x / Constants::SPRITE_SIZE;
                         new_y = Constants::Y_RATIO * event.button.y / Constants::SPRITE_SIZE;
 
-                        success = Grid::move(y, x, new_y, new_x, surface);
+                        success = Grid::move(x, y, new_x, new_y, surface);
 
                         if (success) state = MOVED;
                         selected_character = NULL;
@@ -192,7 +192,7 @@ int main(int argc, char* args[]) {
                         new_x = Constants::X_RATIO * event.button.x / Constants::SPRITE_SIZE;
                         new_y = Constants::Y_RATIO * event.button.y / Constants::SPRITE_SIZE;
 
-                        success = Grid::attack(y, x, new_y, new_x, surface);
+                        success = Grid::attack(x, y, new_x, new_y, surface);
 
                         if (success) state = ATTACKED;
                         selected_character = NULL;
@@ -207,7 +207,7 @@ int main(int argc, char* args[]) {
                         new_x = Constants::X_RATIO * event.button.x / Constants::SPRITE_SIZE;
                         new_y = Constants::Y_RATIO * event.button.y / Constants::SPRITE_SIZE;
 
-                        success = Grid::heal(y, x, new_y, new_x, surface);
+                        success = Grid::heal(x, y, new_x, new_y, surface);
 
                         if (success) state = HEALED;
                         selected_character = NULL;
@@ -224,7 +224,7 @@ int main(int argc, char* args[]) {
                     if (state == SELECTED || state == ATTACKED || state == HEALED) {
                         // this happens if we choose to move after another action
                         if (selected_character != NULL && !selected_character->get_moved_this_turn()) {
-                            success = Grid::show_move_tiles(y, x, surface, true);
+                            success = Grid::show_move_tiles(x, y, surface, true);
                             if (success) state = MOVING;
                         }
                     }
@@ -232,7 +232,7 @@ int main(int argc, char* args[]) {
                     if (state == SELECTED || state == MOVED || state == HEALED) {
                         // this happens if we choose to attack after another action
                         if (selected_character != NULL && !selected_character->get_attacked_this_turn()) {
-                            success = Grid::show_attack_tiles(y, x, surface, true);
+                            success = Grid::show_attack_tiles(x, y, surface, true);
                             if (success) state = ATTACKING;
                         }
                     }
@@ -242,7 +242,7 @@ int main(int argc, char* args[]) {
                         if (selected_character != NULL && selected_character->can_heal()
                                                        && !((Healer*)selected_character)->get_healed_this_turn()) {
                             // just use the attack range for now
-                            success = Grid::show_attack_tiles(y, x, surface, true);
+                            success = Grid::show_attack_tiles(x, y, surface, true);
                             if (success) state = HEALING;
                         }
                     }
@@ -250,12 +250,12 @@ int main(int argc, char* args[]) {
                     if (state == MOVING || state == ATTACKING || state == HEALING) {
                         // this happens if we cancel
                         if (state == MOVING) {
-                            success = Grid::show_move_tiles(y, x, surface, false);
+                            success = Grid::show_move_tiles(x, y, surface, false);
                         } else {
-                            success = Grid::show_attack_tiles(y, x, surface, false);
+                            success = Grid::show_attack_tiles(x, y, surface, false);
                         }
 
-                        Grid::get(y, x)->set_selected(true);
+                        Grid::get(x, y)->set_selected(true);
                         Grid::draw_grid(surface);
                         if (success) state = SELECTED;
                     }

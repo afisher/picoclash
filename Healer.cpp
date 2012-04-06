@@ -67,7 +67,7 @@ void Healer::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface) 
     }
 
     if (closest_move_tile != NULL) {
-        Grid::move(y, x, closest_move_tile->get_y(), closest_move_tile->get_x(), surface);
+        Grid::move(x, y, closest_move_tile->get_x(), closest_move_tile->get_y(), surface);
     }
 }
 
@@ -77,7 +77,7 @@ bool Healer::attack(int x, int y, vector<Tile*> attack_tiles, SDL_Surface* surfa
         Character* cur_char = attack_tiles[i]->get_character();
 
         if (cur_char != NULL && cur_char->get_player() == player) {
-            Grid::heal(y, x, attack_tiles[i]->get_y(), attack_tiles[i]->get_x(), surface);
+            Grid::heal(x, y, attack_tiles[i]->get_x(), attack_tiles[i]->get_y(), surface);
             return true;
         }
     }
