@@ -4,6 +4,7 @@
 #include "Util.h"
 #include <vector>
 #include <iostream>
+#include <climits>
 
 using namespace std;
 
@@ -41,8 +42,8 @@ void Archer::move(SDL_Surface* surface) {
     for (int i = 0; i < move_tiles.size(); i++) {
         vector<Tile*> attack_tiles = Grid::get_range_tiles(move_tiles[i], range);
 
-        // calculate the closest enemy within attacking range
-        int closest_dist = 9999;
+        // calculate the closest enemy within attack range of the move tile
+        int closest_dist = INT_MAX;
         for (int j = 0; j < attack_tiles.size(); j++) {
             int dist = Grid::distance(move_tiles[i]->get_x(), move_tiles[i]->get_y(),
                                       attack_tiles[j]->get_x(), attack_tiles[j]->get_y());
@@ -58,7 +59,7 @@ void Archer::move(SDL_Surface* surface) {
     }
 
     if (best_move_tile != NULL) {
-        Grid::move(y, x, best_move_tile->get_y(), best_move_tile->get_x(), surface);
+        Grid::move(x, y, best_move_tile->get_x(), best_move_tile->get_y(), surface);
     } else { // if we couldn't find a good place to move to, just move towards the closest enemy
         vector<Character*> enemies = Grid::get_player_characters();
 
