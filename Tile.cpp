@@ -88,12 +88,6 @@ void Tile::update_image() {
 SDL_Surface* Tile::get_image()     { return image;     }
 Character*   Tile::get_character() { return character; }
 
-void Tile::character_died() { character = NULL; }
-
-void Tile::move_character(vector<Tile*> move_tiles, SDL_Surface* surface) {
-    character->move(x, y, move_tiles, surface);    
-}
-
-bool Tile::make_character_attack(vector<Tile*> attack_tiles, SDL_Surface* surface) {
-    return character->attack(x, y, attack_tiles, surface);    
+void Tile::character_died() {
+    character = NULL;
 }

@@ -60,8 +60,9 @@ void Character::set_attacked_this_turn(bool attacked) { attacked_this_turn = att
 void Character::take_damage(int d)  { health -= d; }
 void Character::gain_health(int h)  { health = std::min(health + h, get_max_health()); }
 
-void Character::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface) {}
-bool Character::attack(int x, int y, std::vector<Tile*> attack_tiles, SDL_Surface* surface) {}
+void Character::play_turn(SDL_Surface* surface) {}
+void Character::move(SDL_Surface* surface) {}
+bool Character::attack(SDL_Surface* surface) {}
 
 Character::~Character() {
     SDL_FreeSurface(image);

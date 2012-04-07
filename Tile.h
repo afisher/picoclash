@@ -32,7 +32,4 @@ class Tile {
         static SDL_Surface* default_image;  
 
         void character_died();
-
-        void move_character(std::vector<Tile*> move_tiles, SDL_Surface* surface);
-        bool make_character_attack(std::vector<Tile*> attack_tiles, SDL_Surface* surface);
 };

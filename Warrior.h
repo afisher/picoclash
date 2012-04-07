@@ -11,6 +11,7 @@ class Warrior : public Character {
         Warrior(int p);
         Warrior(int p, int lvl);
 
-        virtual void move(int x, int y, std::vector<Tile*> move_tiles, SDL_Surface* surface);
-        virtual bool attack(int x, int y, std::vector<Tile*> attack_tiles, SDL_Surface* surface);
+        virtual void play_turn(SDL_Surface* surface);
+        virtual void move(SDL_Surface* surface);
+        virtual bool attack(SDL_Surface* surface);
 };

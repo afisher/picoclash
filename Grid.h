@@ -6,6 +6,8 @@
 #include "Constants.h"
 #include <vector>
 
+using namespace std;
+
 class Grid {
     public:
         static void load_file();
@@ -13,6 +15,9 @@ class Grid {
         static Tile* get(int i, int j);
 
         static int get_current_player();
+
+        static vector<Character*> get_player_characters();
+        static vector<Character*> get_enemy_characters();
 
         static void add_player_character(Character* c);
         static void add_enemy_character(Character* c);

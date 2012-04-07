@@ -4,6 +4,7 @@
 #include "Util.h"
 #include <vector>
 #include <iostream>
+#include <climits>
 
 using namespace std;
 
@@ -45,20 +46,30 @@ void Healer::set_healed_this_turn(bool h) {
     healed_this_turn = h;
 }
 
+void Healer::play_turn(SDL_Surface* surface) {
+    if (attack(surface)) {
+        move(surface);
+    } else {
+        move(surface);
+        attack(surface);
+    }
+}
+
 // moves toward its closest ally that is not a healer
-void Healer::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface) {
+void Healer::move(SDL_Surface* surface) {
+    vector<Tile*> move_tiles = Grid::get_range_tiles(Grid::get(x, y), mobility);
+    vector<Character*> allies = Grid::get_player_characters();
 
-    vector<Tile*> ally_tiles = Grid::get_character_tiles(player);
-
-    int min_dist = 9999;
+    int min_dist = INT_MAX;
     Tile* closest_move_tile = NULL;
 
     for (int i = 0; i < move_tiles.size(); i++) {
         if (move_tiles[i]->get_character() == NULL) {
-            for (int j = 0; j < ally_tiles.size(); j++) {
+            for (int j = 0; j < allies.size(); j++) {
                 int dist = Grid::distance(move_tiles[i]->get_x(), move_tiles[i]->get_y(),
-                                          ally_tiles[j]->get_x(), ally_tiles[j]->get_y());
-                if (dist < min_dist && !ally_tiles[j]->get_character()->can_heal()) {
+                                          allies[j]->get_x(), allies[j]->get_y());
+
+                if (dist < min_dist && !allies[j]->can_heal()) {
                     min_dist = dist;
                     closest_move_tile = move_tiles[i];
                 }
@@ -72,7 +83,9 @@ void Healer::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface) 
 }
 
 // for now, heal code is here -- heals if there's an ally in range, otherwise heals self
-bool Healer::attack(int x, int y, vector<Tile*> attack_tiles, SDL_Surface* surface) {
+bool Healer::attack(SDL_Surface* surface) {
+    vector<Tile*> attack_tiles = Grid::get_range_tiles(Grid::get(x, y), range);
+
     for (int i = 0; i < attack_tiles.size(); i++) {
         Character* cur_char = attack_tiles[i]->get_character();
 

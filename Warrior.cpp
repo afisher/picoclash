@@ -4,6 +4,7 @@
 #include "Util.h"
 #include <iostream>
 #include <vector>
+#include <climits>
 
 using namespace std;
 
@@ -33,11 +34,41 @@ void Warrior::set_values(int p, int lvl) {
     }
 }
 
-// moves toward the closest enemy
-void Warrior::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface) {
-    int enemy_player = 1; // since this method is for AI, enemy is player 1
+void Warrior::play_turn(SDL_Surface* surface) {
+    if (attack(surface)) {
+        move(surface);
+    } else {
+        move(surface);
+        attack(surface);
+    }
+}
 
-    vector<Tile*> enemy_tiles = Grid::get_character_tiles(enemy_player);
+// moves toward the closest enemy
+void Warrior::move(SDL_Surface* surface) {
+    vector<Tile*> move_tiles = Grid::get_range_tiles(Grid::get(x, y), mobility);
+    vector<Character*> enemies = Grid::get_player_characters();
+
+    int min_dist = INT_MAX; 
+    Tile* closest_move_tile = NULL;
+
+    for (int i = 0; i < move_tiles.size(); i++) {
+        if (move_tiles[i]->get_character() == NULL) {
+            for (int j = 0; j < enemies.size(); j++) {
+                int dist = Grid::distance(move_tiles[i]->get_x(), move_tiles[i]->get_y(),
+                                          enemies[j]->get_x(), enemies[j]->get_y());
+                if (dist < min_dist) {
+                    min_dist = dist;
+                    closest_move_tile = move_tiles[i];
+                }
+            }
+        }
+    }
+
+    if (closest_move_tile != NULL) {
+        Grid::move(x, y, closest_move_tile->get_x(), closest_move_tile->get_y(), surface);
+    }
+
+    /*vector<Tile*> enemy_tiles = Grid::get_character_tiles(enemy_player);
 
     int min_dist = 9999;
     Tile* closest_move_tile = NULL;
@@ -57,17 +88,17 @@ void Warrior::move(int x, int y, vector<Tile*> move_tiles, SDL_Surface* surface)
 
     if (closest_move_tile != NULL) {
         Grid::move(x, y, closest_move_tile->get_x(), closest_move_tile->get_y(), surface);
-    }
+    }*/
 }
 
 // attacks if there is an enemy within range
-bool Warrior::attack(int x, int y, std::vector<Tile*> attack_tiles, SDL_Surface* surface) {
-    int enemy_player = 1; // since this method is for AI, enemy is player 1
+bool Warrior::attack(SDL_Surface* surface) {
+    vector<Tile*> attack_tiles = Grid::get_range_tiles(Grid::get(x, y), range);
 
     for (int i = 0; i < attack_tiles.size(); i++) {
         Character* cur_char = attack_tiles[i]->get_character();
 
-        if (cur_char != NULL && cur_char->get_player() == enemy_player) {
+        if (cur_char != NULL && cur_char->get_player() != player) {
             Grid::attack(x, y, attack_tiles[i]->get_x(), attack_tiles[i]->get_y(), surface);
             return true;
         }

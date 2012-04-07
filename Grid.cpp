@@ -70,6 +70,9 @@ void Grid::draw_grid(SDL_Surface* surface) {
 Tile* Grid::get(int i, int j)  { return grid[j][i];     }
 int Grid::get_current_player() { return current_player; }
 
+vector<Character*> Grid::get_player_characters() { return player_characters; }
+vector<Character*> Grid::get_enemy_characters() { return enemy_characters; }
+
 void Grid::add_player_character(Character* c) {
     player_characters.push_back(c);
 }
@@ -162,7 +165,13 @@ vector<Tile*> Grid::get_range_tiles(Tile* character_tile, int range) {
 }
 
 void Grid::play_ai_turn(SDL_Surface* surface) {
-    vector<Tile*> character_tiles = get_character_tiles(2);
+    for (int i = 0; i < enemy_characters.size(); i++) {
+        Character* character = enemy_characters[i]; 
+        if (character != NULL) {
+            character->play_turn(surface);
+        }
+    }
+/*vector<Tile*> character_tiles = get_character_tiles(2);
     vector<Tile*> move_tiles;
     vector<Tile*> attack_tiles;
 
@@ -185,6 +194,7 @@ void Grid::play_ai_turn(SDL_Surface* surface) {
         
         attack_tiles.clear();
     }
+*/
 }
 
 bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
@@ -230,6 +240,18 @@ bool Grid::attack(int i, int j, int x, int y, SDL_Surface* surface) {
         character2->take_damage(character1->get_strength());
         if (character2->get_health() <= 0) {
             grid[y][x]->character_died();
+
+            for (int i = 0; i < player_characters.size(); i++) {
+                if (player_characters[i]->get_x() == x && player_characters[i]->get_y() == y) {
+                    player_characters.erase(player_characters.begin()+i);
+                }
+            }
+
+            for (int i = 0; i < enemy_characters.size(); i++) {
+                if (enemy_characters[i]->get_x() == x && enemy_characters[i]->get_y() == y) {
+                    enemy_characters.erase(enemy_characters.begin()+i);
+                }
+            }
         }
 
         select_tiles(i, j, range, false);
