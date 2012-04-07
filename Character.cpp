@@ -60,7 +60,22 @@ void Character::set_attacked_this_turn(bool attacked) { attacked_this_turn = att
 void Character::take_damage(int d)  { health -= d; }
 void Character::gain_health(int h)  { health = std::min(health + h, get_max_health()); }
 
-void Character::play_turn(SDL_Surface* surface) {}
+void Character::play_turn(SDL_Surface* surface, SDL_Surface* screen) {
+    if (attack(surface)) {
+        Util::update_screen(surface, screen);
+        SDL_Delay(500);
+        move(surface);
+        Util::update_screen(surface, screen);
+    } else {
+        move(surface);
+        Util::update_screen(surface, screen);
+        SDL_Delay(500);
+        attack(surface);
+        Util::update_screen(surface, screen);
+    }
+    SDL_Delay(500);
+}
+
 void Character::move(SDL_Surface* surface) {}
 bool Character::attack(SDL_Surface* surface) {}
 

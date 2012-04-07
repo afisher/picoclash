@@ -164,37 +164,13 @@ vector<Tile*> Grid::get_range_tiles(Tile* character_tile, int range) {
     return ret;
 }
 
-void Grid::play_ai_turn(SDL_Surface* surface) {
+void Grid::play_ai_turn(SDL_Surface* surface, SDL_Surface* screen) {
     for (int i = 0; i < enemy_characters.size(); i++) {
         Character* character = enemy_characters[i]; 
         if (character != NULL) {
-            character->play_turn(surface);
+            character->play_turn(surface, screen);
         }
     }
-/*vector<Tile*> character_tiles = get_character_tiles(2);
-    vector<Tile*> move_tiles;
-    vector<Tile*> attack_tiles;
-
-    for (int n = 0; n < character_tiles.size(); n++) {
-        move_tiles = get_range_tiles(character_tiles[n],
-                                     character_tiles[n]->get_character()->get_mobility());
-
-        character_tiles[n]->move_character(move_tiles, surface);
-        
-        move_tiles.clear();
-    }
-
-    character_tiles = get_character_tiles(2);
-
-    for (int n = 0; n < character_tiles.size(); n++) {
-        attack_tiles = get_range_tiles(character_tiles[n],
-                                       character_tiles[n]->get_character()->get_range());
-
-        character_tiles[n]->make_character_attack(attack_tiles, surface);
-        
-        attack_tiles.clear();
-    }
-*/
 }
 
 bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {

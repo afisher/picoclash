@@ -33,15 +33,6 @@ void Archer::set_values(int p, int lvl) {
     }
 }
 
-void Archer::play_turn(SDL_Surface* surface) {
-    if (attack(surface)) {
-        move(surface);
-    } else {
-        move(surface);
-        attack(surface);
-    }
-}
-
 void Archer::move(SDL_Surface* surface) {
     vector<Tile*> move_tiles = Grid::get_range_tiles(Grid::get(x, y), mobility);
 

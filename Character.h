@@ -62,7 +62,7 @@ class Character {
         void set_attacked_this_turn(bool attacked);
 
         // for AI
-        virtual void play_turn (SDL_Surface* surface);
+        virtual void play_turn (SDL_Surface* surface, SDL_Surface* screen);
         virtual void move      (SDL_Surface* surface);
         virtual bool attack    (SDL_Surface* surface);
 };

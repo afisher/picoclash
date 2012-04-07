@@ -34,15 +34,6 @@ void Warrior::set_values(int p, int lvl) {
     }
 }
 
-void Warrior::play_turn(SDL_Surface* surface) {
-    if (attack(surface)) {
-        move(surface);
-    } else {
-        move(surface);
-        attack(surface);
-    }
-}
-
 // moves toward the closest enemy
 void Warrior::move(SDL_Surface* surface) {
     vector<Tile*> move_tiles = Grid::get_range_tiles(Grid::get(x, y), mobility);
@@ -67,28 +58,6 @@ void Warrior::move(SDL_Surface* surface) {
     if (closest_move_tile != NULL) {
         Grid::move(x, y, closest_move_tile->get_x(), closest_move_tile->get_y(), surface);
     }
-
-    /*vector<Tile*> enemy_tiles = Grid::get_character_tiles(enemy_player);
-
-    int min_dist = 9999;
-    Tile* closest_move_tile = NULL;
-
-    for (int i = 0; i < move_tiles.size(); i++) {
-        if (move_tiles[i]->get_character() == NULL) {
-            for (int j = 0; j < enemy_tiles.size(); j++) {
-                int dist = Grid::distance(move_tiles[i]->get_x(), move_tiles[i]->get_y(), 
-                                          enemy_tiles[j]->get_x(), enemy_tiles[j]->get_y());
-                if (dist < min_dist) {
-                    min_dist = dist;
-                    closest_move_tile = move_tiles[i];
-                }
-            }
-        }
-    }
-
-    if (closest_move_tile != NULL) {
-        Grid::move(x, y, closest_move_tile->get_x(), closest_move_tile->get_y(), surface);
-    }*/
 }
 
 // attacks if there is an enemy within range

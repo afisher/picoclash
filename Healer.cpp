@@ -46,15 +46,6 @@ void Healer::set_healed_this_turn(bool h) {
     healed_this_turn = h;
 }
 
-void Healer::play_turn(SDL_Surface* surface) {
-    if (attack(surface)) {
-        move(surface);
-    } else {
-        move(surface);
-        attack(surface);
-    }
-}
-
 // moves toward its closest ally that is not a healer
 void Healer::move(SDL_Surface* surface) {
     vector<Tile*> move_tiles = Grid::get_range_tiles(Grid::get(x, y), mobility);

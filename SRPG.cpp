@@ -265,7 +265,8 @@ int main(int argc, char* args[]) {
                 Grid::new_turn();
                 Grid::draw_grid(surface);
                 if (Grid::get_current_player() == 2) {
-                    Grid::play_ai_turn(surface);
+                    draw_sidebar();
+                    Grid::play_ai_turn(surface, screen);
                     Grid::new_turn();
                     Grid::draw_grid(surface);
                 }

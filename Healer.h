@@ -20,7 +20,6 @@ class Healer : public Character {
 
         virtual bool can_heal();
 
-        virtual void play_turn(SDL_Surface* surface);
         virtual void move(SDL_Surface* surface);
         virtual bool attack(SDL_Surface* surface);
 };
