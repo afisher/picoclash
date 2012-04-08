@@ -81,4 +81,5 @@ bool Character::attack(SDL_Surface* surface) {}
 
 Character::~Character() {
     SDL_FreeSurface(image);
+    SDL_FreeSurface(grey_image);
 }

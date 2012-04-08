@@ -9,6 +9,8 @@ class Tile {
         Character* character;
         bool selected;
 
+        bool use_alt; // whether or not this tile uses the alt image
+
         int x;
         int y;
 
@@ -29,6 +31,7 @@ class Tile {
         int get_y();
 
         static SDL_Surface* selected_image; 
+        static SDL_Surface* alt_image; 
         static SDL_Surface* default_image;  
 
         void character_died();

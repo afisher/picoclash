@@ -16,8 +16,8 @@ vector<Character*> player_characters;
 vector<Character*> enemy_characters;
 int current_player = 1;
 
-SDL_Surface* grid_image;
-bool grid_on = false;
+SDL_Surface* Grid::grid_image = NULL;
+bool grid_on = true;
 
 // loads the test map into the grid
 void Grid::load_file() {

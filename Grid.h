@@ -10,6 +10,8 @@ using namespace std;
 
 class Grid {
     public:
+        static SDL_Surface* grid_image;
+
         static void load_file();
         static void draw_grid(SDL_Surface* surface);
 

@@ -13,6 +13,7 @@
 using namespace std;
 
 SDL_Surface* Tile::default_image  = NULL;
+SDL_Surface* Tile::alt_image      = NULL;
 SDL_Surface* Tile::selected_image = NULL;
 
 Tile::Tile(int i, int j) {
@@ -21,7 +22,10 @@ Tile::Tile(int i, int j) {
 
     character = NULL;
 
+    use_alt = false;
+    if ((x*y)%11 == 3) use_alt = true;
     set_selected(false);
+    update_image();
 }
 
 Tile::Tile(int i, int j, int type) {
@@ -42,7 +46,7 @@ Tile::Tile(int i, int j, int type) {
         case Constants::ENEMY_HEALER:
             set_character(new Healer(2));  break;
         default:
-            character = NULL;
+            character = NULL; break;
     }
 
     set_selected(false);
@@ -55,6 +59,10 @@ Tile::Tile(int i, int j, int type) {
             default: break;
         }
     }
+
+    use_alt = false;
+    if ((x*y)%11 == 3) use_alt = true;
+    update_image();
 }
 
 void Tile::set_selected(bool s) {
@@ -80,6 +88,8 @@ int Tile::get_y() { return y; }
 void Tile::update_image() {
     if (selected) {
         image = selected_image;
+    } else if (use_alt) {
+        image = alt_image;
     } else {
         image = default_image;
     }

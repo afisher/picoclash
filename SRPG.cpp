@@ -156,7 +156,9 @@ void select_single() {
 
 void clean_up() {
     SDL_FreeSurface(Tile::default_image);
+    SDL_FreeSurface(Tile::alt_image);
     SDL_FreeSurface(Tile::selected_image);
+    SDL_FreeSurface(Grid::grid_image);
     SDL_FreeSurface(sidebar);
     SDL_FreeSurface(surface);
     SDL_FreeSurface(screen);
@@ -174,7 +176,9 @@ int main(int argc, char* args[]) {
                                    Constants::HEIGHT,
                                    Constants::SCREEN_BPP, 0, 0, 0, 0);
 
-    Tile::default_image  = Util::load_image("sprites/grass2.png");
+    //Tile::default_image  = Util::load_image("sprites/grass2.png");
+    Tile::default_image  = Util::load_image("sprites/grass-plain.png");
+    Tile::alt_image      = Util::load_image("sprites/grass-busy.png");
     Tile::selected_image = Util::load_image("sprites/grass2-selected.png");
 
     if (screen == NULL)   return 1;
