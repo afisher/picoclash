@@ -16,6 +16,9 @@ vector<Character*> player_characters;
 vector<Character*> enemy_characters;
 int current_player = 1;
 
+SDL_Surface* grid_image;
+bool grid_on = false;
+
 // loads the test map into the grid
 void Grid::load_file() {
     std::ifstream file("testmap.txt");
@@ -48,6 +51,8 @@ void Grid::load_file() {
     }
 
     file.close();
+    grid_image = Util::load_image("sprites/grid.png");
+
 }
 
 // draw the grid -- assumes the file has been loaded
@@ -64,6 +69,15 @@ void Grid::draw_grid(SDL_Surface* surface) {
             }
         }
     }
+
+    if (grid_on) {
+        Util::apply_surface(0, 0, grid_image, surface);
+    }
+}
+
+void Grid::toggle_show_lines(SDL_Surface* surface) {
+    grid_on = !grid_on;
+    draw_grid(surface);
 }
 
 Tile* Grid::get(int i, int j)  { return grid[j][i];     }
@@ -244,8 +258,9 @@ bool Grid::heal(int i, int j, int x, int y, SDL_Surface* surface) {
     Healer* character1 = (Healer*)(grid[j][i]->get_character());
     Character* character2 = grid[y][x]->get_character();
 
-    if (character1->get_player() != current_player) return false;
     if (character1 == NULL || character2 == NULL) return false;
+    if (character1->get_player() != current_player) return false;
+    if (character2->get_health() == character2->get_max_health()) return false;
 
     int range = character1->get_range();
 

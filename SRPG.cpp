@@ -105,10 +105,15 @@ void draw_sidebar() {
 
     }
 
-    string end    = "v - End turn";
+    string end = "v - End turn";
     SDL_Surface* end_control = TTF_RenderText_Solid(font, end.c_str(), text_color);
     Util::apply_surface(486, 260, end_control, surface);
     SDL_FreeSurface(end_control);
+
+    string grid = "shift - Toggle grid";
+    SDL_Surface* grid_control = TTF_RenderText_Solid(font, grid.c_str(), text_color);
+    Util::apply_surface(486, 300, grid_control, surface);
+    SDL_FreeSurface(grid_control);
 
     string turn_str = "";
     int current_player = Grid::get_current_player();
@@ -284,6 +289,9 @@ int main(int argc, char* args[]) {
                     default: break;
                 }
             } else if (event.type == SDL_KEYDOWN) {
+                if (event.key.keysym.sym == SDLK_LSHIFT || event.key.keysym.sym == SDLK_RSHIFT) {
+                    Grid::toggle_show_lines(surface);
+                }
                 if (event.key.keysym.sym == SDLK_z) {
                     if (state == SELECTED) {
                         // this happens if we choose to move after another action
@@ -339,6 +347,7 @@ int main(int argc, char* args[]) {
             }
         }
         draw_sidebar();
+
 
         int ticks = SDL_GetTicks() - start_ticks;
         if (ticks < 1000 / Constants::FRAMES_PER_SECOND) {

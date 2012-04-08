@@ -12,6 +12,9 @@ class Grid {
     public:
         static void load_file();
         static void draw_grid(SDL_Surface* surface);
+
+        static void toggle_show_lines(SDL_Surface* surface);
+
         static Tile* get(int i, int j);
 
         static int get_current_player();
