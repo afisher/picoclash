@@ -68,10 +68,9 @@ void draw_sidebar() {
 
         // Build controls info
         
-        string move   = "Move - z";
-        string attack = "Attack - x";
-        string heal   = "Heal - c";
-        string end    = "End turn - v";
+        string move   = "z - Move";
+        string attack = "x - Attack";
+        string heal   = "c - Heal";
 
         SDL_Color color;
         if (selected_character->get_moved_this_turn()) {
@@ -95,19 +94,21 @@ void draw_sidebar() {
         }
         SDL_Surface* heal_control = TTF_RenderText_Solid(font, heal.c_str(), color);
 
-        SDL_Surface* end_control = TTF_RenderText_Solid(font, end.c_str(), text_color);
 
         Util::apply_surface(486, 200, move_control, surface);
         Util::apply_surface(486, 220, attack_control, surface);
         Util::apply_surface(486, 240, heal_control, surface);
-        Util::apply_surface(486, 260, end_control, surface);
 
         SDL_FreeSurface(move_control);
         SDL_FreeSurface(attack_control);
         SDL_FreeSurface(heal_control);
-        SDL_FreeSurface(end_control);
 
     }
+
+    string end    = "v - End turn";
+    SDL_Surface* end_control = TTF_RenderText_Solid(font, end.c_str(), text_color);
+    Util::apply_surface(486, 260, end_control, surface);
+    SDL_FreeSurface(end_control);
 
     string turn_str = "";
     int current_player = Grid::get_current_player();
@@ -198,8 +199,33 @@ int main(int argc, char* args[]) {
             if (event.type == SDL_QUIT) {
                 cout << "Quit Event" << endl;
                 quit = true;
+            } else if (event.type == SDL_MOUSEMOTION && state != MOVING
+                                                     && state != ATTACKING
+                                                     && state != HEALING) {
+                //selected_tile = Grid::get(x, y);
+
+                if (selected_tile != NULL) {
+                    // unhighlight the old selected tile
+                    selected_tile->set_selected(false);
+                    Grid::draw_grid(surface);
+                }
+
+                x = Constants::X_RATIO * event.motion.x / Constants::SPRITE_SIZE; 
+                y = Constants::Y_RATIO * event.motion.y / Constants::SPRITE_SIZE; 
+                if (x < Constants::GRID_WIDTH && y < Constants::GRID_HEIGHT) { 
+                    selected_tile = Grid::get(x, y);
+                    selected_character = selected_tile->get_character();
+
+                    state = SELECTED;
+
+                    // highlight the tile
+                    selected_tile->set_selected(true);
+                    Grid::draw_grid(surface);
+
+                    draw_sidebar();
+                }
             } else if (event.type == SDL_MOUSEBUTTONDOWN &&
-                    event.button.button == SDL_BUTTON_LEFT) {
+                       event.button.button == SDL_BUTTON_LEFT) {
 
                 switch (state) {
                     case IDLE:
@@ -223,8 +249,12 @@ int main(int argc, char* args[]) {
 
                         success = Grid::move(x, y, new_x, new_y, surface);
 
-                        if (success) state = MOVED;
-                        selected_character = NULL;
+                        if (success) {
+                            state = SELECTED;
+                            //selected_character = NULL;
+                            selected_tile = Grid::get(selected_character->get_x(), selected_character->get_y());
+                            select_single();
+                        }
                         break;
                     case MOVED:
                         // this happens if we make another character selection after moving
@@ -238,8 +268,12 @@ int main(int argc, char* args[]) {
 
                         success = Grid::attack(x, y, new_x, new_y, surface);
 
-                        if (success) state = ATTACKED;
-                        selected_character = NULL;
+                        if (success) {
+                            state = SELECTED;
+                            //selected_character = NULL;
+                            selected_tile = Grid::get(selected_character->get_x(), selected_character->get_y());
+                            select_single();
+                        }
                         break;
                     case ATTACKED:
                         // this happens if we make another character selection after attacking
@@ -253,8 +287,12 @@ int main(int argc, char* args[]) {
 
                         success = Grid::heal(x, y, new_x, new_y, surface);
 
-                        if (success) state = HEALED;
-                        selected_character = NULL;
+                        if (success) {
+                            state = SELECTED;
+                            //selected_character = NULL;
+                            selected_tile = Grid::get(selected_character->get_x(), selected_character->get_y());
+                            select_single();
+                        }
                         break;
                     case HEALED:
                         // this happens if we make another character selection after healing
