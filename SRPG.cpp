@@ -17,7 +17,8 @@ SDL_Surface* surface = NULL;
 SDL_Surface* sidebar = NULL;
 
 TTF_Font* font = NULL;
-SDL_Color textColor = { 255, 255, 255 };
+SDL_Color text_color = { 255, 255, 255 };
+SDL_Color grey_color = { 130, 130, 130 };
 
 SDL_Event event;
 
@@ -38,6 +39,7 @@ void draw_sidebar() {
     Util::apply_surface(480, 0, sidebar, surface);
 
     if (selected_character != NULL) {
+        // Build stat info
         stringstream health;
         stringstream strength;
         stringstream mobility;
@@ -49,10 +51,10 @@ void draw_sidebar() {
         mobility << "Mobility: " << selected_character->get_mobility();
         range    << "Range: "    << selected_character->get_range();
 
-        SDL_Surface* health_stats   = TTF_RenderText_Solid(font, health.str().c_str(), textColor);
-        SDL_Surface* strength_stats = TTF_RenderText_Solid(font, strength.str().c_str(), textColor);
-        SDL_Surface* mobility_stats = TTF_RenderText_Solid(font, mobility.str().c_str(), textColor);
-        SDL_Surface* range_stats    = TTF_RenderText_Solid(font, range.str().c_str(), textColor);
+        SDL_Surface* health_stats   = TTF_RenderText_Solid(font, health.str().c_str(),   text_color);
+        SDL_Surface* strength_stats = TTF_RenderText_Solid(font, strength.str().c_str(), text_color);
+        SDL_Surface* mobility_stats = TTF_RenderText_Solid(font, mobility.str().c_str(), text_color);
+        SDL_Surface* range_stats    = TTF_RenderText_Solid(font, range.str().c_str(),    text_color);
 
         Util::apply_surface(486, 10, health_stats, surface);
         Util::apply_surface(486, 30, strength_stats, surface);
@@ -63,6 +65,48 @@ void draw_sidebar() {
         SDL_FreeSurface(strength_stats);
         SDL_FreeSurface(mobility_stats);
         SDL_FreeSurface(range_stats);
+
+        // Build controls info
+        
+        string move   = "Move - z";
+        string attack = "Attack - x";
+        string heal   = "Heal - c";
+        string end    = "End turn - v";
+
+        SDL_Color color;
+        if (selected_character->get_moved_this_turn()) {
+            color = grey_color;
+        } else {
+            color = text_color;
+        }
+        SDL_Surface* move_control = TTF_RenderText_Solid(font, move.c_str(), color);
+
+        if (selected_character->get_attacked_this_turn()) {
+            color = grey_color;
+        } else {
+            color = text_color;
+        }
+        SDL_Surface* attack_control = TTF_RenderText_Solid(font, attack.c_str(), color);
+
+        if (!selected_character->can_heal() || selected_character->get_attacked_this_turn()) {
+            color = grey_color;
+        } else {
+            color = text_color;
+        }
+        SDL_Surface* heal_control = TTF_RenderText_Solid(font, heal.c_str(), color);
+
+        SDL_Surface* end_control = TTF_RenderText_Solid(font, end.c_str(), text_color);
+
+        Util::apply_surface(486, 200, move_control, surface);
+        Util::apply_surface(486, 220, attack_control, surface);
+        Util::apply_surface(486, 240, heal_control, surface);
+        Util::apply_surface(486, 260, end_control, surface);
+
+        SDL_FreeSurface(move_control);
+        SDL_FreeSurface(attack_control);
+        SDL_FreeSurface(heal_control);
+        SDL_FreeSurface(end_control);
+
     }
 
     string turn_str = "";
@@ -72,8 +116,8 @@ void draw_sidebar() {
     } else {
         turn_str = "Red turn";
     }
-    SDL_Surface* turn_info = TTF_RenderText_Solid(font, turn_str.c_str(), textColor);
-    Util::apply_surface(486, 260, turn_info, surface);
+    SDL_Surface* turn_info = TTF_RenderText_Solid(font, turn_str.c_str(), text_color);
+    Util::apply_surface(486, 440, turn_info, surface);
     SDL_FreeSurface(turn_info);
 
     string state_str = "";
@@ -88,8 +132,8 @@ void draw_sidebar() {
         case HEALED:    state_str = "Select a character";   break;
         default: break;
     }
-    SDL_Surface* state_info = TTF_RenderText_Solid(font, state_str.c_str(), textColor);
-    Util::apply_surface(486, 360, state_info, surface);
+    SDL_Surface* state_info = TTF_RenderText_Solid(font, state_str.c_str(), text_color);
+    Util::apply_surface(486, 460, state_info, surface);
     SDL_FreeSurface(state_info);
 }
 

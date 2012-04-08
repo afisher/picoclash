@@ -61,16 +61,16 @@ void Character::take_damage(int d)  { health -= d; }
 void Character::gain_health(int h)  { health = std::min(health + h, get_max_health()); }
 
 void Character::play_turn(SDL_Surface* surface, SDL_Surface* screen) {
-    SDL_Delay(500);
+    SDL_Delay(100);
     if (attack(surface)) {
         Util::update_screen(surface, screen);
-        SDL_Delay(500);
+        SDL_Delay(100);
         move(surface);
         Util::update_screen(surface, screen);
     } else {
         move(surface);
         Util::update_screen(surface, screen);
-        SDL_Delay(500);
+        SDL_Delay(100);
         attack(surface);
         Util::update_screen(surface, screen);
     }

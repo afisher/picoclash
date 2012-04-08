@@ -19,7 +19,6 @@ int current_player = 1;
 // loads the test map into the grid
 void Grid::load_file() {
     std::ifstream file("testmap.txt");
-    //std::ifstream file("offensemap.txt");
     std::string line;
 
     for (int j = 0; j < Constants::GRID_HEIGHT; j++) {
@@ -252,7 +251,13 @@ bool Grid::heal(int i, int j, int x, int y, SDL_Surface* surface) {
 
     if (distance(i, j, x, y) <= range && !character1->get_attacked_this_turn()
         && character1->get_player() == character2->get_player()) {
-        character2->gain_health(character1->get_magic());
+
+        // heal for less if we're healing ourselves
+        if (distance(i, j, x, y) == 0) {
+            character2->gain_health(character1->get_magic() / 2);
+        } else {
+            character2->gain_health(character1->get_magic());
+        }
         character1->set_healed_this_turn(true); // tell the first character that it just healed
 
         select_tiles(i, j, range, false);

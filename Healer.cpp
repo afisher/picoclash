@@ -24,7 +24,7 @@ void Healer::set_values(int p, int lvl) {
     health    = increment  * level;
     strength  = 1  * level;
     range     = 1;
-    magic     = 10 * level;
+    magic     = 4 * level;
 
     healed_this_turn = false;
 
