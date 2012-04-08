@@ -29,7 +29,7 @@ Tile* selected_tile = NULL;
 Character* selected_character = NULL;
 
 // temporary home for the possible states
-enum States { IDLE, SELECTED, MOVING, MOVED, ATTACKING, ATTACKED, HEALING, HEALED };
+enum States { IDLE, SELECTED, MOVING, ATTACKING, HEALING };
 
 int state = IDLE;
 
@@ -126,11 +126,8 @@ void draw_sidebar() {
         case IDLE:      state_str = "Select a character";   break;
         case SELECTED:  state_str = "Choose an action";     break;
         case MOVING:    state_str = "Select a square";      break;
-        case MOVED:     state_str = "Select a character";   break;
         case ATTACKING: state_str = "Select a victim";      break;
-        case ATTACKED:  state_str = "Select a character";   break;
         case HEALING:   state_str = "Select an ally";       break;
-        case HEALED:    state_str = "Select a character";   break;
         default: break;
     }
     SDL_Surface* state_info = TTF_RenderText_Solid(font, state_str.c_str(), text_color);
@@ -256,11 +253,6 @@ int main(int argc, char* args[]) {
                             select_single();
                         }
                         break;
-                    case MOVED:
-                        // this happens if we make another character selection after moving
-                        select_single();
-                        state = SELECTED;
-                        break;
                     case ATTACKING:
                         // this happens if we select a character to attack
                         new_x = Constants::X_RATIO * event.button.x / Constants::SPRITE_SIZE;
@@ -274,11 +266,6 @@ int main(int argc, char* args[]) {
                             selected_tile = Grid::get(selected_character->get_x(), selected_character->get_y());
                             select_single();
                         }
-                        break;
-                    case ATTACKED:
-                        // this happens if we make another character selection after attacking
-                        select_single();
-                        state = SELECTED;
                         break;
                     case HEALING:
                         // this happens if we select a character to heal
@@ -294,16 +281,11 @@ int main(int argc, char* args[]) {
                             select_single();
                         }
                         break;
-                    case HEALED:
-                        // this happens if we make another character selection after healing
-                        select_single();
-                        state = SELECTED;
-                        break;
                     default: break;
                 }
             } else if (event.type == SDL_KEYDOWN) {
                 if (event.key.keysym.sym == SDLK_z) {
-                    if (state == SELECTED || state == ATTACKED || state == HEALED) {
+                    if (state == SELECTED) {
                         // this happens if we choose to move after another action
                         if (selected_character != NULL && !selected_character->get_moved_this_turn()) {
                             success = Grid::show_move_tiles(x, y, surface, true);
@@ -311,7 +293,7 @@ int main(int argc, char* args[]) {
                         }
                     }
                 } else if (event.key.keysym.sym == SDLK_x) {
-                    if (state == SELECTED || state == MOVED || state == HEALED) {
+                    if (state == SELECTED) {
                         // this happens if we choose to attack after another action
                         if (selected_character != NULL && !selected_character->get_attacked_this_turn()) {
                             success = Grid::show_attack_tiles(x, y, surface, true);
@@ -319,7 +301,7 @@ int main(int argc, char* args[]) {
                         }
                     }
                 } else if (event.key.keysym.sym == SDLK_c) {
-                    if (state == SELECTED || state == MOVED || state == ATTACKED) {
+                    if (state == SELECTED) {
                         // this happens if we choose to heal after another action
                         if (selected_character != NULL && selected_character->can_heal()
                                                        && !((Healer*)selected_character)->get_healed_this_turn()) {
