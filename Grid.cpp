@@ -212,7 +212,8 @@ bool Grid::attack(int i, int j, int x, int y, SDL_Surface* surface) {
 
     int range = character1->get_range();
 
-    if (distance(i, j, x, y) <= range) {
+    if (distance(i, j, x, y) <= range && !character1->get_attacked_this_turn()
+        && character1->get_player() != character2->get_player()) {
         character2->take_damage(character1->get_strength());
         if (character2->get_health() <= 0) {
             grid[y][x]->character_died();
@@ -249,7 +250,8 @@ bool Grid::heal(int i, int j, int x, int y, SDL_Surface* surface) {
 
     int range = character1->get_range();
 
-    if (distance(i, j, x, y) <= range) {
+    if (distance(i, j, x, y) <= range && !character1->get_attacked_this_turn()
+        && character1->get_player() == character2->get_player()) {
         character2->gain_health(character1->get_magic());
         character1->set_healed_this_turn(true); // tell the first character that it just healed
 
