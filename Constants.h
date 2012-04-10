@@ -5,6 +5,7 @@ namespace Constants {
 
     const int SCREEN_WIDTH  = 640;
     const int SCREEN_HEIGHT = 480;
+
     const int SCREEN_BPP    = 32;
 
     const int PLAYER_WARRIOR = 1;
@@ -21,8 +22,6 @@ namespace Constants {
 
     const int WIDTH  = 640;
     const int HEIGHT = 480;
-    const double fWIDTH  = 640;
-    const double fHEIGHT = 480;
 
     const double X_RATIO = WIDTH  / (double)SCREEN_WIDTH;
     const double Y_RATIO = HEIGHT / (double)SCREEN_HEIGHT;

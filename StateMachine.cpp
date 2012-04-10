@@ -1,8 +1,14 @@
 #include "Header.h"
 
+State* current_state = NULL;
+State* previous_state = NULL;
+
+Tile* selected_tile = NULL;
+Tile* inspected_tile = NULL;
+
 void StateMachine::init() {
-    current_state = new IdleState();
-    previous_state = NULL;
+    current_state = new SelectedState();
+    previous_state = new IdleState();
 
     selected_tile  = NULL;
     inspected_tile = NULL;
@@ -29,3 +35,15 @@ void StateMachine::execute(SDL_Event event, SDL_Surface* surface, SDL_Surface* s
     }
 
 }
+
+void StateMachine::set_current_state(State* s)  { current_state = s;  }
+void StateMachine::set_previous_state(State* s) { previous_state = s; }
+
+void StateMachine::set_selected_tile(Tile* t)  { selected_tile = t;  }
+void StateMachine::set_inspected_tile(Tile* t) { inspected_tile = t; }
+
+State* StateMachine::get_current_state() { return current_state; }
+State* StateMachine::get_previous_state() { return previous_state; }
+
+Tile* StateMachine::get_selected_tile() { return selected_tile; }
+Tile* StateMachine::get_inspected_tile() { return inspected_tile; }

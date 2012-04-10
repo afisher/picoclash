@@ -115,14 +115,20 @@ class State {
 
 class StateMachine {
     public:
-        static State* current_state;
-        static State* previous_state;
-
-        static Tile* selected_tile;
-        static Tile* inspected_tile;
-
         static void init();
         static void execute(SDL_Event event, SDL_Surface* surface, SDL_Surface* screen);
+
+        static void set_current_state(State* s);
+        static void set_previous_state(State* s);
+
+        static void set_selected_tile(Tile* t);
+        static void set_inspected_tile(Tile* t);
+
+        static State* get_current_state();
+        static State* get_previous_state();
+
+        static Tile* get_selected_tile();
+        static Tile* get_inspected_tile();
 };
 
 class Archer : public Character {

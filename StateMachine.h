@@ -13,4 +13,10 @@ class StateMachine {
         Tile* inspected_tile;
 
         void execute(SDL_Event event);
+
+        void set_current_state(State s);
+        void set_previous_state(State s);
+
+        void set_selected_tile(Tile* t);
+        void set_inspected_tile(Tile* t);
 };

@@ -21,10 +21,15 @@ static void draw_sidebar() {
 
     Util::apply_surface(480, 0, sidebar, surface);
 
-    Character* selected_character = StateMachine::selected_tile->get_character();
-    Character* inspected_character = StateMachine::inspected_tile->get_character();
+    Tile* selected_tile = StateMachine::get_selected_tile();
+    Tile* inspected_tile = StateMachine::get_inspected_tile();
 
-    if (StateMachine::inspected_tile != NULL && inspected_character != NULL) {
+    if (selected_tile == NULL || inspected_tile == NULL) return;
+
+    Character* selected_character = selected_tile->get_character();
+    Character* inspected_character = inspected_tile->get_character();
+
+    if (inspected_character != NULL) {
         // Build stat info
         stringstream health;
         stringstream strength;
@@ -53,7 +58,7 @@ static void draw_sidebar() {
         SDL_FreeSurface(range_stats);
 
 
-        if (StateMachine::selected_tile != NULL && selected_character != NULL) {
+        if (StateMachine::get_selected_tile() != NULL && selected_character != NULL) {
             // Build controls info
             string move   = "z - Move";
             string attack = "x - Attack";
@@ -117,7 +122,7 @@ static void draw_sidebar() {
     Util::apply_surface(486, 440, turn_info, surface);
     SDL_FreeSurface(turn_info);
 
-    string state_str = StateMachine::current_state->sidebar_tip();
+    string state_str = StateMachine::get_current_state()->sidebar_tip();
 /*      string state_str = "";
     switch (state) {
         case IDLE:      state_str = "Select a character";   break;
