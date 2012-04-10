@@ -1,55 +1,41 @@
-#include "SDL/SDL.h"
-#include "SDL/SDL_image.h"
-#include "SDL/SDL_ttf.h"
+#include "Header.h"
 
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <sstream>
+using namespace std;
 
-#include "Util.h"
-#include "Constants.h"
-#include "Grid.h"
-#include "Healer.h"
-
-SDL_Surface* screen  = NULL;
+SDL_Surface* screen = NULL;
 SDL_Surface* surface = NULL;
 SDL_Surface* sidebar = NULL;
 
 TTF_Font* font = NULL;
-SDL_Color text_color = { 255, 255, 255 };
-SDL_Color grey_color = { 130, 130, 130 };
 
 SDL_Event event;
 
-int x = 0, y = 0; // current selected position
-int new_x = 0, new_y = 0; // position for moving/attacking
-
-Tile* selected_tile = NULL;
-Character* selected_character = NULL;
-
 // temporary home for the possible states
-enum States { IDLE, SELECTED, MOVING, ATTACKING, HEALING };
+/*static enum States { IDLE, SELECTED, MOVING, ATTACKING, HEALING };
 
-int state = IDLE;
+static int state = IDLE;*/
 
-using namespace std;
+static void draw_sidebar() {
+    SDL_Color text_color = { 255, 255, 255 };
+    SDL_Color grey_color = { 130, 130, 130 };
 
-void draw_sidebar() {
     Util::apply_surface(480, 0, sidebar, surface);
 
-    if (selected_character != NULL) {
+    Character* selected_character = StateMachine::selected_tile->get_character();
+    Character* inspected_character = StateMachine::inspected_tile->get_character();
+
+    if (StateMachine::inspected_tile != NULL && inspected_character != NULL) {
         // Build stat info
         stringstream health;
         stringstream strength;
         stringstream mobility;
         stringstream range;
 
-        health   << "Health: "   << selected_character->get_health()
-                 << " / "        << selected_character->get_max_health();
-        strength << "Strength: " << selected_character->get_strength();
-        mobility << "Mobility: " << selected_character->get_mobility();
-        range    << "Range: "    << selected_character->get_range();
+        health   << "Health: "   << inspected_character->get_health()
+                 << " / "        << inspected_character->get_max_health();
+        strength << "Strength: " << inspected_character->get_strength();
+        mobility << "Mobility: " << inspected_character->get_mobility();
+        range    << "Range: "    << inspected_character->get_range();
 
         SDL_Surface* health_stats   = TTF_RenderText_Solid(font, health.str().c_str(),   text_color);
         SDL_Surface* strength_stats = TTF_RenderText_Solid(font, strength.str().c_str(), text_color);
@@ -66,43 +52,43 @@ void draw_sidebar() {
         SDL_FreeSurface(mobility_stats);
         SDL_FreeSurface(range_stats);
 
-        // Build controls info
-        
-        string move   = "z - Move";
-        string attack = "x - Attack";
-        string heal   = "c - Heal";
 
-        SDL_Color color;
-        if (selected_character->get_moved_this_turn()) {
-            color = grey_color;
-        } else {
-            color = text_color;
+        if (StateMachine::selected_tile != NULL && selected_character != NULL) {
+            // Build controls info
+            string move   = "z - Move";
+            string attack = "x - Attack";
+            string heal   = "c - Heal";
+
+            SDL_Color color;
+            if (selected_character->get_moved_this_turn()) {
+                color = grey_color;
+            } else {
+                color = text_color;
+            }
+            SDL_Surface* move_control = TTF_RenderText_Solid(font, move.c_str(), color);
+
+            if (selected_character->get_attacked_this_turn()) {
+                color = grey_color;
+            } else {
+                color = text_color;
+            }
+            SDL_Surface* attack_control = TTF_RenderText_Solid(font, attack.c_str(), color);
+
+            if (!selected_character->can_heal() || selected_character->get_attacked_this_turn()) {
+                color = grey_color;
+            } else {
+                color = text_color;
+            }
+            SDL_Surface* heal_control = TTF_RenderText_Solid(font, heal.c_str(), color);
+
+            Util::apply_surface(486, 200, move_control, surface);
+            Util::apply_surface(486, 220, attack_control, surface);
+            Util::apply_surface(486, 240, heal_control, surface);
+
+            SDL_FreeSurface(move_control);
+            SDL_FreeSurface(attack_control);
+            SDL_FreeSurface(heal_control);
         }
-        SDL_Surface* move_control = TTF_RenderText_Solid(font, move.c_str(), color);
-
-        if (selected_character->get_attacked_this_turn()) {
-            color = grey_color;
-        } else {
-            color = text_color;
-        }
-        SDL_Surface* attack_control = TTF_RenderText_Solid(font, attack.c_str(), color);
-
-        if (!selected_character->can_heal() || selected_character->get_attacked_this_turn()) {
-            color = grey_color;
-        } else {
-            color = text_color;
-        }
-        SDL_Surface* heal_control = TTF_RenderText_Solid(font, heal.c_str(), color);
-
-
-        Util::apply_surface(486, 200, move_control, surface);
-        Util::apply_surface(486, 220, attack_control, surface);
-        Util::apply_surface(486, 240, heal_control, surface);
-
-        SDL_FreeSurface(move_control);
-        SDL_FreeSurface(attack_control);
-        SDL_FreeSurface(heal_control);
-
     }
 
     string end = "v - End turn";
@@ -110,7 +96,12 @@ void draw_sidebar() {
     Util::apply_surface(486, 260, end_control, surface);
     SDL_FreeSurface(end_control);
 
-    string grid = "shift - Toggle grid";
+    string cancel = "Esc - Cancel";
+    SDL_Surface* cancel_control = TTF_RenderText_Solid(font, cancel.c_str(), text_color);
+    Util::apply_surface(486, 280, cancel_control, surface);
+    SDL_FreeSurface(cancel_control);
+
+    string grid = "Shift - Toggle grid";
     SDL_Surface* grid_control = TTF_RenderText_Solid(font, grid.c_str(), text_color);
     Util::apply_surface(486, 300, grid_control, surface);
     SDL_FreeSurface(grid_control);
@@ -126,7 +117,8 @@ void draw_sidebar() {
     Util::apply_surface(486, 440, turn_info, surface);
     SDL_FreeSurface(turn_info);
 
-    string state_str = "";
+    string state_str = StateMachine::current_state->sidebar_tip();
+/*      string state_str = "";
     switch (state) {
         case IDLE:      state_str = "Select a character";   break;
         case SELECTED:  state_str = "Choose an action";     break;
@@ -134,13 +126,13 @@ void draw_sidebar() {
         case ATTACKING: state_str = "Select a victim";      break;
         case HEALING:   state_str = "Select an ally";       break;
         default: break;
-    }
+    }*/
     SDL_Surface* state_info = TTF_RenderText_Solid(font, state_str.c_str(), text_color);
     Util::apply_surface(486, 460, state_info, surface);
     SDL_FreeSurface(state_info);
 }
 
-void select_single() {
+/*static void select_single() {
     x = Constants::X_RATIO * event.button.x / Constants::SPRITE_SIZE;
     y = Constants::Y_RATIO * event.button.y / Constants::SPRITE_SIZE;
 
@@ -152,9 +144,9 @@ void select_single() {
     Grid::draw_grid(surface);
 
     draw_sidebar();
-}
+}*/
 
-void clean_up() {
+static void clean_up() {
     SDL_FreeSurface(Tile::default_image);
     SDL_FreeSurface(Tile::alt_image);
     SDL_FreeSurface(Tile::selected_image);
@@ -163,6 +155,7 @@ void clean_up() {
     SDL_FreeSurface(surface);
     SDL_FreeSurface(screen);
 }
+
 
 int main(int argc, char* args[]) {
     bool quit = false;
@@ -196,6 +189,8 @@ int main(int argc, char* args[]) {
 
     bool success;
 
+    StateMachine::init();
+
     while (quit == false) {
 
         int start_ticks = SDL_GetTicks();
@@ -205,7 +200,11 @@ int main(int argc, char* args[]) {
             if (event.type == SDL_QUIT) {
                 cout << "Quit Event" << endl;
                 quit = true;
-            } else if (event.type == SDL_MOUSEMOTION && state != MOVING
+            } else {
+                StateMachine::execute(event, surface, screen);
+            }
+            
+            /*else if (event.type == SDL_MOUSEMOTION && state != MOVING
                                                      && state != ATTACKING
                                                      && state != HEALING) {
                 //selected_tile = Grid::get(x, y);
@@ -235,7 +234,7 @@ int main(int argc, char* args[]) {
 
                 switch (state) {
                     case IDLE:
-                        select_single();
+                        //select_single();
                         state = SELECTED;
                         break;
                     case SELECTED:
@@ -323,6 +322,8 @@ int main(int argc, char* args[]) {
                         }
                     }
                 } else if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    // TODO store previous state in FSM and just roll back
+
                     if (state == MOVING || state == ATTACKING || state == HEALING) {
                         // this happens if we cancel
                         if (state == MOVING) {
@@ -348,7 +349,7 @@ int main(int argc, char* args[]) {
                 }
                 //Grid::new_turn();
                 //Grid::draw_grid(surface);
-            }
+            }*/
         }
         draw_sidebar();
 

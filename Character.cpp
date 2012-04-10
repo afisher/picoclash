@@ -1,10 +1,4 @@
-#include "Character.h"
-#include "Util.h"
-#include "Healer.h"
-#include "Grid.h"
-#include "Tile.h"
-#include "SDL/SDL.h"
-#include <algorithm>
+#include "Header.h"
 
 using namespace std;
 

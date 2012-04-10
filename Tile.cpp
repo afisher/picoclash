@@ -1,14 +1,4 @@
-#include "SDL/SDL.h"
-#include "SDL/SDL_image.h"
-#include "Util.h"
-#include "Constants.h"
-#include "Tile.h"
-#include "Warrior.h"
-#include "Archer.h"
-#include "Healer.h"
-#include "Grid.h"
-#include "Character.h"
-#include <vector>
+#include "Header.h"
 
 using namespace std;
 

@@ -1,10 +1,4 @@
-#include "SDL/SDL.h"
-#include "SDL/SDL_image.h"
-#include "Archer.h"
-#include "Util.h"
-#include <vector>
-#include <iostream>
-#include <climits>
+#include "Header.h"
 
 using namespace std;
 

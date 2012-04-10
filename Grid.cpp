@@ -1,13 +1,4 @@
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <cmath>
-#include <vector>
-
-#include "Util.h"
-#include "Grid.h"
-#include "Tile.h"
-#include "Healer.h"
+#include "Header.h"
 
 using namespace std;
 

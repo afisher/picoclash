@@ -1,9 +1,4 @@
-#include "SDL/SDL.h"
-#include "SDL/SDL_image.h"
-#include <string>
-#include <iostream>
-#include "Util.h"
-#include <cmath>
+#include "Header.h"
 
 using namespace std;
 
