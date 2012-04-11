@@ -32,6 +32,31 @@ void StateMachine::execute(SDL_Event event, SDL_Surface* surface, SDL_Surface* s
                 Grid::draw_grid(surface);
             }
         }
+    } else if (event.type == SDL_MOUSEMOTION) {
+        Tile* inspected_tile = StateMachine::get_inspected_tile();
+        Character* inspected_character = NULL;
+        if (inspected_tile != NULL) {
+            inspected_character = inspected_tile->get_character();
+        }
+
+        if (inspected_tile != NULL && (inspected_tile->get_x() != selected_tile->get_x()
+                                   || inspected_tile->get_y() != selected_tile->get_y())) {
+            inspected_tile->set_selected(false);
+        }
+
+        int x = Constants::X_RATIO * event.motion.x / Constants::SPRITE_SIZE;
+        int y = Constants::Y_RATIO * event.motion.y / Constants::SPRITE_SIZE;
+
+        if (x >= 0 && y >= 0 && x < Constants::GRID_WIDTH && y < Constants::GRID_HEIGHT) { 
+            StateMachine::set_inspected_tile(Grid::get(x, y));
+            inspected_tile = StateMachine::get_inspected_tile();
+
+            // highlight the tile
+            inspected_tile->set_selected(true);
+            Grid::draw_grid(surface);
+
+            //SRPG::draw_sidebar();
+        }
     }
 
 }
