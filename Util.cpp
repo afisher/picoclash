@@ -202,10 +202,10 @@ SDL_Surface* Util::load_image(std::string filename) {
 }
 
 // applies one surface to another based on x and y coords
-void Util::apply_surface(int x, int y, SDL_Surface* source, SDL_Surface* destination) {
+void Util::apply_surface(int x, int y, SDL_Surface* source, SDL_Surface* destination, SDL_Rect* clip) {
     SDL_Rect offset;
     offset.x = x;
     offset.y = y;
 
-    SDL_BlitSurface(source, NULL, destination, &offset);
+    SDL_BlitSurface(source, clip, destination, &offset);
 }
