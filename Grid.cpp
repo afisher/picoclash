@@ -91,7 +91,7 @@ void Grid::add_enemy_character(Character* c) {
 
 bool Grid::show_move_tiles(int i, int j, SDL_Surface* surface, bool show) {
     Character* selected_character = grid[j][i]->get_character();
-    if (selected_character->get_player() != current_player) return false;
+    //if (selected_character->get_player() != current_player) return false;
 
     int mobility = 0;
 
@@ -107,7 +107,7 @@ bool Grid::show_move_tiles(int i, int j, SDL_Surface* surface, bool show) {
 
 bool Grid::show_attack_tiles(int i, int j, SDL_Surface* surface, bool show) {
     Character* selected_character = grid[j][i]->get_character();
-    if (selected_character->get_player() != current_player) return false;
+    //if (selected_character->get_player() != current_player) return false;
 
     int range = 0;
 
