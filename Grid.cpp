@@ -50,21 +50,40 @@ void Grid::load_file() {
 void Grid::draw_grid(SDL_Surface* surface) {
     for (int j = 0; j < Constants::GRID_HEIGHT; j++) {
         for (int i = 0; i < Constants::GRID_WIDTH; i++) {
-            int x = i * Constants::SPRITE_SIZE;
-            int y = j * Constants::SPRITE_SIZE;
-
-            Util::apply_surface(x, y, get(i, j)->get_image(), surface);
-
-            if (get(i, j)->get_overlay_image() != NULL) {
-                Util::apply_surface(x, y, get(i, j)->get_overlay_image(), surface);
-            }
-
-            if (grid[j][i]->get_character() != NULL) {
-                Util::apply_surface(x, y, get(i, j)->get_character()->get_image(), surface);
-            }
+            draw_tile(get(i, j), surface);
         }
     }
+}
 
+void Grid::draw_tile(Tile* tile, SDL_Surface* surface) {
+    int i = tile->get_x();
+    int j = tile->get_y();
+
+    int x = i * Constants::SPRITE_SIZE;
+    int y = j * Constants::SPRITE_SIZE;
+
+    Util::apply_surface(x, y, get(i, j)->get_image(), surface);
+
+    if (get(i, j)->get_overlay_image() != NULL) {
+        Util::apply_surface(x, y, get(i, j)->get_overlay_image(), surface);
+    }
+
+    if (get(i, j)->get_character() != NULL) {
+        Util::apply_surface(x, y, get(i, j)->get_character()->get_image(), surface);
+    }
+
+    SDL_Rect clip;
+    clip.x = x;
+    clip.y = y;
+    clip.w = Constants::SPRITE_SIZE;
+    clip.h = Constants::SPRITE_SIZE;
+
+    if (grid_on) {
+        Util::apply_surface(x, y, grid_image, surface, &clip);
+    }
+}
+
+void Grid::draw_lines(SDL_Surface* surface) {
     if (grid_on) {
         Util::apply_surface(0, 0, grid_image, surface);
     }

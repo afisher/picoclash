@@ -195,6 +195,8 @@ class Grid {
 
         static void load_file();
         static void draw_grid(SDL_Surface* surface);
+        static void draw_tile(Tile* tile, SDL_Surface* surface);
+        static void draw_lines(SDL_Surface* surface);
 
         static void toggle_show_lines(SDL_Surface* surface);
 
@@ -284,7 +286,7 @@ class Util {
         static void update_screen(SDL_Surface* source, SDL_Surface* destination);
 
         static SDL_Surface* load_image(std::string filename);
-        static void apply_surface(int x, int y, SDL_Surface* source, SDL_Surface* destination);
+        static void apply_surface(int x, int y, SDL_Surface* source, SDL_Surface* destination, SDL_Rect* clip = NULL);
 };
 
 class Warrior : public Character {
