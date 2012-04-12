@@ -123,33 +123,10 @@ static void draw_sidebar() {
     SDL_FreeSurface(turn_info);
 
     string state_str = StateMachine::get_current_state()->sidebar_tip();
-/*      string state_str = "";
-    switch (state) {
-        case IDLE:      state_str = "Select a character";   break;
-        case SELECTED:  state_str = "Choose an action";     break;
-        case MOVING:    state_str = "Select a square";      break;
-        case ATTACKING: state_str = "Select a victim";      break;
-        case HEALING:   state_str = "Select an ally";       break;
-        default: break;
-    }*/
     SDL_Surface* state_info = TTF_RenderText_Solid(font, state_str.c_str(), text_color);
     Util::apply_surface(486, 460, state_info, surface);
     SDL_FreeSurface(state_info);
 }
-
-/*static void select_single() {
-    x = Constants::X_RATIO * event.button.x / Constants::SPRITE_SIZE;
-    y = Constants::Y_RATIO * event.button.y / Constants::SPRITE_SIZE;
-
-    selected_tile = Grid::get(x, y);
-    selected_character = selected_tile->get_character();
-
-    // highlight the tile
-    selected_tile->set_selected(true);
-    Grid::draw_grid(surface);
-
-    draw_sidebar();
-}*/
 
 static void clean_up() {
     SDL_FreeSurface(Tile::default_image);
@@ -178,6 +155,8 @@ int main(int argc, char* args[]) {
     Tile::default_image  = Util::load_image("sprites/grass-plain.png");
     Tile::alt_image      = Util::load_image("sprites/grass-busy.png");
     Tile::selected_image = Util::load_image("sprites/grass2-selected.png");
+    Tile::move_image     = Util::load_image("sprites/grass-move.png");
+    Tile::attack_image   = Util::load_image("sprites/grass-attack.png");
 
     if (screen == NULL)   return 1;
     if (TTF_Init() == -1) return 1;

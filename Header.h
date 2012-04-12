@@ -75,6 +75,8 @@ class Character {
 class Tile {
     private:
         SDL_Surface* image;
+        SDL_Surface* overlay_image;
+
         Character* character;
 
         bool selected;
@@ -87,6 +89,7 @@ class Tile {
         int y;
 
         void update_image();
+        void update_overlay_image();
 
     public:
         Tile(int i, int j);
@@ -99,12 +102,15 @@ class Tile {
 
         bool         get_selected();
         SDL_Surface* get_image();
+        SDL_Surface* get_overlay_image();
         Character*   get_character();
 
         int get_x();
         int get_y();
 
         static SDL_Surface* selected_image; 
+        static SDL_Surface* move_image; 
+        static SDL_Surface* attack_image; 
         static SDL_Surface* alt_image; 
         static SDL_Surface* default_image;  
 
@@ -158,8 +164,8 @@ class AttackingState : public State {
 namespace Constants {
     const int FRAMES_PER_SECOND = 20;
 
-    const int SCREEN_WIDTH  = 640;
-    const int SCREEN_HEIGHT = 480;
+    const int SCREEN_WIDTH  = 1280;
+    const int SCREEN_HEIGHT = 960;
     const int SCREEN_BPP    = 32;
 
     const int PLAYER_WARRIOR = 1;

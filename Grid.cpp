@@ -53,10 +53,14 @@ void Grid::draw_grid(SDL_Surface* surface) {
             int x = i * Constants::SPRITE_SIZE;
             int y = j * Constants::SPRITE_SIZE;
 
-            Util::apply_surface(x, y, grid[j][i]->get_image(), surface);
+            Util::apply_surface(x, y, get(i, j)->get_image(), surface);
+
+            if (get(i, j)->get_overlay_image() != NULL) {
+                Util::apply_surface(x, y, get(i, j)->get_overlay_image(), surface);
+            }
 
             if (grid[j][i]->get_character() != NULL) {
-                Util::apply_surface(x, y, grid[j][i]->get_character()->get_image(), surface);
+                Util::apply_surface(x, y, get(i, j)->get_character()->get_image(), surface);
             }
         }
     }
@@ -224,7 +228,8 @@ bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
         cur_char->set_moved_this_turn(true);
     } else return false;
 
-    select_tiles(i, j, mobility, false);
+    get(i, j)->set_selected(false);
+    select_move_tiles(i, j, mobility, false);
 
     draw_grid(surface);
 
@@ -261,7 +266,8 @@ bool Grid::attack(int i, int j, int x, int y, SDL_Surface* surface) {
             }
         }
 
-        select_tiles(i, j, range, false);
+        get(i, j)->set_selected(false);
+        select_attack_tiles(i, j, range, false);
 
         character1->set_attacked_this_turn(true);
 

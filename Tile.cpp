@@ -5,8 +5,8 @@ using namespace std;
 SDL_Surface* Tile::default_image  = NULL;
 SDL_Surface* Tile::alt_image      = NULL;
 SDL_Surface* Tile::selected_image = NULL;
-/*SDL_Surface* Tile::move_image     = NULL;
-SDL_Surface* Tile::attack_image   = NULL;*/
+SDL_Surface* Tile::move_image     = NULL;
+SDL_Surface* Tile::attack_image   = NULL;
 
 Tile::Tile(int i, int j) {
     x = i;
@@ -22,6 +22,7 @@ Tile::Tile(int i, int j) {
     attack_on = false;
 
     update_image();
+    update_overlay_image();
 }
 
 Tile::Tile(int i, int j, int type) {
@@ -60,22 +61,24 @@ Tile::Tile(int i, int j, int type) {
 
     use_alt = false;
     if ((x*y)%11 == 3) use_alt = true;
+
     update_image();
+    update_overlay_image();
 }
 
 void Tile::set_selected(bool s) {
     selected = s;
-    update_image();
+    update_overlay_image();
 }
 
 void Tile::set_move_on(bool s) {
     move_on = s;
-    update_image();
+    update_overlay_image();
 }
 
 void Tile::set_attack_on(bool s) {
     attack_on = s;
-    update_image();
+    update_overlay_image();
 }
 
 void Tile::set_character(Character* c) { 
@@ -93,22 +96,29 @@ bool Tile::get_selected() {
 int Tile::get_x() { return x; }
 int Tile::get_y() { return y; }
 
-void Tile::update_image() {
+void Tile::update_overlay_image() {
     if (selected) {
-        image = selected_image;
+        overlay_image = selected_image;
     } else if (move_on) {
-        image = selected_image; // TODO get different image
+        overlay_image = move_image;
     } else if (attack_on) {
-        image = selected_image; // TODO get different image
-    } else if (use_alt) {
+        overlay_image = attack_image;
+    } else {
+        overlay_image = NULL;
+    }
+}
+
+void Tile::update_image() {
+    if (use_alt) {
         image = alt_image;
     } else {
         image = default_image;
     }
 }
 
-SDL_Surface* Tile::get_image()     { return image;     }
-Character*   Tile::get_character() { return character; }
+SDL_Surface* Tile::get_image()         { return image;     }
+SDL_Surface* Tile::get_overlay_image() { return overlay_image; }
+Character*   Tile::get_character()     { return character; }
 
 void Tile::character_died() {
     character = NULL;
