@@ -76,7 +76,10 @@ class Tile {
     private:
         SDL_Surface* image;
         Character* character;
+
         bool selected;
+        bool move_on;
+        bool attack_on;
 
         bool use_alt; // whether or not this tile uses the alt image
 
@@ -90,6 +93,8 @@ class Tile {
         Tile(int i, int j, int type);
 
         void set_selected(bool s);
+        void set_move_on(bool s);
+        void set_attack_on(bool s);
         void set_character(Character* c);
 
         bool         get_selected();
@@ -198,7 +203,10 @@ class Grid {
         static void add_enemy_character(Character* c);
 
         static int distance(int i, int j, int x, int y);
-        static void select_tiles(int i, int j, int range, bool show);
+
+        static void select_tiles       (int i, int j, int range, bool show);
+        static void select_move_tiles  (int i, int j, int range, bool show);
+        static void select_attack_tiles(int i, int j, int range, bool show);
 
         static bool show_move_tiles  (int i, int j, SDL_Surface* surface, bool show);
         static bool show_attack_tiles(int i, int j, SDL_Surface* surface, bool show);

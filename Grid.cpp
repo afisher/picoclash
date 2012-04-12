@@ -93,7 +93,7 @@ bool Grid::show_move_tiles(int i, int j, SDL_Surface* surface, bool show) {
 
     if (selected_character != NULL) {
         mobility = selected_character->get_mobility();
-        select_tiles(i, j, mobility, show);
+        select_move_tiles(i, j, mobility, show);
     } else return false;
 
     draw_grid(surface);
@@ -109,7 +109,7 @@ bool Grid::show_attack_tiles(int i, int j, SDL_Surface* surface, bool show) {
 
     if (selected_character != NULL) {
         range = selected_character->get_range();
-        select_tiles(i, j, range, show);
+        select_attack_tiles(i, j, range, show);
     } else return false;
 
     draw_grid(surface);
@@ -125,6 +125,32 @@ void Grid::select_tiles(int i, int j, int range, bool show) {
             if (distance(i, j, x, y) <= range && x < Constants::GRID_WIDTH && y < Constants::GRID_HEIGHT
                                               && x >= 0 && y >= 0) {
                 grid[y][x]->set_selected(show);
+            }
+        }
+    }
+}
+
+void Grid::select_move_tiles(int i, int j, int range, bool show) {
+    // interate over the range*range square
+    for (int x = i - range; x <= i + range; x++) {
+        for (int y = j - range; y <= j + range; y++) {
+            // if the tile is within the range, light it up
+            if (distance(i, j, x, y) <= range && x < Constants::GRID_WIDTH && y < Constants::GRID_HEIGHT
+                                              && x >= 0 && y >= 0) {
+                grid[y][x]->set_move_on(show);
+            }
+        }
+    }
+}
+
+void Grid::select_attack_tiles(int i, int j, int range, bool show) {
+    // interate over the range*range square
+    for (int x = i - range; x <= i + range; x++) {
+        for (int y = j - range; y <= j + range; y++) {
+            // if the tile is within the range, light it up
+            if (distance(i, j, x, y) <= range && x < Constants::GRID_WIDTH && y < Constants::GRID_HEIGHT
+                                              && x >= 0 && y >= 0) {
+                grid[y][x]->set_attack_on(show);
             }
         }
     }

@@ -5,6 +5,8 @@ using namespace std;
 SDL_Surface* Tile::default_image  = NULL;
 SDL_Surface* Tile::alt_image      = NULL;
 SDL_Surface* Tile::selected_image = NULL;
+/*SDL_Surface* Tile::move_image     = NULL;
+SDL_Surface* Tile::attack_image   = NULL;*/
 
 Tile::Tile(int i, int j) {
     x = i;
@@ -14,7 +16,11 @@ Tile::Tile(int i, int j) {
 
     use_alt = false;
     if ((x*y)%11 == 3) use_alt = true;
-    set_selected(false);
+
+    selected  = false;
+    move_on   = false;
+    attack_on = false;
+
     update_image();
 }
 
@@ -39,7 +45,9 @@ Tile::Tile(int i, int j, int type) {
             character = NULL; break;
     }
 
-    set_selected(false);
+    selected  = false;
+    move_on   = false;
+    attack_on = false;
 
     // add new character to the list of characters in the grid
     if (character != NULL) {
@@ -57,6 +65,16 @@ Tile::Tile(int i, int j, int type) {
 
 void Tile::set_selected(bool s) {
     selected = s;
+    update_image();
+}
+
+void Tile::set_move_on(bool s) {
+    move_on = s;
+    update_image();
+}
+
+void Tile::set_attack_on(bool s) {
+    attack_on = s;
     update_image();
 }
 
@@ -78,6 +96,10 @@ int Tile::get_y() { return y; }
 void Tile::update_image() {
     if (selected) {
         image = selected_image;
+    } else if (move_on) {
+        image = selected_image; // TODO get different image
+    } else if (attack_on) {
+        image = selected_image; // TODO get different image
     } else if (use_alt) {
         image = alt_image;
     } else {
