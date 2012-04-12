@@ -53,7 +53,7 @@ void StateMachine::execute(SDL_Event event, SDL_Surface* surface, SDL_Surface* s
 
             // highlight the tile
             inspected_tile->set_selected(true);
-            Grid::draw_grid(surface);
+            //Grid::draw_grid(surface);
 
             //SRPG::draw_sidebar();
         }
