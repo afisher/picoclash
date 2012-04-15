@@ -71,6 +71,8 @@ void SelectedState::execute(SDL_Event event, SDL_Surface* surface) {
                     }
                 }
                 break;
+
+            default: break;
         }
     }
 }

@@ -34,6 +34,8 @@ void Grid::load_file() {
                     grid[j][i] = new Tile(i, j, Constants::ENEMY_ARCHER);   break;
                 case 'H':
                     grid[j][i] = new Tile(i, j, Constants::ENEMY_HEALER);   break;
+                case 'o':
+                    grid[j][i] = new RockTile(i, j); break;
                 default:
                     grid[j][i] = new Tile(i, j);
             }
@@ -154,7 +156,7 @@ void Grid::select_tiles(int i, int j, int range, bool show) {
 }
 
 void Grid::select_move_tiles(int i, int j, int range, bool show) {
-    // interate over the range*range square
+    /*// interate over the range*range square
     for (int x = i - range; x <= i + range; x++) {
         for (int y = j - range; y <= j + range; y++) {
             // if the tile is within the range, light it up
@@ -163,6 +165,11 @@ void Grid::select_move_tiles(int i, int j, int range, bool show) {
                 grid[y][x]->set_move_on(show);
             }
         }
+    }*/
+
+    vector<Tile*> move_tiles = get_move_tiles(get(i, j), range);
+    for (int k = 0; k < move_tiles.size(); k++) {
+        move_tiles[k]->set_move_on(show);
     }
 }
 
@@ -197,6 +204,27 @@ vector<Tile*> Grid::get_character_tiles(int player) {
     return ret;
 }
 
+vector<Tile*> Grid::get_neighbors(Tile* tile) {
+    vector<Tile*> ret;
+
+    int i = tile->get_x();
+    int j = tile->get_y();
+
+    // get left
+    if (i > 0) ret.push_back(get(i-1, j));
+
+    // get right
+    if (i < Constants::GRID_WIDTH - 1) ret.push_back(get(i+1, j));
+
+    // get up
+    if (j > 0) ret.push_back(get(i, j-1));
+
+    // get down
+    if (j < Constants::GRID_HEIGHT - 1) ret.push_back(get(i, j+1));
+
+    return ret;
+}
+
 vector<Tile*> Grid::get_range_tiles(Tile* character_tile, int range) {
     vector<Tile*> ret;
 
@@ -217,6 +245,32 @@ vector<Tile*> Grid::get_range_tiles(Tile* character_tile, int range) {
     return ret;
 }
 
+vector<Tile*> Grid::get_move_tiles(Tile* character_tile, int range) {
+    set<Tile*> move_tiles;
+    generate_move_tiles(character_tile, character_tile, range, &move_tiles);
+
+    vector<Tile*> ret;
+    copy(move_tiles.begin(), move_tiles.end(), back_inserter(ret));
+    return ret;
+}
+
+// recursively generate all of the tiles a character can move to
+void Grid::generate_move_tiles(Tile* character_tile, Tile* current_tile, int range, set<Tile*>* move_tiles) {
+    int dist = distance(character_tile->get_x(), character_tile->get_y(),
+                        current_tile->get_x(), current_tile->get_y());
+    if (dist > range) return;
+
+    if (current_tile->is_standable() && move_tiles->count(current_tile) == 0) {
+        move_tiles->insert(current_tile);
+
+        vector<Tile*> nbrs = get_neighbors(current_tile);
+        for (int i = 0; i < nbrs.size(); i++) {
+            generate_move_tiles(character_tile, nbrs[i], range, move_tiles);
+        }
+    }
+
+}
+
 void Grid::play_ai_turn(SDL_Surface* surface, SDL_Surface* screen) {
     for (int i = 0; i < enemy_characters.size(); i++) {
         Character* character = enemy_characters[i]; 
@@ -229,30 +283,29 @@ void Grid::play_ai_turn(SDL_Surface* surface, SDL_Surface* screen) {
 bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
     Character* cur_char = grid[j][i]->get_character();
     if (cur_char == NULL) { return false; }
-
     if (cur_char->get_player() != current_player) return false;
 
     int mobility = cur_char->get_mobility();
+    vector<Tile*> move_tiles = get_move_tiles(get(i, j), mobility);
 
-    // don't do anything if we try to move outside our mobility
-    if (distance(i, j, x, y) > mobility) return false;
 
     Tile* selected_tile = grid[y][x];
 
     // move if we picked an empty square
     if (selected_tile->get_character() == NULL) {
-        selected_tile->set_character(cur_char);
-        grid[j][i]->set_character(NULL);
+        for (int k = 0; k < move_tiles.size(); k++) {
+            if (move_tiles[k] == selected_tile) {
+                selected_tile->set_character(cur_char);
+                grid[j][i]->set_character(NULL);
 
-        cur_char->set_moved_this_turn(true);
-    } else return false;
+                cur_char->set_moved_this_turn(true);
 
-    get(i, j)->set_selected(false);
-    select_move_tiles(i, j, mobility, false);
+                return true;
+            }
+        }
+    }
 
-    draw_grid(surface);
-
-    return true;
+    return false;
 
     //grid[i][j]->get_character()->move(i, j, x, y, surface);
 }

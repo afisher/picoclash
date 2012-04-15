@@ -16,6 +16,11 @@ void MovingState::execute(SDL_Event event, SDL_Surface* surface) {
         bool success = Grid::move(selected_tile->get_x(), selected_tile->get_y(), x, y, surface);
 
         if (success) {
+            selected_tile->set_selected(false);
+            Grid::select_move_tiles(selected_tile->get_x(), selected_tile->get_y(), selected_character->get_mobility(), false);
+
+            Grid::draw_grid(surface);
+
             StateMachine::set_selected_tile(Grid::get(selected_character->get_x(),
                                                       selected_character->get_y()));
             StateMachine::get_selected_tile()->set_selected(true);
