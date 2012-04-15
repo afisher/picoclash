@@ -7,6 +7,7 @@ SDL_Surface* Tile::alt_image      = NULL;
 SDL_Surface* Tile::selected_image = NULL;
 SDL_Surface* Tile::move_image     = NULL;
 SDL_Surface* Tile::attack_image   = NULL;
+SDL_Surface* Tile::heal_image     = NULL;
 
 Tile::Tile(int i, int j) {
     x = i;
@@ -20,6 +21,7 @@ Tile::Tile(int i, int j) {
     selected  = false;
     move_on   = false;
     attack_on = false;
+    heal_on   = false;
 
     update_image();
     update_overlay_image();
@@ -49,6 +51,7 @@ Tile::Tile(int i, int j, int type) {
     selected  = false;
     move_on   = false;
     attack_on = false;
+    heal_on   = false;
 
     // add new character to the list of characters in the grid
     if (character != NULL) {
@@ -81,6 +84,11 @@ void Tile::set_attack_on(bool s) {
     update_overlay_image();
 }
 
+void Tile::set_heal_on(bool s) {
+    heal_on = s;
+    update_overlay_image();
+}
+
 void Tile::set_character(Character* c) { 
     character = c;
     if (character != NULL) {
@@ -103,6 +111,8 @@ void Tile::update_overlay_image() {
         overlay_image = move_image;
     } else if (attack_on) {
         overlay_image = attack_image;
+    } else if (heal_on) {
+        overlay_image = heal_image;
     } else {
         overlay_image = NULL;
     }

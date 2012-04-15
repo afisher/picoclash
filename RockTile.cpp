@@ -7,6 +7,7 @@ SDL_Surface* RockTile::alt_image      = NULL;
 SDL_Surface* RockTile::selected_image = NULL;
 SDL_Surface* RockTile::move_image     = NULL;
 SDL_Surface* RockTile::attack_image   = NULL;
+SDL_Surface* RockTile::heal_image     = NULL;
 
 RockTile::RockTile(int i, int j) : Tile(i, j) {
     update_image();
@@ -20,6 +21,8 @@ void RockTile::update_overlay_image() {
         overlay_image = move_image;
     } else if (attack_on) {
         overlay_image = attack_image;
+    } else if (heal_on) {
+        overlay_image = heal_image;
     } else {
         overlay_image = NULL;
     }

@@ -142,6 +142,22 @@ bool Grid::show_attack_tiles(int i, int j, SDL_Surface* surface, bool show) {
     return true;
 }
 
+bool Grid::show_heal_tiles(int i, int j, SDL_Surface* surface, bool show) {
+    Character* selected_character = grid[j][i]->get_character();
+    //if (selected_character->get_player() != current_player) return false;
+
+    int range = 0;
+
+    if (selected_character != NULL) {
+        range = selected_character->get_range();
+        select_heal_tiles(i, j, range, show);
+    } else return false;
+
+    draw_grid(surface);
+
+    return true;
+}
+
 void Grid::select_tiles(int i, int j, int range, bool show) {
     // interate over the range*range square
     for (int x = i - range; x <= i + range; x++) {
@@ -181,6 +197,19 @@ void Grid::select_attack_tiles(int i, int j, int range, bool show) {
             if (distance(i, j, x, y) <= range && x < Constants::GRID_WIDTH && y < Constants::GRID_HEIGHT
                                               && x >= 0 && y >= 0) {
                 grid[y][x]->set_attack_on(show);
+            }
+        }
+    }
+}
+
+void Grid::select_heal_tiles(int i, int j, int range, bool show) {
+    // interate over the range*range square
+    for (int x = i - range; x <= i + range; x++) {
+        for (int y = j - range; y <= j + range; y++) {
+            // if the tile is within the range, light it up
+            if (distance(i, j, x, y) <= range && x < Constants::GRID_WIDTH && y < Constants::GRID_HEIGHT
+                                              && x >= 0 && y >= 0) {
+                grid[y][x]->set_heal_on(show);
             }
         }
     }
@@ -256,8 +285,7 @@ vector<Tile*> Grid::get_move_tiles(Tile* character_tile, int range) {
 
 // recursively generate all of the tiles a character can move to
 void Grid::generate_move_tiles(Tile* character_tile, Tile* current_tile, int range, set<Tile*>* move_tiles) {
-    int dist = distance(character_tile->get_x(), character_tile->get_y(),
-                        current_tile->get_x(), current_tile->get_y());
+    int dist = distance(character_tile, current_tile);
     if (dist > range) return;
 
     if (current_tile->is_standable() && move_tiles->count(current_tile) == 0) {
@@ -382,6 +410,10 @@ bool Grid::heal(int i, int j, int x, int y, SDL_Surface* surface) {
 
 int Grid::distance(int i, int j, int x, int y) {
     return abs(i - x) + abs(j - y);
+}
+
+int Grid::distance(Tile* tile1, Tile* tile2) {
+    return abs(tile1->get_x() - tile2->get_x()) + abs(tile1->get_y() - tile2->get_y());
 }
 
 void Grid::new_turn() {

@@ -152,16 +152,18 @@ int main(int argc, char* args[]) {
                                    Constants::SCREEN_BPP, 0, 0, 0, 0);
 
     Tile::default_image  = Util::load_image("sprites/grass-plain.png");
-    Tile::alt_image      = Util::load_image("sprites/grass-busy.png");
-    Tile::selected_image = Util::load_image("sprites/grass2-selected.png");
-    Tile::move_image     = Util::load_image("sprites/grass-move.png");
-    Tile::attack_image   = Util::load_image("sprites/grass-attack.png");
+    Tile::alt_image      = Util::load_image("sprites/grass-alt.png");
+    Tile::selected_image = Util::load_image("sprites/overlay-selected.png");
+    Tile::move_image     = Util::load_image("sprites/overlay-move.png");
+    Tile::attack_image   = Util::load_image("sprites/overlay-attack.png");
+    Tile::heal_image     = Util::load_image("sprites/overlay-heal.png");
 
     RockTile::default_image  = Util::load_image("sprites/rock.png");
     RockTile::alt_image      = Util::load_image("sprites/rock.png");
-    RockTile::selected_image = Util::load_image("sprites/grass2-selected.png");
-    RockTile::move_image     = Util::load_image("sprites/grass-move.png");
-    RockTile::attack_image   = Util::load_image("sprites/grass-attack.png");
+    RockTile::selected_image = Util::load_image("sprites/overlay-selected.png");
+    RockTile::move_image     = Util::load_image("sprites/overlay-move.png");
+    RockTile::attack_image   = Util::load_image("sprites/overlay-attack.png");
+    RockTile::heal_image     = Util::load_image("sprites/overlay-heal.png");
 
     if (screen == NULL)   return 1;
     if (TTF_Init() == -1) return 1;

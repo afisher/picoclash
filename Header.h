@@ -83,6 +83,7 @@ class Tile {
         bool selected;
         bool move_on;
         bool attack_on;
+        bool heal_on;
 
         bool use_alt; // whether or not this tile uses the alt image
 
@@ -99,6 +100,7 @@ class Tile {
         void set_selected(bool s);
         void set_move_on(bool s);
         void set_attack_on(bool s);
+        void set_heal_on(bool s);
         void set_character(Character* c);
 
         bool         get_selected();
@@ -114,6 +116,7 @@ class Tile {
         static SDL_Surface* selected_image; 
         static SDL_Surface* move_image; 
         static SDL_Surface* attack_image; 
+        static SDL_Surface* heal_image; 
         static SDL_Surface* alt_image; 
         static SDL_Surface* default_image;  
 
@@ -137,6 +140,7 @@ class RockTile : public Tile {
         static SDL_Surface* selected_image; 
         static SDL_Surface* move_image; 
         static SDL_Surface* attack_image; 
+        static SDL_Surface* heal_image; 
         static SDL_Surface* alt_image; 
         static SDL_Surface* default_image;  
 };
@@ -235,13 +239,16 @@ class Grid {
         static void add_enemy_character(Character* c);
 
         static int distance(int i, int j, int x, int y);
+        static int distance(Tile* tile1, Tile* tile2);
 
         static void select_tiles       (int i, int j, int range, bool show);
         static void select_move_tiles  (int i, int j, int range, bool show);
         static void select_attack_tiles(int i, int j, int range, bool show);
+        static void select_heal_tiles(int i, int j, int range, bool show);
 
         static bool show_move_tiles  (int i, int j, SDL_Surface* surface, bool show);
         static bool show_attack_tiles(int i, int j, SDL_Surface* surface, bool show);
+        static bool show_heal_tiles(int i, int j, SDL_Surface* surface, bool show);
 
         static std::vector<Tile*> get_neighbors(Tile* tile);
         static std::vector<Tile*> get_character_tiles(int player);

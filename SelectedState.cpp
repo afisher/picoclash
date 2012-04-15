@@ -61,8 +61,8 @@ void SelectedState::execute(SDL_Event event, SDL_Surface* surface) {
                 if (selected_character != NULL && selected_character->can_heal()
                         && !((Healer*)selected_character)->get_healed_this_turn()) {
                     // just use the attack range for now
-                    bool success = Grid::show_attack_tiles(selected_character->get_x(),
-                                                           selected_character->get_y(), surface, true);
+                    bool success = Grid::show_heal_tiles(selected_character->get_x(),
+                                                         selected_character->get_y(), surface, true);
 
                     if (success) {
                         StateMachine::set_previous_state(this);
