@@ -240,7 +240,6 @@ class Grid {
 
         static int distance(int i, int j, int x, int y);
         static int distance(Tile* tile1, Tile* tile2);
-        static int real_distance(Tile* tile1, Tile* tile2);
         static int real_distance(Tile* tile1, Tile* tile2, std::set<Tile*>* traversed);
         static double sqrt_distance(Tile* tile1, Tile* tile2);
 

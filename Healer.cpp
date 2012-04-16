@@ -49,7 +49,8 @@ void Healer::move(SDL_Surface* surface) {
     Tile* closest_enemy_tile = NULL;
     for (int i = 0; i < enemies.size(); i++) {
         int dist = Grid::distance(x, y, enemies[i]->get_x(), enemies[i]->get_y());
-        if (dist < min_dist && dist != 0) {
+        Character* cur_char = Grid::get(enemies[i]->get_x(), enemies[i]->get_y())->get_character();
+        if (dist < min_dist && dist != 0 && cur_char != NULL && !cur_char->can_heal()) {
             min_dist = dist;
             closest_enemy_tile = Grid::get(enemies[i]->get_x(), enemies[i]->get_y());
         }

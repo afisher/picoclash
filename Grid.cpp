@@ -416,11 +416,7 @@ int Grid::distance(Tile* tile1, Tile* tile2) {
     return abs(tile1->get_x() - tile2->get_x()) + abs(tile1->get_y() - tile2->get_y());
 }
 
-int Grid::real_distance(Tile* tile1, Tile* tile2) {
-    set<Tile*> traversed;
-    return real_distance(tile1, tile2, &traversed);
-}
-
+// returns distance with obstacles taken into account
 int Grid::real_distance(Tile* tile1, Tile* tile2, set<Tile*>* traversed) {
     if (tile1 == tile2) return 0;
 
