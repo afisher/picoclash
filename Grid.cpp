@@ -409,55 +409,8 @@ double Grid::sqrt_distance(Tile* tile1, Tile* tile2) {
     return sqrt(pow(tile1->get_x() - tile2->get_x(), 2) + pow(tile1->get_y() - tile2->get_y(), 2));
 }
 
-// returns distance with obstacles taken into account
-int Grid::real_distance(Tile* tile1, Tile* tile2, set<Tile*>* traversed) {
-    /*if (tile1 == tile2) return 0;
-
-    traversed->insert(tile1);
-    vector<Tile*> nbrs = get_neighbors(tile1);
-
-    Tile* closest_nbr = NULL;
-    double min_dist = 99999;
-    for (int i = 0; i < nbrs.size(); i++) {
-        double dist = sqrt_distance(nbrs[i], tile2);
-        if (dist <= min_dist && nbrs[i]->is_standable() && traversed->count(nbrs[i]) == 0) {
-            min_dist = dist;
-            closest_nbr = nbrs[i];
-        } else if (!nbrs[i]->is_standable()) {
-            traversed->insert(nbrs[i]);
-        }
-    }
-
-    if (closest_nbr == NULL) return 9999999; 
-    return 1 + real_distance(closest_nbr, tile2, traversed);*/
-
-    if (tile1 == tile2) return 0;
-
-    traversed->insert(tile1);
-    vector<Tile*> nbrs = get_neighbors(tile1);
-    
-    int min_dist = INT_MAX;
-    Tile* closest_nbr = NULL;
-
-    for (int i = 0; i < nbrs.size(); i++) {
-        set<Tile*> move_set = *traversed;
-
-        if (move_set.count(nbrs[i]) == 0 && nbrs[i]->is_standable()) {
-            int dist = real_distance(nbrs[i], tile2, &move_set);
-            if (dist < min_dist) {
-                min_dist = dist;
-                closest_nbr = nbrs[i];
-            }
-        } else if (!nbrs[i]->is_standable()) {
-            move_set.insert(nbrs[i]);
-            traversed->insert(nbrs[i]);
-        }
-    }
-
-    //if (closest_nbr == NULL) return 9999999; 
-    return min_dist;
-}
-
+// translated from psuedocode found at
+// http://en.wikipedia.org/wiki/A*_search_algorithm
 vector<Tile*> Grid::path_search(Tile* start, Tile* end) {
     set<Tile*> open_set;
     open_set.insert(start);
