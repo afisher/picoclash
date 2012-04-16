@@ -172,17 +172,6 @@ void Grid::select_tiles(int i, int j, int range, bool show) {
 }
 
 void Grid::select_move_tiles(int i, int j, int range, bool show) {
-    /*// interate over the range*range square
-    for (int x = i - range; x <= i + range; x++) {
-        for (int y = j - range; y <= j + range; y++) {
-            // if the tile is within the range, light it up
-            if (distance(i, j, x, y) <= range && x < Constants::GRID_WIDTH && y < Constants::GRID_HEIGHT
-                                              && x >= 0 && y >= 0) {
-                grid[y][x]->set_move_on(show);
-            }
-        }
-    }*/
-
     vector<Tile*> move_tiles = get_move_tiles(get(i, j), range);
     for (int k = 0; k < move_tiles.size(); k++) {
         move_tiles[k]->set_move_on(show);
@@ -302,7 +291,7 @@ void Grid::generate_move_tiles(Tile* character_tile, Tile* current_tile, int ran
 void Grid::play_ai_turn(SDL_Surface* surface, SDL_Surface* screen) {
     for (int i = 0; i < enemy_characters.size(); i++) {
         Character* character = enemy_characters[i]; 
-        if (character != NULL) {
+        if (character != NULL && player_characters.size() > 0) {
             character->play_turn(surface, screen);
         }
     }
@@ -416,30 +405,161 @@ int Grid::distance(Tile* tile1, Tile* tile2) {
     return abs(tile1->get_x() - tile2->get_x()) + abs(tile1->get_y() - tile2->get_y());
 }
 
+double Grid::sqrt_distance(Tile* tile1, Tile* tile2) {
+    return sqrt(pow(tile1->get_x() - tile2->get_x(), 2) + pow(tile1->get_y() - tile2->get_y(), 2));
+}
+
 // returns distance with obstacles taken into account
 int Grid::real_distance(Tile* tile1, Tile* tile2, set<Tile*>* traversed) {
-    if (tile1 == tile2) return 0;
+    /*if (tile1 == tile2) return 0;
 
     traversed->insert(tile1);
     vector<Tile*> nbrs = get_neighbors(tile1);
 
     Tile* closest_nbr = NULL;
-    double min_dist = 99999999;
+    double min_dist = 99999;
     for (int i = 0; i < nbrs.size(); i++) {
         double dist = sqrt_distance(nbrs[i], tile2);
         if (dist <= min_dist && nbrs[i]->is_standable() && traversed->count(nbrs[i]) == 0) {
             min_dist = dist;
             closest_nbr = nbrs[i];
+        } else if (!nbrs[i]->is_standable()) {
+            traversed->insert(nbrs[i]);
         }
     }
 
-    if (closest_nbr == NULL) return 99999;
+    if (closest_nbr == NULL) return 9999999; 
+    return 1 + real_distance(closest_nbr, tile2, traversed);*/
 
-    return 1 + real_distance(closest_nbr, tile2, traversed);
+    if (tile1 == tile2) return 0;
+
+    traversed->insert(tile1);
+    vector<Tile*> nbrs = get_neighbors(tile1);
+    
+    int min_dist = INT_MAX;
+    Tile* closest_nbr = NULL;
+
+    for (int i = 0; i < nbrs.size(); i++) {
+        set<Tile*> move_set = *traversed;
+
+        if (move_set.count(nbrs[i]) == 0 && nbrs[i]->is_standable()) {
+            int dist = real_distance(nbrs[i], tile2, &move_set);
+            if (dist < min_dist) {
+                min_dist = dist;
+                closest_nbr = nbrs[i];
+            }
+        } else if (!nbrs[i]->is_standable()) {
+            move_set.insert(nbrs[i]);
+            traversed->insert(nbrs[i]);
+        }
+    }
+
+    //if (closest_nbr == NULL) return 9999999; 
+    return min_dist;
 }
 
-double Grid::sqrt_distance(Tile* tile1, Tile* tile2) {
-    return sqrt(pow(tile1->get_x() - tile2->get_x(), 2) + pow(tile1->get_y() - tile2->get_y(), 2));
+vector<Tile*> Grid::path_search(Tile* start, Tile* end) {
+    set<Tile*> open_set;
+    open_set.insert(start);
+
+    set<Tile*> closed_set;
+
+    int g_score[Constants::GRID_HEIGHT][Constants::GRID_WIDTH];
+    int h_score[Constants::GRID_HEIGHT][Constants::GRID_WIDTH];
+    int f_score[Constants::GRID_HEIGHT][Constants::GRID_WIDTH];
+    vector<vector<Tile*> > came_from;
+    for (int i = 0; i < Constants::GRID_HEIGHT; i++) {
+        vector<Tile*> temp;
+        came_from.push_back(temp);
+        for (int j = 0; j < Constants::GRID_WIDTH; j++) {
+            came_from[i].push_back(NULL);
+        }
+    }
+
+    g_score[start->get_y()][start->get_x()] = 0;
+    h_score[start->get_y()][start->get_x()] = distance(start, end);
+    f_score[start->get_y()][start->get_x()] = distance(start, end);
+
+    while (open_set.size() > 0) {
+        Tile* current;
+
+        vector<Tile*> open_tiles;
+        copy(open_set.begin(), open_set.end(), back_inserter(open_tiles));
+
+        int min = INT_MAX;
+        for (int i = 0; i < open_tiles.size(); i++) {
+            int x = open_tiles[i]->get_x();
+            int y = open_tiles[i]->get_y();
+
+            if (f_score[y][x] < min) {
+                current = open_tiles[i];
+                min = f_score[y][x];
+            }
+        } 
+
+        if (current == end) {
+            //return reconstruct_path(came_from, came_from[end->get_y()][end->get_x()]);
+            return reconstruct_path(came_from, end);
+        }
+
+        open_set.erase(current);
+        closed_set.insert(current);
+
+        int x = current->get_x();
+        int y = current->get_y();
+
+        vector<Tile*> nbrs = get_neighbors(current);
+        for (int i = 0; i < nbrs.size(); i++) {
+            if (nbrs[i]->is_standable()) {
+                int nbr_x = nbrs[i]->get_x();
+                int nbr_y = nbrs[i]->get_y();
+
+                if (closed_set.count(nbrs[i]) != 0) {
+                    continue;
+                }
+
+                int tentative_g_score = g_score[y][x] + distance(current, nbrs[i]);
+                bool tentative_is_better = false;
+
+                if (open_set.count(nbrs[i]) == 0) {
+                    open_set.insert(nbrs[i]);
+                    h_score[nbr_y][nbr_x] = distance(nbrs[i], end);
+                    tentative_is_better = true;
+                } else if (tentative_g_score < g_score[nbr_y][nbr_x]) {
+                    tentative_is_better = true;
+                }
+
+                if (tentative_is_better) {
+                    came_from[nbr_y][nbr_x] = current;
+                    g_score[nbr_y][nbr_x] = tentative_g_score;
+                    f_score[nbr_y][nbr_x] = g_score[nbr_y][nbr_x] + h_score[nbr_y][nbr_x];
+                }
+            }
+        }
+    }
+    
+    vector<Tile*> ret;
+    return ret;
+}
+
+vector<Tile*> Grid::reconstruct_path(vector<vector<Tile*> > came_from, Tile* current) {
+    int x;
+    int y;
+
+    if (current != NULL) {
+        x = current->get_x();
+        y = current->get_y();
+    }
+
+    if (current != NULL && came_from[y][x] != NULL) {
+        vector<Tile*> p = reconstruct_path(came_from, came_from[y][x]);
+        p.push_back(current);
+        return p;
+    } else {
+        vector<Tile*> p;
+        p.push_back(current);
+        return p;
+    }
 }
 
 void Grid::new_turn() {

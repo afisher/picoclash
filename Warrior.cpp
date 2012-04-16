@@ -46,32 +46,13 @@ void Warrior::move(SDL_Surface* surface) {
 
     if (closest_enemy_tile == NULL) return;
 
-    for (int i = 0; i < move_tiles.size(); i++) {
-        vector<Tile*> nbrs = Grid::get_neighbors(move_tiles[i]);
-        for (int j = 0; j < nbrs.size(); j++) {
-            if (nbrs[j] == closest_enemy_tile) {
-                Grid::move(x, y, move_tiles[i]->get_x(), move_tiles[i]->get_y(), surface);
-                return;
-            }
-        }
-    }
-
-    min_dist = INT_MAX; 
     Tile* closest_move_tile = NULL;
 
-    for (int i = 0; i < move_tiles.size(); i++) {
-        if (move_tiles[i]->get_character() == NULL) {
-            set<Tile*> move_set;
-            for (int j = 0; j < move_tiles.size(); j++) {
-                move_set.insert(move_tiles[j]);
-            }
-
-            int dist = Grid::real_distance(move_tiles[i], closest_enemy_tile, &move_set);
-            if (dist < min_dist && dist != 0) {
-                min_dist = dist;
-                closest_move_tile = move_tiles[i];
-            }
-        }
+    vector<Tile*> path = Grid::path_search(Grid::get(x, y), closest_enemy_tile);
+    int size = path.size();
+    if (size > 1) {
+        int index = min(size-2, mobility);
+        closest_move_tile = path[index];
     }
 
     if (closest_move_tile != NULL) {

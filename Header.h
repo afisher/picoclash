@@ -5,11 +5,13 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <iterator>
 #include <iostream>
 #include <climits>
 #include <cmath>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -266,6 +268,9 @@ class Grid {
         static bool move  (int i, int j, int x, int y, SDL_Surface* surface);
         static bool attack(int i, int j, int x, int y, SDL_Surface* surface);
         static bool heal  (int i, int j, int x, int y, SDL_Surface* surface);
+
+        static vector<Tile*> path_search(Tile* start, Tile* end);
+        static vector<Tile*> reconstruct_path(std::vector<std::vector<Tile*> > came_from, Tile* current);
 
         static void new_turn();
 };
