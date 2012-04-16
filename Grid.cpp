@@ -416,6 +416,36 @@ int Grid::distance(Tile* tile1, Tile* tile2) {
     return abs(tile1->get_x() - tile2->get_x()) + abs(tile1->get_y() - tile2->get_y());
 }
 
+int Grid::real_distance(Tile* tile1, Tile* tile2) {
+    set<Tile*> traversed;
+    return real_distance(tile1, tile2, &traversed);
+}
+
+int Grid::real_distance(Tile* tile1, Tile* tile2, set<Tile*>* traversed) {
+    if (tile1 == tile2) return 0;
+
+    traversed->insert(tile1);
+    vector<Tile*> nbrs = get_neighbors(tile1);
+
+    Tile* closest_nbr = NULL;
+    double min_dist = 99999999;
+    for (int i = 0; i < nbrs.size(); i++) {
+        double dist = sqrt_distance(nbrs[i], tile2);
+        if (dist <= min_dist && nbrs[i]->is_standable() && traversed->count(nbrs[i]) == 0) {
+            min_dist = dist;
+            closest_nbr = nbrs[i];
+        }
+    }
+
+    if (closest_nbr == NULL) return 99999;
+
+    return 1 + real_distance(closest_nbr, tile2, traversed);
+}
+
+double Grid::sqrt_distance(Tile* tile1, Tile* tile2) {
+    return sqrt(pow(tile1->get_x() - tile2->get_x(), 2) + pow(tile1->get_y() - tile2->get_y(), 2));
+}
+
 void Grid::new_turn() {
     for (int j = 0; j < Constants::GRID_HEIGHT; j++) {
         for (int i = 0; i < Constants::GRID_WIDTH; i++) {
