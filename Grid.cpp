@@ -34,6 +34,8 @@ void Grid::load_file() {
                     grid[j][i] = new Tile(i, j, Constants::ENEMY_ARCHER);   break;
                 case 'H':
                     grid[j][i] = new Tile(i, j, Constants::ENEMY_HEALER);   break;
+                case 'o':
+                    grid[j][i] = new RockTile(i, j); break;
                 default:
                     grid[j][i] = new Tile(i, j);
             }
@@ -140,6 +142,22 @@ bool Grid::show_attack_tiles(int i, int j, SDL_Surface* surface, bool show) {
     return true;
 }
 
+bool Grid::show_heal_tiles(int i, int j, SDL_Surface* surface, bool show) {
+    Character* selected_character = grid[j][i]->get_character();
+    //if (selected_character->get_player() != current_player) return false;
+
+    int range = 0;
+
+    if (selected_character != NULL) {
+        range = selected_character->get_range();
+        select_heal_tiles(i, j, range, show);
+    } else return false;
+
+    draw_grid(surface);
+
+    return true;
+}
+
 void Grid::select_tiles(int i, int j, int range, bool show) {
     // interate over the range*range square
     for (int x = i - range; x <= i + range; x++) {
@@ -154,15 +172,9 @@ void Grid::select_tiles(int i, int j, int range, bool show) {
 }
 
 void Grid::select_move_tiles(int i, int j, int range, bool show) {
-    // interate over the range*range square
-    for (int x = i - range; x <= i + range; x++) {
-        for (int y = j - range; y <= j + range; y++) {
-            // if the tile is within the range, light it up
-            if (distance(i, j, x, y) <= range && x < Constants::GRID_WIDTH && y < Constants::GRID_HEIGHT
-                                              && x >= 0 && y >= 0) {
-                grid[y][x]->set_move_on(show);
-            }
-        }
+    vector<Tile*> move_tiles = get_move_tiles(get(i, j), range);
+    for (int k = 0; k < move_tiles.size(); k++) {
+        move_tiles[k]->set_move_on(show);
     }
 }
 
@@ -174,6 +186,19 @@ void Grid::select_attack_tiles(int i, int j, int range, bool show) {
             if (distance(i, j, x, y) <= range && x < Constants::GRID_WIDTH && y < Constants::GRID_HEIGHT
                                               && x >= 0 && y >= 0) {
                 grid[y][x]->set_attack_on(show);
+            }
+        }
+    }
+}
+
+void Grid::select_heal_tiles(int i, int j, int range, bool show) {
+    // interate over the range*range square
+    for (int x = i - range; x <= i + range; x++) {
+        for (int y = j - range; y <= j + range; y++) {
+            // if the tile is within the range, light it up
+            if (distance(i, j, x, y) <= range && x < Constants::GRID_WIDTH && y < Constants::GRID_HEIGHT
+                                              && x >= 0 && y >= 0) {
+                grid[y][x]->set_heal_on(show);
             }
         }
     }
@@ -193,6 +218,27 @@ vector<Tile*> Grid::get_character_tiles(int player) {
             }
         }
     }
+
+    return ret;
+}
+
+vector<Tile*> Grid::get_neighbors(Tile* tile) {
+    vector<Tile*> ret;
+
+    int i = tile->get_x();
+    int j = tile->get_y();
+
+    // get left
+    if (i > 0) ret.push_back(get(i-1, j));
+
+    // get right
+    if (i < Constants::GRID_WIDTH - 1) ret.push_back(get(i+1, j));
+
+    // get up
+    if (j > 0) ret.push_back(get(i, j-1));
+
+    // get down
+    if (j < Constants::GRID_HEIGHT - 1) ret.push_back(get(i, j+1));
 
     return ret;
 }
@@ -217,10 +263,35 @@ vector<Tile*> Grid::get_range_tiles(Tile* character_tile, int range) {
     return ret;
 }
 
+vector<Tile*> Grid::get_move_tiles(Tile* character_tile, int range) {
+    set<Tile*> move_tiles;
+    generate_move_tiles(character_tile, character_tile, range, &move_tiles);
+
+    vector<Tile*> ret;
+    copy(move_tiles.begin(), move_tiles.end(), back_inserter(ret));
+    return ret;
+}
+
+// recursively generate all of the tiles a character can move to
+void Grid::generate_move_tiles(Tile* character_tile, Tile* current_tile, int range, set<Tile*>* move_tiles) {
+    int dist = distance(character_tile, current_tile);
+    if (dist > range) return;
+
+    if (current_tile->is_standable() && move_tiles->count(current_tile) == 0) {
+        move_tiles->insert(current_tile);
+
+        vector<Tile*> nbrs = get_neighbors(current_tile);
+        for (int i = 0; i < nbrs.size(); i++) {
+            generate_move_tiles(character_tile, nbrs[i], range, move_tiles);
+        }
+    }
+
+}
+
 void Grid::play_ai_turn(SDL_Surface* surface, SDL_Surface* screen) {
     for (int i = 0; i < enemy_characters.size(); i++) {
         Character* character = enemy_characters[i]; 
-        if (character != NULL) {
+        if (character != NULL && player_characters.size() > 0) {
             character->play_turn(surface, screen);
         }
     }
@@ -229,30 +300,29 @@ void Grid::play_ai_turn(SDL_Surface* surface, SDL_Surface* screen) {
 bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
     Character* cur_char = grid[j][i]->get_character();
     if (cur_char == NULL) { return false; }
-
     if (cur_char->get_player() != current_player) return false;
 
     int mobility = cur_char->get_mobility();
+    vector<Tile*> move_tiles = get_move_tiles(get(i, j), mobility);
 
-    // don't do anything if we try to move outside our mobility
-    if (distance(i, j, x, y) > mobility) return false;
 
     Tile* selected_tile = grid[y][x];
 
     // move if we picked an empty square
     if (selected_tile->get_character() == NULL) {
-        selected_tile->set_character(cur_char);
-        grid[j][i]->set_character(NULL);
+        for (int k = 0; k < move_tiles.size(); k++) {
+            if (move_tiles[k] == selected_tile) {
+                selected_tile->set_character(cur_char);
+                grid[j][i]->set_character(NULL);
 
-        cur_char->set_moved_this_turn(true);
-    } else return false;
+                cur_char->set_moved_this_turn(true);
 
-    get(i, j)->set_selected(false);
-    select_move_tiles(i, j, mobility, false);
+                return true;
+            }
+        }
+    }
 
-    draw_grid(surface);
-
-    return true;
+    return false;
 
     //grid[i][j]->get_character()->move(i, j, x, y, surface);
 }
@@ -329,6 +399,120 @@ bool Grid::heal(int i, int j, int x, int y, SDL_Surface* surface) {
 
 int Grid::distance(int i, int j, int x, int y) {
     return abs(i - x) + abs(j - y);
+}
+
+int Grid::distance(Tile* tile1, Tile* tile2) {
+    return abs(tile1->get_x() - tile2->get_x()) + abs(tile1->get_y() - tile2->get_y());
+}
+
+double Grid::sqrt_distance(Tile* tile1, Tile* tile2) {
+    return sqrt(pow(tile1->get_x() - tile2->get_x(), 2) + pow(tile1->get_y() - tile2->get_y(), 2));
+}
+
+// translated from psuedocode found at
+// http://en.wikipedia.org/wiki/A*_search_algorithm
+vector<Tile*> Grid::path_search(Tile* start, Tile* end) {
+    set<Tile*> open_set;
+    open_set.insert(start);
+
+    set<Tile*> closed_set;
+
+    int g_score[Constants::GRID_HEIGHT][Constants::GRID_WIDTH];
+    int h_score[Constants::GRID_HEIGHT][Constants::GRID_WIDTH];
+    int f_score[Constants::GRID_HEIGHT][Constants::GRID_WIDTH];
+    vector<vector<Tile*> > came_from;
+    for (int i = 0; i < Constants::GRID_HEIGHT; i++) {
+        vector<Tile*> temp;
+        came_from.push_back(temp);
+        for (int j = 0; j < Constants::GRID_WIDTH; j++) {
+            came_from[i].push_back(NULL);
+        }
+    }
+
+    g_score[start->get_y()][start->get_x()] = 0;
+    h_score[start->get_y()][start->get_x()] = distance(start, end);
+    f_score[start->get_y()][start->get_x()] = distance(start, end);
+
+    while (open_set.size() > 0) {
+        Tile* current;
+
+        vector<Tile*> open_tiles;
+        copy(open_set.begin(), open_set.end(), back_inserter(open_tiles));
+
+        int min = INT_MAX;
+        for (int i = 0; i < open_tiles.size(); i++) {
+            int x = open_tiles[i]->get_x();
+            int y = open_tiles[i]->get_y();
+
+            if (f_score[y][x] < min) {
+                current = open_tiles[i];
+                min = f_score[y][x];
+            }
+        } 
+
+        if (current == end) {
+            //return reconstruct_path(came_from, came_from[end->get_y()][end->get_x()]);
+            return reconstruct_path(came_from, end);
+        }
+
+        open_set.erase(current);
+        closed_set.insert(current);
+
+        int x = current->get_x();
+        int y = current->get_y();
+
+        vector<Tile*> nbrs = get_neighbors(current);
+        for (int i = 0; i < nbrs.size(); i++) {
+            if (nbrs[i]->is_standable()) {
+                int nbr_x = nbrs[i]->get_x();
+                int nbr_y = nbrs[i]->get_y();
+
+                if (closed_set.count(nbrs[i]) != 0) {
+                    continue;
+                }
+
+                int tentative_g_score = g_score[y][x] + distance(current, nbrs[i]);
+                bool tentative_is_better = false;
+
+                if (open_set.count(nbrs[i]) == 0) {
+                    open_set.insert(nbrs[i]);
+                    h_score[nbr_y][nbr_x] = distance(nbrs[i], end);
+                    tentative_is_better = true;
+                } else if (tentative_g_score < g_score[nbr_y][nbr_x]) {
+                    tentative_is_better = true;
+                }
+
+                if (tentative_is_better) {
+                    came_from[nbr_y][nbr_x] = current;
+                    g_score[nbr_y][nbr_x] = tentative_g_score;
+                    f_score[nbr_y][nbr_x] = g_score[nbr_y][nbr_x] + h_score[nbr_y][nbr_x];
+                }
+            }
+        }
+    }
+    
+    vector<Tile*> ret;
+    return ret;
+}
+
+vector<Tile*> Grid::reconstruct_path(vector<vector<Tile*> > came_from, Tile* current) {
+    int x;
+    int y;
+
+    if (current != NULL) {
+        x = current->get_x();
+        y = current->get_y();
+    }
+
+    if (current != NULL && came_from[y][x] != NULL) {
+        vector<Tile*> p = reconstruct_path(came_from, came_from[y][x]);
+        p.push_back(current);
+        return p;
+    } else {
+        vector<Tile*> p;
+        p.push_back(current);
+        return p;
+    }
 }
 
 void Grid::new_turn() {

@@ -4,11 +4,14 @@
 
 #include <string>
 #include <vector>
+#include <set>
+#include <iterator>
 #include <iostream>
 #include <climits>
 #include <cmath>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -73,7 +76,7 @@ class Character {
 };
 
 class Tile {
-    private:
+    protected:
         SDL_Surface* image;
         SDL_Surface* overlay_image;
 
@@ -82,14 +85,15 @@ class Tile {
         bool selected;
         bool move_on;
         bool attack_on;
+        bool heal_on;
 
         bool use_alt; // whether or not this tile uses the alt image
 
         int x;
         int y;
 
-        void update_image();
-        void update_overlay_image();
+        virtual void update_image();
+        virtual void update_overlay_image();
 
     public:
         Tile(int i, int j);
@@ -98,12 +102,15 @@ class Tile {
         void set_selected(bool s);
         void set_move_on(bool s);
         void set_attack_on(bool s);
+        void set_heal_on(bool s);
         void set_character(Character* c);
 
         bool         get_selected();
-        SDL_Surface* get_image();
-        SDL_Surface* get_overlay_image();
+        virtual SDL_Surface* get_image();
+        virtual SDL_Surface* get_overlay_image();
         Character*   get_character();
+
+        virtual bool is_standable();
 
         int get_x();
         int get_y();
@@ -111,10 +118,33 @@ class Tile {
         static SDL_Surface* selected_image; 
         static SDL_Surface* move_image; 
         static SDL_Surface* attack_image; 
+        static SDL_Surface* heal_image; 
         static SDL_Surface* alt_image; 
         static SDL_Surface* default_image;  
 
         void character_died();
+
+        bool operator<(Tile other);
+        bool operator>(Tile other);
+        bool operator==(Tile other);
+};
+
+class RockTile : public Tile {
+    public:
+        RockTile(int i, int j);
+        virtual bool is_standable();
+
+        virtual void update_image();
+        virtual void update_overlay_image();
+        virtual SDL_Surface* get_image();
+        virtual SDL_Surface* get_overlay_image();
+
+        static SDL_Surface* selected_image; 
+        static SDL_Surface* move_image; 
+        static SDL_Surface* attack_image; 
+        static SDL_Surface* heal_image; 
+        static SDL_Surface* alt_image; 
+        static SDL_Surface* default_image;  
 };
 
 class State {
@@ -211,22 +241,35 @@ class Grid {
         static void add_enemy_character(Character* c);
 
         static int distance(int i, int j, int x, int y);
+        static int distance(Tile* tile1, Tile* tile2);
+        static double sqrt_distance(Tile* tile1, Tile* tile2);
 
         static void select_tiles       (int i, int j, int range, bool show);
         static void select_move_tiles  (int i, int j, int range, bool show);
         static void select_attack_tiles(int i, int j, int range, bool show);
+        static void select_heal_tiles(int i, int j, int range, bool show);
 
         static bool show_move_tiles  (int i, int j, SDL_Surface* surface, bool show);
         static bool show_attack_tiles(int i, int j, SDL_Surface* surface, bool show);
+        static bool show_heal_tiles(int i, int j, SDL_Surface* surface, bool show);
 
+        static std::vector<Tile*> get_neighbors(Tile* tile);
         static std::vector<Tile*> get_character_tiles(int player);
         static std::vector<Tile*> get_range_tiles(Tile* character_tile, int range);
+        static std::vector<Tile*> get_move_tiles(Tile* character_tile, int range);
+
+        static void generate_move_tiles(Tile* character_tile, Tile* current_tile, int range, std::set<Tile*>* move_tiles);
+
+        static bool has_path(Tile* character_tile, Tile* destination, int range);
 
         static void play_ai_turn(SDL_Surface* surface, SDL_Surface* screen);
 
         static bool move  (int i, int j, int x, int y, SDL_Surface* surface);
         static bool attack(int i, int j, int x, int y, SDL_Surface* surface);
         static bool heal  (int i, int j, int x, int y, SDL_Surface* surface);
+
+        static vector<Tile*> path_search(Tile* start, Tile* end);
+        static vector<Tile*> reconstruct_path(std::vector<std::vector<Tile*> > came_from, Tile* current);
 
         static void new_turn();
 };

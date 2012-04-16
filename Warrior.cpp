@@ -30,23 +30,29 @@ void Warrior::set_values(int p, int lvl) {
 
 // moves toward the closest enemy
 void Warrior::move(SDL_Surface* surface) {
-    vector<Tile*> move_tiles = Grid::get_range_tiles(Grid::get(x, y), mobility);
+    vector<Tile*> move_tiles = Grid::get_move_tiles(Grid::get(x, y), mobility);
+
     vector<Character*> enemies = Grid::get_player_characters();
 
-    int min_dist = INT_MAX; 
+    int min_dist = INT_MAX;
+    Tile* closest_enemy_tile = NULL;
+    for (int i = 0; i < enemies.size(); i++) {
+        int dist = Grid::distance(x, y, enemies[i]->get_x(), enemies[i]->get_y());
+        if (dist < min_dist) {
+            min_dist = dist;
+            closest_enemy_tile = Grid::get(enemies[i]->get_x(), enemies[i]->get_y());
+        }
+    }
+
+    if (closest_enemy_tile == NULL) return;
+
     Tile* closest_move_tile = NULL;
 
-    for (int i = 0; i < move_tiles.size(); i++) {
-        if (move_tiles[i]->get_character() == NULL) {
-            for (int j = 0; j < enemies.size(); j++) {
-                int dist = Grid::distance(move_tiles[i]->get_x(), move_tiles[i]->get_y(),
-                                          enemies[j]->get_x(), enemies[j]->get_y());
-                if (dist < min_dist) {
-                    min_dist = dist;
-                    closest_move_tile = move_tiles[i];
-                }
-            }
-        }
+    vector<Tile*> path = Grid::path_search(Grid::get(x, y), closest_enemy_tile);
+    int size = path.size();
+    if (size > 1) {
+        int index = min(size-2, mobility);
+        closest_move_tile = path[index];
     }
 
     if (closest_move_tile != NULL) {

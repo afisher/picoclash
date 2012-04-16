@@ -26,7 +26,7 @@ void HealingState::execute(SDL_Event event, SDL_Surface* surface) {
         }
     } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE) {
         // this happens if we cancel
-        bool success = Grid::show_attack_tiles(selected_tile->get_x(),
+        bool success = Grid::show_heal_tiles(selected_tile->get_x(),
                                                selected_tile->get_y(), surface, false);
 
         Grid::get(selected_tile->get_x(), selected_tile->get_y())->set_selected(true);
