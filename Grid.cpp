@@ -10,6 +10,9 @@ int current_player = 1;
 SDL_Surface* Grid::grid_image = NULL;
 bool grid_on = true;
 
+SDL_Surface* Grid::sidebar = NULL;
+TTF_Font* Grid::font = NULL;
+
 // loads the test map into the grid
 void Grid::load_file() {
     std::ifstream file("testmap.txt");
@@ -451,7 +454,6 @@ vector<Tile*> Grid::path_search(Tile* start, Tile* end) {
         } 
 
         if (current == end) {
-            //return reconstruct_path(came_from, came_from[end->get_y()][end->get_x()]);
             return reconstruct_path(came_from, end);
         }
 
@@ -532,4 +534,117 @@ void Grid::new_turn() {
 
     if (current_player == 1) current_player = 2;
     else current_player = 1;
+}
+
+// this should probably go somewhere else, but here is fine for now...
+void Grid::draw_sidebar(SDL_Surface* surface) {
+    SDL_Color text_color = { 255, 255, 255 };
+    SDL_Color grey_color = { 130, 130, 130 };
+
+    Util::apply_surface(480, 0, sidebar, surface);
+
+    Tile* selected_tile = StateMachine::get_selected_tile();
+    Tile* inspected_tile = StateMachine::get_inspected_tile();
+
+    if (selected_tile == NULL || inspected_tile == NULL) return;
+
+    Character* selected_character = selected_tile->get_character();
+    Character* inspected_character = inspected_tile->get_character();
+
+    if (inspected_character != NULL) {
+        // Build stat info
+        stringstream health;
+        stringstream strength;
+        stringstream mobility;
+        stringstream range;
+
+        health   << "Health: "   << inspected_character->get_health()
+                 << " / "        << inspected_character->get_max_health();
+        strength << "Strength: " << inspected_character->get_strength();
+        mobility << "Mobility: " << inspected_character->get_mobility();
+        range    << "Range: "    << inspected_character->get_range();
+
+        SDL_Surface* health_stats   = TTF_RenderText_Solid(font, health.str().c_str(),   text_color);
+        SDL_Surface* strength_stats = TTF_RenderText_Solid(font, strength.str().c_str(), text_color);
+        SDL_Surface* mobility_stats = TTF_RenderText_Solid(font, mobility.str().c_str(), text_color);
+        SDL_Surface* range_stats    = TTF_RenderText_Solid(font, range.str().c_str(),    text_color);
+
+        Util::apply_surface(486, 10, health_stats, surface);
+        Util::apply_surface(486, 30, strength_stats, surface);
+        Util::apply_surface(486, 50, mobility_stats, surface);
+        Util::apply_surface(486, 70, range_stats, surface);
+
+        SDL_FreeSurface(health_stats);
+        SDL_FreeSurface(strength_stats);
+        SDL_FreeSurface(mobility_stats);
+        SDL_FreeSurface(range_stats);
+
+
+        if (StateMachine::get_selected_tile() != NULL && selected_character != NULL) {
+            // Build controls info
+            string move   = "z - Move";
+            string attack = "x - Attack";
+            string heal   = "c - Heal";
+
+            SDL_Color color;
+            if (selected_character->get_moved_this_turn()) {
+                color = grey_color;
+            } else {
+                color = text_color;
+            }
+            SDL_Surface* move_control = TTF_RenderText_Solid(font, move.c_str(), color);
+
+            if (selected_character->get_attacked_this_turn()) {
+                color = grey_color;
+            } else {
+                color = text_color;
+            }
+            SDL_Surface* attack_control = TTF_RenderText_Solid(font, attack.c_str(), color);
+
+            if (!selected_character->can_heal() || selected_character->get_attacked_this_turn()) {
+                color = grey_color;
+            } else {
+                color = text_color;
+            }
+            SDL_Surface* heal_control = TTF_RenderText_Solid(font, heal.c_str(), color);
+
+            Util::apply_surface(486, 200, move_control, surface);
+            Util::apply_surface(486, 220, attack_control, surface);
+            Util::apply_surface(486, 240, heal_control, surface);
+
+            SDL_FreeSurface(move_control);
+            SDL_FreeSurface(attack_control);
+            SDL_FreeSurface(heal_control);
+        }
+    }
+
+    string end = "v - End turn";
+    SDL_Surface* end_control = TTF_RenderText_Solid(font, end.c_str(), text_color);
+    Util::apply_surface(486, 260, end_control, surface);
+    SDL_FreeSurface(end_control);
+
+    string cancel = "Esc - Cancel";
+    SDL_Surface* cancel_control = TTF_RenderText_Solid(font, cancel.c_str(), text_color);
+    Util::apply_surface(486, 280, cancel_control, surface);
+    SDL_FreeSurface(cancel_control);
+
+    string grid = "Shift - Toggle grid";
+    SDL_Surface* grid_control = TTF_RenderText_Solid(font, grid.c_str(), text_color);
+    Util::apply_surface(486, 300, grid_control, surface);
+    SDL_FreeSurface(grid_control);
+
+    string turn_str = "";
+    if (current_player == 1) {
+        turn_str = "Blue turn";
+    } else {
+        turn_str = "Red turn";
+    }
+    SDL_Surface* turn_info = TTF_RenderText_Solid(font, turn_str.c_str(), text_color);
+    Util::apply_surface(486, 440, turn_info, surface);
+    SDL_FreeSurface(turn_info);
+
+    string state_str = StateMachine::get_current_state()->sidebar_tip();
+    SDL_Surface* state_info = TTF_RenderText_Solid(font, state_str.c_str(), text_color);
+    Util::apply_surface(486, 460, state_info, surface);
+    SDL_FreeSurface(state_info);
 }

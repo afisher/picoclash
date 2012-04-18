@@ -27,9 +27,10 @@ void StateMachine::execute(SDL_Event event, SDL_Surface* surface, SDL_Surface* s
             Grid::draw_grid(surface);
             if (Grid::get_current_player() == 2) {
                 //SRPG::draw_sidebar();
+                Grid::draw_sidebar(surface);
                 Grid::play_ai_turn(surface, screen);
                 Grid::new_turn();
-                //Grid::draw_grid(surface);
+                Grid::draw_grid(surface);
             }
         }
     } else if (event.type == SDL_MOUSEMOTION) {
