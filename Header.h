@@ -194,8 +194,8 @@ class AttackingState : public State {
 namespace Constants {
     const int FRAMES_PER_SECOND = 20;
 
-    const int SCREEN_WIDTH  = 800;
-    const int SCREEN_HEIGHT = 600;
+    const int SCREEN_WIDTH  = 1280;
+    const int SCREEN_HEIGHT = 960;
     const int SCREEN_BPP    = 32;
 
     const int PLAYER_WARRIOR = 1;
@@ -222,6 +222,9 @@ namespace Constants {
 class Grid {
     public:
         static SDL_Surface* grid_image;
+        static SDL_Surface* sidebar;
+
+        static TTF_Font* font;
 
         static void load_file();
         static void draw_grid(SDL_Surface* surface);
@@ -272,6 +275,8 @@ class Grid {
         static vector<Tile*> reconstruct_path(std::vector<std::vector<Tile*> > came_from, Tile* current);
 
         static void new_turn();
+
+        static void draw_sidebar(SDL_Surface* surface);
 };
 
 class Healer : public Character {
