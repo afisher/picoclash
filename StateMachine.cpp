@@ -26,7 +26,6 @@ void StateMachine::execute(SDL_Event event, SDL_Surface* surface, SDL_Surface* s
             Grid::new_turn();
             Grid::draw_grid(surface);
             if (Grid::get_current_player() == 2) {
-                //SRPG::draw_sidebar();
                 Grid::draw_sidebar(surface);
                 Grid::play_ai_turn(surface, screen);
                 Grid::new_turn();
@@ -56,9 +55,6 @@ void StateMachine::execute(SDL_Event event, SDL_Surface* surface, SDL_Surface* s
             // highlight the tile
             inspected_tile->set_selected(true);
             Grid::draw_tile(inspected_tile, surface);
-            //Grid::draw_grid(surface);
-
-            //SRPG::draw_sidebar();
         }
     }
 

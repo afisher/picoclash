@@ -35,25 +35,21 @@ void SelectedState::execute(SDL_Event event, SDL_Surface* surface) {
         switch (event.key.keysym.sym) {
             case SDLK_z:
                 if (selected_character != NULL && !selected_character->get_moved_this_turn()) {
-                    bool success = Grid::show_move_tiles(selected_character->get_x(),
+                    Grid::show_move_tiles(selected_character->get_x(),
                                                          selected_character->get_y(), surface, true);
 
-                    if (success) {
-                        StateMachine::set_previous_state(this);
-                        StateMachine::set_current_state(new MovingState());
-                    }
+                    StateMachine::set_previous_state(this);
+                    StateMachine::set_current_state(new MovingState());
                 }
                 break;
 
             case SDLK_x:
                 if (selected_character != NULL && !selected_character->get_attacked_this_turn()) {
-                    bool success = Grid::show_attack_tiles(selected_character->get_x(),
+                    Grid::show_attack_tiles(selected_character->get_x(),
                                                            selected_character->get_y(), surface, true);
 
-                    if (success) {
-                        StateMachine::set_previous_state(this);
-                        StateMachine::set_current_state(new AttackingState());
-                    }
+                    StateMachine::set_previous_state(this);
+                    StateMachine::set_current_state(new AttackingState());
                 }
                 break;
 
@@ -61,14 +57,11 @@ void SelectedState::execute(SDL_Event event, SDL_Surface* surface) {
                 if (selected_character != NULL && selected_character->can_heal()
                         && !((Healer*)selected_character)->get_healed_this_turn()) {
                     // just use the attack range for now
-                    bool success = Grid::show_heal_tiles(selected_character->get_x(),
+                    Grid::show_heal_tiles(selected_character->get_x(),
                                                          selected_character->get_y(), surface, true);
 
-                    if (success) {
-                        StateMachine::set_previous_state(this);
-                        StateMachine::set_current_state(new HealingState());
-                        
-                    }
+                    StateMachine::set_previous_state(this);
+                    StateMachine::set_current_state(new HealingState());
                 }
                 break;
 
