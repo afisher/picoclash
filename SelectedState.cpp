@@ -29,9 +29,6 @@ void SelectedState::execute(SDL_Event event, SDL_Surface* surface) {
             StateMachine::set_current_state(new SelectedState());
         }
     } else if (event.type == SDL_KEYDOWN) {
-        int x = Constants::X_RATIO * event.motion.x / Constants::SPRITE_SIZE; 
-        int y = Constants::Y_RATIO * event.motion.y / Constants::SPRITE_SIZE; 
-
         switch (event.key.keysym.sym) {
             case SDLK_z:
                 if (selected_character != NULL && !selected_character->get_moved_this_turn()) {
