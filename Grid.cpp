@@ -14,9 +14,11 @@ SDL_Surface* Grid::sidebar = NULL;
 TTF_Font* Grid::font = NULL;
 
 // loads the test map into the grid
-void Grid::load_file() {
-    std::ifstream file("testmap.txt");
-    std::string line;
+void Grid::load_file(string filename) {
+    ifstream file(filename.c_str());
+    string line;
+
+    cout << filename << endl;
 
     for (int j = 0; j < Constants::GRID_HEIGHT; j++) {
         std::getline(file, line);

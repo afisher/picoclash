@@ -226,7 +226,7 @@ class Grid {
 
         static TTF_Font* font;
 
-        static void load_file();
+        static void load_file(std::string filename);
         static void draw_grid(SDL_Surface* surface);
         static void draw_tile(Tile* tile, SDL_Surface* surface);
         static void draw_lines(SDL_Surface* surface);
@@ -325,16 +325,16 @@ class SelectedState : public State {
 };
 
 class Util {
-    private:
-        static void scale  (SDL_Surface* source, SDL_Surface* destination);
-        static void bilinear_scale  (SDL_Surface* source, SDL_Surface* destination);
-        static SDL_Surface* scale2x(SDL_Surface* source);
     public:
         static SDL_Surface* init_screen(int width, int height, int bpp);
         static void update_screen(SDL_Surface* source, SDL_Surface* destination);
 
         static SDL_Surface* load_image(std::string filename);
         static void apply_surface(int x, int y, SDL_Surface* source, SDL_Surface* destination, SDL_Rect* clip = NULL);
+
+        static void scale  (SDL_Surface* source, SDL_Surface* destination);
+        static void bilinear_scale  (SDL_Surface* source, SDL_Surface* destination);
+        static SDL_Surface* scale2x(SDL_Surface* source);
 };
 
 class Warrior : public Character {
@@ -347,4 +347,29 @@ class Warrior : public Character {
 
         virtual void move(SDL_Surface* surface);
         virtual bool attack(SDL_Surface* surface);
+};
+
+/* Map selector classes */
+class MapButton {
+    private:
+        std::string name;
+        SDL_Surface* preview;
+        SDL_Surface* name_surface;
+        SDL_Surface* surface;
+    public:
+        MapButton(std::string filename);
+        ~MapButton();
+
+        SDL_Surface* get_button();
+};
+
+class MapSelector {
+    private:
+        std::vector<MapButton*> buttons;
+        SDL_Surface* surface;
+    public:
+        MapSelector();
+        ~MapSelector();
+
+        SDL_Surface* get_surface();
 };

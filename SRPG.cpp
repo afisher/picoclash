@@ -53,7 +53,7 @@ int main(int argc, char* args[]) {
     Grid::font = TTF_OpenFont("fonts/04B-03/04B_03__.TTF", 14);
     if (Grid::font == NULL) return 1;
 
-    Grid::load_file();
+    /*Grid::load_file("testmap.txt");
     Grid::draw_grid(surface);
     Util::update_screen(surface, screen);
 
@@ -62,7 +62,10 @@ int main(int argc, char* args[]) {
 
     bool success;
 
-    StateMachine::init();
+    StateMachine::init();*/
+
+    MapSelector selector;
+    Util::update_screen(selector.get_surface(), screen);
 
     while (quit == false) {
 
@@ -73,11 +76,11 @@ int main(int argc, char* args[]) {
             if (event.type == SDL_QUIT) {
                 cout << "Quit Event" << endl;
                 quit = true;
-            } else {
+            } /*else {
                 StateMachine::execute(event, surface, screen);
-            }
+            }*/
         }
-        Grid::draw_sidebar(surface);
+        /*Grid::draw_sidebar(surface);
 
 
         int ticks = SDL_GetTicks() - start_ticks;
@@ -85,7 +88,7 @@ int main(int argc, char* args[]) {
             SDL_Delay((1000 / Constants::FRAMES_PER_SECOND) - ticks);
         }
 
-        Util::update_screen(surface, screen);
+        Util::update_screen(surface, screen);*/
     }
 
     clean_up();
