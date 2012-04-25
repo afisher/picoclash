@@ -15,6 +15,9 @@ TTF_Font* Grid::font = NULL;
 
 // loads the test map into the grid
 void Grid::load_file(string filename) {
+    player_characters.clear();
+    enemy_characters.clear();
+
     ifstream file(filename.c_str());
     string line;
 
@@ -294,7 +297,8 @@ void Grid::generate_move_tiles(Tile* character_tile, Tile* current_tile, int ran
 }
 
 void Grid::play_ai_turn(SDL_Surface* surface, SDL_Surface* screen) {
-    for (int i = 0; i < enemy_characters.size(); i++) {
+    // iterate in opposite order so enemies in the "front" move first
+    for (int i = enemy_characters.size() - 1; i >= 0; i--) {
         Character* character = enemy_characters[i]; 
         if (character != NULL && player_characters.size() > 0) {
             character->play_turn(surface, screen);

@@ -215,8 +215,8 @@ namespace Constants {
     const double fWIDTH  = 640;
     const double fHEIGHT = 480;
 
-    const double X_RATIO = WIDTH  / (double)SCREEN_WIDTH;
-    const double Y_RATIO = HEIGHT / (double)SCREEN_HEIGHT;
+    const double X_RATIO = (double)SCREEN_WIDTH  / WIDTH;
+    const double Y_RATIO = (double)SCREEN_HEIGHT / HEIGHT;
 };
 
 class Grid {
@@ -353,6 +353,7 @@ class Warrior : public Character {
 class MapButton {
     private:
         std::string name;
+        std::string filename;
         SDL_Surface* preview;
         SDL_Surface* name_surface;
         SDL_Surface* surface;
@@ -361,6 +362,7 @@ class MapButton {
         ~MapButton();
 
         SDL_Surface* get_button();
+        std::string get_filename();
 };
 
 class MapSelector {
@@ -372,4 +374,5 @@ class MapSelector {
         ~MapSelector();
 
         SDL_Surface* get_surface();
+        MapButton* get_selected_button(int x, int y);
 };

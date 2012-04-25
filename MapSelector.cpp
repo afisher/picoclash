@@ -35,6 +35,18 @@ SDL_Surface* MapSelector::get_surface() {
     return surface;
 }
 
+MapButton* MapSelector::get_selected_button(int x, int y) {
+    for (int i = 0; i < buttons.size(); i++) {
+        if (x >= Constants::X_RATIO*120 && x <= Constants::X_RATIO*(120+Constants::WIDTH - 220) &&
+            y >= Constants::Y_RATIO*(30 + 130*i) && y <= Constants::Y_RATIO*(30 + 130*i + Constants::HEIGHT / 4 + 10)) {
+
+            return buttons[i];
+        }
+    }
+
+    return NULL;
+}
+
 MapSelector::~MapSelector() {
     SDL_FreeSurface(surface);
 }

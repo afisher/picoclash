@@ -2,10 +2,15 @@
 
 using namespace std;
 
-MapButton::MapButton(string filename) {
-    Grid::load_file(filename);
+MapButton::MapButton(string file) {
+    Grid::load_file(file);
 
-    name = filename;
+    filename = file;
+
+    int begin = filename.find_last_of('/') + 1;
+    int end = filename.find_last_of('.');
+
+    name = filename.substr(begin, end - begin);
 
     SDL_Surface* temp_preview = SDL_CreateRGBSurface(SDL_SWSURFACE,
                                    Constants::HEIGHT,
@@ -38,6 +43,8 @@ MapButton::MapButton(string filename) {
 SDL_Surface* MapButton::get_button() {
     return surface;
 }
+
+string MapButton::get_filename() { return filename; }
 
 MapButton::~MapButton() {
     SDL_FreeSurface(surface);
