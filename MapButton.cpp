@@ -3,6 +3,9 @@
 using namespace std;
 
 MapButton::MapButton(string file) {
+    width = Constants::WIDTH - 200;
+    height = Constants::HEIGHT / 4 + 10;
+
     Grid::load_file(file);
 
     filename = file;
@@ -29,9 +32,10 @@ MapButton::MapButton(string file) {
     name_surface = TTF_RenderText_Solid(Grid::font, name.c_str(), text_color);
 
     surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
-                               Constants::WIDTH - 220,
-                               Constants::HEIGHT / 4 + 10,
-                               Constants::SCREEN_BPP, 0, 0, 0, 0);
+                                   width,
+                                   height,
+                                   Constants::SCREEN_BPP,
+                                   0, 0, 0, 0);
 
     Util::apply_surface(5, 5, preview, surface);
     Util::apply_surface(130, 50, name_surface, surface);
@@ -39,6 +43,9 @@ MapButton::MapButton(string file) {
     SDL_FreeSurface(preview);
     SDL_FreeSurface(name_surface);
 }
+
+int MapButton::get_width()  { return width;  }
+int MapButton::get_height() { return height; }
 
 SDL_Surface* MapButton::get_button() {
     return surface;

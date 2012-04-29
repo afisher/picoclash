@@ -147,3 +147,12 @@ bool Tile::operator>(Tile other) {
 bool Tile::operator==(Tile other) {
     return (x == other.get_x() && y == other.get_y());
 }
+
+Tile::~Tile() {
+    SDL_FreeSurface(default_image);
+    SDL_FreeSurface(alt_image);     
+    SDL_FreeSurface(selected_image);
+    SDL_FreeSurface(move_image);    
+    SDL_FreeSurface(attack_image);  
+    SDL_FreeSurface(heal_image);    
+}

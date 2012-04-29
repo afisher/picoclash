@@ -18,8 +18,9 @@ static void clean_up() {
     SDL_FreeSurface(Grid::sidebar);
     SDL_FreeSurface(surface);
     SDL_FreeSurface(screen);
+    
+    Grid::clean_up();
 }
-
 
 int main(int argc, char* args[]) {
     bool quit = false;
@@ -55,8 +56,8 @@ int main(int argc, char* args[]) {
 
     StateMachine::init();
 
-    MapSelector selector;
-    Util::update_screen(selector.get_surface(), screen);
+    MapSelector* selector = new MapSelector();
+    Util::update_screen(selector->get_surface(), screen);
 
     bool game_started = false;
 
@@ -75,9 +76,9 @@ int main(int argc, char* args[]) {
                     int x = event.button.x;
                     int y = event.button.y;
                     
-                    MapButton* selected_button = selector.get_selected_button(x, y);
+                    MapButton* selected_button = selector->get_selected_button(x, y);
                     if (selected_button != NULL) {
-                        string filename = selector.get_selected_button(x, y)->get_filename();
+                        string filename = selector->get_selected_button(x, y)->get_filename();
 
                         Grid::load_file(filename);
                         Grid::draw_grid(surface);
@@ -97,18 +98,18 @@ int main(int argc, char* args[]) {
             }
         }
 
+        int ticks = SDL_GetTicks() - start_ticks;
+        if (ticks < 1000 / Constants::FRAMES_PER_SECOND) {
+            SDL_Delay((1000 / Constants::FRAMES_PER_SECOND) - ticks);
+        }
+
         if (game_started) {
             Grid::draw_sidebar(surface);
-
-            int ticks = SDL_GetTicks() - start_ticks;
-            if (ticks < 1000 / Constants::FRAMES_PER_SECOND) {
-                SDL_Delay((1000 / Constants::FRAMES_PER_SECOND) - ticks);
-            }
-
             Util::update_screen(surface, screen);
         }
     }
 
+    delete selector;
     clean_up();
     SDL_Quit();
 

@@ -98,6 +98,7 @@ class Tile {
     public:
         Tile(int i, int j);
         Tile(int i, int j, int type);
+        ~Tile();
 
         void set_selected(bool s);
         void set_move_on(bool s);
@@ -277,6 +278,8 @@ class Grid {
         static void new_turn();
 
         static void draw_sidebar(SDL_Surface* surface);
+
+        static void clean_up();
 };
 
 class Healer : public Character {
@@ -357,9 +360,14 @@ class MapButton {
         SDL_Surface* preview;
         SDL_Surface* name_surface;
         SDL_Surface* surface;
+        int width;
+        int height;
     public:
         MapButton(std::string filename);
         ~MapButton();
+
+        int get_width();
+        int get_height();
 
         SDL_Surface* get_button();
         std::string get_filename();
@@ -368,7 +376,13 @@ class MapButton {
 class MapSelector {
     private:
         std::vector<MapButton*> buttons;
-        SDL_Surface* surface;
+        std::vector<SDL_Surface*> pages;
+
+        int x_padding;
+        int y_padding;
+
+        int current_page;
+        int buttons_per_page;
     public:
         MapSelector();
         ~MapSelector();
