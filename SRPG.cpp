@@ -94,6 +94,8 @@ int main(int argc, char* args[]) {
                 selector->previous_page();
             } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RIGHT && !game_started) {
                 selector->next_page();
+            } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_BACKSPACE && game_started) {
+                game_started = false;
             }
 
             if (game_started) {

@@ -10,13 +10,6 @@ MapSelector::MapSelector() {
     x_padding = 120;
     y_padding = 30;
 
-/*
-    surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
-                  Constants::WIDTH,
-                  Constants::HEIGHT,
-                  Constants::SCREEN_BPP, 0, 0, 0, 0);
-*/
-
     DIR* dir;
     struct dirent *entry;
     if(dir = opendir("maps/"))
@@ -33,10 +26,7 @@ MapSelector::MapSelector() {
         closedir(dir);
     }  
 
-    cout << "Button size " << buttons.size() << endl;
-
     int num_pages = (buttons.size() / buttons_per_page) + 1;
-    cout << "Num pages " << num_pages << endl;
 
     for (int i = 0; i < num_pages; i++) {
         pages.push_back(SDL_CreateRGBSurface(SDL_SWSURFACE,
@@ -44,8 +34,6 @@ MapSelector::MapSelector() {
                           Constants::HEIGHT,
                           Constants::SCREEN_BPP, 0, 0, 0, 0));
     }
-
-    cout << "Real num pages " << pages.size() << endl;
 
     for (int i = 0; i < buttons.size(); i++) {
         int page_number = i / buttons_per_page;
@@ -55,12 +43,6 @@ MapSelector::MapSelector() {
 
         Util::apply_surface(x_padding, y_padding + 130*position, button, pages[page_number]);
     }
-/*
-    for (int i = 0; i < buttons.size(); i++) {
-        SDL_Surface* button = buttons[i]->get_button();
-        Util::apply_surface(x_padding, y_padding + 130*i, button, surface);
-    }
-*/
 }
 
 SDL_Surface* MapSelector::get_surface() {
@@ -72,8 +54,10 @@ MapButton* MapSelector::get_selected_button(int x, int y) {
     int end_index = min(start_index + buttons_per_page, (int)(buttons.size()));
 
     for (int i = start_index; i < end_index; i++) {
-        if (x >= Constants::X_RATIO*x_padding && x <= Constants::X_RATIO*(x_padding+buttons[i]->get_width()) &&
-            y >= Constants::Y_RATIO*(y_padding + 130*i) && y <= Constants::Y_RATIO*(y_padding + 130*i + buttons[i]->get_height())) {
+        if (x >= Constants::X_RATIO*x_padding &&
+            x <= Constants::X_RATIO*(x_padding+buttons[i]->get_width()) &&
+            y >= Constants::Y_RATIO*(y_padding + buttons[i]->get_height()*(i%buttons_per_page)) &&
+            y <= Constants::Y_RATIO*(y_padding + buttons[i]->get_height()*(i%buttons_per_page) + buttons[i]->get_height())) {
 
             return buttons[i];
         }
