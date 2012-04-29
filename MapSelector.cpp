@@ -82,6 +82,14 @@ MapButton* MapSelector::get_selected_button(int x, int y) {
     return NULL;
 }
 
+void MapSelector::next_page() {
+    if (current_page < pages.size() - 1) current_page++;
+}
+
+void MapSelector::previous_page() {
+    if (current_page > 0) current_page--;
+}
+
 MapSelector::~MapSelector() {
     for (int i = 0; i < pages.size(); i++) {
         SDL_FreeSurface(pages[i]);

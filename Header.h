@@ -389,4 +389,7 @@ class MapSelector {
 
         SDL_Surface* get_surface();
         MapButton* get_selected_button(int x, int y);
+
+        void next_page();
+        void previous_page();
 };

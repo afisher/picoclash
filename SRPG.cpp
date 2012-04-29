@@ -90,6 +90,10 @@ int main(int argc, char* args[]) {
                         game_started = true;
                     }
                 }
+            } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_LEFT && !game_started) {
+                selector->previous_page();
+            } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RIGHT && !game_started) {
+                selector->next_page();
             }
 
             if (game_started) {
@@ -106,6 +110,8 @@ int main(int argc, char* args[]) {
         if (game_started) {
             Grid::draw_sidebar(surface);
             Util::update_screen(surface, screen);
+        } else {
+            Util::update_screen(selector->get_surface(), screen);
         }
     }
 
