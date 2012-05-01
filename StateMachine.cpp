@@ -23,6 +23,7 @@ void StateMachine::execute(SDL_Event event, SDL_Surface* surface, SDL_Surface* s
 
             Grid::toggle_show_lines(surface);
         } else if (event.key.keysym.sym == SDLK_v) {
+            // end the turn
             Grid::new_turn();
             Grid::draw_grid(surface);
             if (Grid::get_current_player() == 2) {

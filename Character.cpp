@@ -56,22 +56,43 @@ void Character::gain_health(int h)  { health = std::min(health + h, get_max_heal
 
 void Character::play_turn(SDL_Surface* surface, SDL_Surface* screen) {
     SDL_Delay(50);
+    Tile* my_tile = Grid::get(x, y);
+    my_tile->set_selected(true);
+    Grid::draw_grid(surface);
+    Util::update_screen(surface, screen);
+
     if (attack(surface)) {
-        Grid::draw_grid(surface);
-        Util::update_screen(surface, screen);
         SDL_Delay(50);
+
         move(surface);
+
+        my_tile->set_selected(false);
+        my_tile = Grid::get(x, y);
+        my_tile->set_selected(true);
+
         Grid::draw_grid(surface);
         Util::update_screen(surface, screen);
     } else {
         move(surface);
+
+        my_tile->set_selected(false);
+        my_tile = Grid::get(x, y);
+        my_tile->set_selected(true);
+
         Grid::draw_grid(surface);
         Util::update_screen(surface, screen);
+
         SDL_Delay(50);
+
         attack(surface);
         Grid::draw_grid(surface);
         Util::update_screen(surface, screen);
     }
+
+    SDL_Delay(50);
+    my_tile->set_selected(false);
+    Grid::draw_grid(surface);
+    Util::update_screen(surface, screen);
 }
 
 void Character::move(SDL_Surface* surface) {}
