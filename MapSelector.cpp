@@ -35,6 +35,9 @@ MapSelector::MapSelector() {
                           Constants::SCREEN_BPP, 0, 0, 0, 0));
     }
 
+    SDL_Surface* arrow_left  = Util::load_image("sprites/arrow-left.png");
+    SDL_Surface* arrow_right = Util::load_image("sprites/arrow.png");
+
     for (int i = 0; i < buttons.size(); i++) {
         int page_number = i / buttons_per_page;
         int position = i % buttons_per_page;
@@ -42,6 +45,9 @@ MapSelector::MapSelector() {
         SDL_Surface* button = buttons[i]->get_button();
 
         Util::apply_surface(x_padding, y_padding + 130*position, button, pages[page_number]);
+
+        Util::apply_surface(10, Constants::HEIGHT / 2 - 32, arrow_left, pages[page_number]);
+        Util::apply_surface(Constants::WIDTH - 74, Constants::HEIGHT / 2 - 32, arrow_right, pages[page_number]);
     }
 }
 
@@ -62,6 +68,19 @@ MapButton* MapSelector::get_selected_button(int x, int y) {
             return buttons[i];
         }
     }
+
+    if (y >= Constants::Y_RATIO*(Constants::HEIGHT / 2 - 32) &&
+        y <= Constants::Y_RATIO*(Constants::HEIGHT / 2 - 32 + 64)) {
+
+        if (x >= Constants::X_RATIO*10 &&
+            x <= Constants::X_RATIO*74) {
+            previous_page();
+        } else if (x >= Constants::X_RATIO*(Constants::WIDTH - 74) &&
+                   x <= Constants::X_RATIO*(Constants::WIDTH - 74 + 64)) {
+            next_page();
+        }
+    }
+
 
     return NULL;
 }
