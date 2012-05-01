@@ -61,7 +61,7 @@ void Character::play_turn(SDL_Surface* surface, SDL_Surface* screen) {
     Grid::draw_grid(surface);
     Util::update_screen(surface, screen);
 
-    if (attack(surface)) {
+    if (attack(surface, screen)) {
         SDL_Delay(50);
 
         move(surface);
@@ -84,7 +84,7 @@ void Character::play_turn(SDL_Surface* surface, SDL_Surface* screen) {
 
         SDL_Delay(50);
 
-        attack(surface);
+        attack(surface, screen);
         Grid::draw_grid(surface);
         Util::update_screen(surface, screen);
     }
@@ -97,7 +97,7 @@ void Character::play_turn(SDL_Surface* surface, SDL_Surface* screen) {
 
 // Implemented in subclasses
 void Character::move(SDL_Surface* surface) {}
-bool Character::attack(SDL_Surface* surface) {}
+bool Character::attack(SDL_Surface* surface, SDL_Surface* screen) {}
 
 Character::~Character() {
     SDL_FreeSurface(image);

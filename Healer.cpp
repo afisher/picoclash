@@ -73,7 +73,7 @@ void Healer::move(SDL_Surface* surface) {
 }
 
 // for now, heal code is here -- heals if there's an ally in range, otherwise heals self
-bool Healer::attack(SDL_Surface* surface) {
+bool Healer::attack(SDL_Surface* surface, SDL_Surface* screen) {
     vector<Tile*> attack_tiles = Grid::get_range_tiles(Grid::get(x, y), range);
 
     for (int i = 0; i < attack_tiles.size(); i++) {

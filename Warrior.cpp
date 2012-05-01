@@ -61,7 +61,7 @@ void Warrior::move(SDL_Surface* surface) {
 }
 
 // attacks if there is an enemy within range
-bool Warrior::attack(SDL_Surface* surface) {
+bool Warrior::attack(SDL_Surface* surface, SDL_Surface* screen) {
     vector<Tile*> attack_tiles = Grid::get_range_tiles(Grid::get(x, y), range);
 
     for (int i = 0; i < attack_tiles.size(); i++) {

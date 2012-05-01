@@ -76,13 +76,18 @@ void Archer::move(SDL_Surface* surface) {
     }
 }
 
-bool Archer::attack(SDL_Surface* surface) {
+bool Archer::attack(SDL_Surface* surface, SDL_Surface* screen) {
     vector<Tile*> attack_tiles = Grid::get_range_tiles(Grid::get(x, y), range);
 
     for (int i = 0; i < attack_tiles.size(); i++) {
         Character* cur_char = attack_tiles[i]->get_character();
 
         if (cur_char != NULL && cur_char->get_player() != player) {
+            attack_tiles[i]->set_attack_on(true);
+            Grid::draw_tile(attack_tiles[i], surface);
+            Util::update_screen(surface, screen);
+            SDL_Delay(400);
+
             Grid::attack(x, y, attack_tiles[i]->get_x(), attack_tiles[i]->get_y(), surface);
             return true;;
         }

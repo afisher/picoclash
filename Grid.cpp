@@ -74,13 +74,14 @@ void Grid::draw_tile(Tile* tile, SDL_Surface* surface) {
 
     Util::apply_surface(x, y, get(i, j)->get_image(), surface);
 
+    if (get(i, j)->get_character() != NULL) {
+        Util::apply_surface(x, y, get(i, j)->get_character()->get_image(), surface);
+    }
+
     if (get(i, j)->get_overlay_image() != NULL) {
         Util::apply_surface(x, y, get(i, j)->get_overlay_image(), surface);
     }
 
-    if (get(i, j)->get_character() != NULL) {
-        Util::apply_surface(x, y, get(i, j)->get_character()->get_image(), surface);
-    }
 
     SDL_Rect clip;
     clip.x = x;
@@ -332,8 +333,6 @@ bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
     }
 
     return false;
-
-    //grid[i][j]->get_character()->move(i, j, x, y, surface);
 }
 
 bool Grid::attack(int i, int j, int x, int y, SDL_Surface* surface) {
@@ -347,6 +346,7 @@ bool Grid::attack(int i, int j, int x, int y, SDL_Surface* surface) {
 
     if (distance(i, j, x, y) <= range && !character1->get_attacked_this_turn()
         && character1->get_player() != character2->get_player()) {
+
         character2->take_damage(character1->get_strength());
         if (character2->get_health() <= 0) {
             grid[y][x]->character_died();

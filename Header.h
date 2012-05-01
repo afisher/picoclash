@@ -106,7 +106,7 @@ class Character {
         // for AI
         virtual void play_turn (SDL_Surface* surface, SDL_Surface* screen);
         virtual void move      (SDL_Surface* surface);
-        virtual bool attack    (SDL_Surface* surface);
+        virtual bool attack    (SDL_Surface* surface, SDL_Surface* screen);
 };
 
 class Archer : public Character {
@@ -118,7 +118,7 @@ class Archer : public Character {
         Archer(int p, int lvl);
 
         virtual void move(SDL_Surface* surface);
-        virtual bool attack(SDL_Surface* surface);
+        virtual bool attack(SDL_Surface* surface, SDL_Surface* screen);
 };
 
 class Warrior : public Character {
@@ -130,7 +130,7 @@ class Warrior : public Character {
         Warrior(int p, int lvl);
 
         virtual void move(SDL_Surface* surface);
-        virtual bool attack(SDL_Surface* surface);
+        virtual bool attack(SDL_Surface* surface, SDL_Surface* screen);
 };
 
 class Healer : public Character {
@@ -151,7 +151,7 @@ class Healer : public Character {
         virtual bool can_heal();
 
         virtual void move(SDL_Surface* surface);
-        virtual bool attack(SDL_Surface* surface);
+        virtual bool attack(SDL_Surface* surface, SDL_Surface* screen);
 };
 
 /* ------------ *
