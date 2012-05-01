@@ -315,7 +315,6 @@ bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
     int mobility = cur_char->get_mobility();
     vector<Tile*> move_tiles = get_move_tiles(get(i, j), mobility);
 
-
     Tile* selected_tile = grid[y][x];
 
     // move if we picked an empty square
@@ -372,7 +371,9 @@ bool Grid::attack(int i, int j, int x, int y, SDL_Surface* surface) {
         draw_grid(surface);
 
         return true;
-    } else return false;
+    }
+    
+    return false;
 }
 
 bool Grid::heal(int i, int j, int x, int y, SDL_Surface* surface) {
@@ -403,7 +404,9 @@ bool Grid::heal(int i, int j, int x, int y, SDL_Surface* surface) {
         draw_grid(surface);
 
         return true;
-    } else return false;
+    }
+    
+    return false;
 }
 
 int Grid::distance(int i, int j, int x, int y) {

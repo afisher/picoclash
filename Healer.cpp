@@ -79,8 +79,16 @@ bool Healer::attack(SDL_Surface* surface, SDL_Surface* screen) {
     for (int i = 0; i < attack_tiles.size(); i++) {
         Character* cur_char = attack_tiles[i]->get_character();
 
-        if (cur_char != NULL && cur_char->get_player() == player) {
+        if (cur_char != NULL && cur_char->get_player() == player && 
+            (cur_char->get_x() != x || cur_char->get_y() != y)) {
+
+            attack_tiles[i]->set_heal_on(true);
+            Grid::draw_tile(attack_tiles[i], surface);
+            Util::update_screen(surface, screen);
+            SDL_Delay(400);
+
             Grid::heal(x, y, attack_tiles[i]->get_x(), attack_tiles[i]->get_y(), surface);
+            attack_tiles[i]->set_heal_on(false);
             return true;
         }
     }
