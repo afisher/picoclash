@@ -7,8 +7,8 @@ void IdleState::execute(SDL_Event event, SDL_Surface* surface) {
             selected_tile->set_selected(false);
         }
         
-        int x = Constants::X_RATIO * event.motion.x / Constants::SPRITE_SIZE; 
-        int y = Constants::Y_RATIO * event.motion.y / Constants::SPRITE_SIZE; 
+        int x = event.motion.x / (Constants::X_RATIO * Constants::SPRITE_SIZE); 
+        int y = event.motion.y / (Constants::Y_RATIO * Constants::SPRITE_SIZE); 
 
         if (x >= 0 && y >= 0 && x < Constants::GRID_WIDTH && y < Constants::GRID_HEIGHT) { 
             StateMachine::set_selected_tile(Grid::get(x, y));

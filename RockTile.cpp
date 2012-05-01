@@ -40,3 +40,12 @@ bool RockTile::is_standable() { return false; }
 
 SDL_Surface* RockTile::get_image()         { return image;     }
 SDL_Surface* RockTile::get_overlay_image() { return overlay_image; }
+
+RockTile::~RockTile() {
+    SDL_FreeSurface(default_image);
+    SDL_FreeSurface(alt_image);     
+    SDL_FreeSurface(selected_image);
+    SDL_FreeSurface(move_image);    
+    SDL_FreeSurface(attack_image);  
+    SDL_FreeSurface(heal_image);    
+}

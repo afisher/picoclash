@@ -215,6 +215,8 @@ class Tile {
 class RockTile : public Tile {
     public:
         RockTile(int i, int j);
+        ~RockTile();
+
         virtual bool is_standable();
 
         virtual void update_image();

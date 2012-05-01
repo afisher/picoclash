@@ -95,6 +95,7 @@ void Character::play_turn(SDL_Surface* surface, SDL_Surface* screen) {
     Util::update_screen(surface, screen);
 }
 
+// Implemented in subclasses
 void Character::move(SDL_Surface* surface) {}
 bool Character::attack(SDL_Surface* surface) {}
 

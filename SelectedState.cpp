@@ -12,8 +12,8 @@ void SelectedState::execute(SDL_Event event, SDL_Surface* surface) {
             selected_tile->set_selected(false);
         }
         
-        int x = Constants::X_RATIO * event.motion.x / Constants::SPRITE_SIZE; 
-        int y = Constants::Y_RATIO * event.motion.y / Constants::SPRITE_SIZE; 
+        int x = event.motion.x / (Constants::X_RATIO * Constants::SPRITE_SIZE); 
+        int y = event.motion.y / (Constants::Y_RATIO * Constants::SPRITE_SIZE); 
 
         if (x >= 0 && y >= 0 && x < Constants::GRID_WIDTH && y < Constants::GRID_HEIGHT) { 
             StateMachine::set_selected_tile(Grid::get(x, y));
@@ -22,8 +22,7 @@ void SelectedState::execute(SDL_Event event, SDL_Surface* surface) {
             // highlight the tile
             selected_tile->set_selected(true);
             Grid::draw_grid(surface);
-
-            //SRPG::draw_sidebar();
+            Grid::draw_sidebar(surface);
 
             StateMachine::set_previous_state(this);
             StateMachine::set_current_state(new SelectedState());

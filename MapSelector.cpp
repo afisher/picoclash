@@ -49,6 +49,9 @@ MapSelector::MapSelector() {
         Util::apply_surface(10, Constants::HEIGHT / 2 - 32, arrow_left, pages[page_number]);
         Util::apply_surface(Constants::WIDTH - 74, Constants::HEIGHT / 2 - 32, arrow_right, pages[page_number]);
     }
+
+    SDL_FreeSurface(arrow_left);
+    SDL_FreeSurface(arrow_right);
 }
 
 SDL_Surface* MapSelector::get_surface() {

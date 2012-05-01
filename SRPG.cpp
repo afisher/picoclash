@@ -6,14 +6,23 @@ SDL_Surface* screen = NULL;
 SDL_Surface* surface = NULL;
 SDL_Surface* sidebar = NULL;
 
-
 SDL_Event event;
-
 
 static void clean_up() {
     SDL_FreeSurface(Tile::default_image);
     SDL_FreeSurface(Tile::alt_image);
     SDL_FreeSurface(Tile::selected_image);
+    SDL_FreeSurface(Tile::move_image);
+    SDL_FreeSurface(Tile::attack_image);
+    SDL_FreeSurface(Tile::heal_image);
+
+    SDL_FreeSurface(RockTile::default_image);
+    SDL_FreeSurface(RockTile::alt_image);
+    SDL_FreeSurface(RockTile::selected_image);
+    SDL_FreeSurface(RockTile::move_image);
+    SDL_FreeSurface(RockTile::attack_image);
+    SDL_FreeSurface(RockTile::heal_image);
+
     SDL_FreeSurface(Grid::grid_image);
     SDL_FreeSurface(Grid::sidebar);
     SDL_FreeSurface(surface);
@@ -96,11 +105,8 @@ int main(int argc, char* args[]) {
                 selector->next_page();
             } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_BACKSPACE && game_started) {
                 game_started = false;
-            }
-
-            if (game_started) {
+            } else if (game_started) {
                 StateMachine::execute(event, surface, screen);
-
             }
         }
 

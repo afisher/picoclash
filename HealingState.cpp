@@ -10,8 +10,8 @@ void HealingState::execute(SDL_Event event, SDL_Surface* surface) {
     if (event.type == SDL_MOUSEBUTTONDOWN &&
         event.button.button == SDL_BUTTON_LEFT) {
         
-        int x = Constants::X_RATIO * event.button.x / Constants::SPRITE_SIZE;
-        int y = Constants::Y_RATIO * event.button.y / Constants::SPRITE_SIZE;
+        int x = event.motion.x / (Constants::X_RATIO * Constants::SPRITE_SIZE); 
+        int y = event.motion.y / (Constants::Y_RATIO * Constants::SPRITE_SIZE); 
 
         bool success = Grid::heal(selected_tile->get_x(), selected_tile->get_y(), x, y, surface);
 

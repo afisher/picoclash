@@ -656,12 +656,6 @@ void Grid::draw_sidebar(SDL_Surface* surface) {
 }
 
 void Grid::clean_up() {
-    for (int i = 0; i < Constants::GRID_HEIGHT; i++) {
-        for (int j = 0; j < Constants::GRID_WIDTH; j++) {
-            delete grid[i][j];
-        }
-    }
-
     for (int i = 0; i < player_characters.size(); i++) {
         delete player_characters[i];
     }
