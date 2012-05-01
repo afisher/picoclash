@@ -406,7 +406,7 @@ class MapSelector {
         int current_page;
         int buttons_per_page;
 
-        bool in_bounds(int x, int y, MapButton* button);
+        bool in_bounds(int x, int y, MapButton* button, int button_number);
     public:
         MapSelector();
         ~MapSelector();

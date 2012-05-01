@@ -61,7 +61,7 @@ MapButton* MapSelector::get_selected_button(int x, int y) {
 
     // Check to see if one of the maps was selected
     for (int i = start_index; i < end_index; i++) {
-        if (in_bounds(x, y, buttons[i])) {
+        if (in_bounds(x, y, buttons[i], i)) {
             return buttons[i];
         }
     }
@@ -83,11 +83,11 @@ MapButton* MapSelector::get_selected_button(int x, int y) {
     return NULL;
 }
 
-bool MapSelector::in_bounds(int x, int y, MapButton* button) {
+bool MapSelector::in_bounds(int x, int y, MapButton* button, int button_number) {
     return x >= Constants::X_RATIO*x_padding &&
            x <= Constants::X_RATIO*(x_padding+button->get_width()) &&
-           y >= Constants::Y_RATIO*(y_padding + button->get_height()*(i%buttons_per_page)) &&
-           y <= Constants::Y_RATIO*(y_padding + button->get_height()*(i%buttons_per_page) + button->get_height());
+           y >= Constants::Y_RATIO*(y_padding + button->get_height()*(button_number%buttons_per_page)) &&
+           y <= Constants::Y_RATIO*(y_padding + button->get_height()*(button_number%buttons_per_page) + button->get_height());
 }
 
 void MapSelector::next_page() {
