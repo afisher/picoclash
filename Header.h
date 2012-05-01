@@ -15,6 +15,40 @@
 
 using namespace std;
 
+/* --------------------- *
+ * Global game constants *
+ * --------------------- */
+namespace Constants {
+    const int FRAMES_PER_SECOND = 20;
+
+    const int SCREEN_WIDTH  = 1280;
+    const int SCREEN_HEIGHT = 960;
+    const int SCREEN_BPP    = 32;
+
+    const int PLAYER_WARRIOR = 1;
+    const int PLAYER_ARCHER  = 2;
+    const int PLAYER_HEALER  = 3;
+    const int ENEMY_WARRIOR  = 4;
+    const int ENEMY_ARCHER   = 5;
+    const int ENEMY_HEALER   = 6;
+
+    const int GRID_WIDTH  = 30;
+    const int GRID_HEIGHT = 30;
+
+    const int SPRITE_SIZE = 16;
+
+    const int WIDTH  = 640;
+    const int HEIGHT = 480;
+    const double fWIDTH  = 640;
+    const double fHEIGHT = 480;
+
+    const double X_RATIO = (double)SCREEN_WIDTH  / WIDTH;
+    const double Y_RATIO = (double)SCREEN_HEIGHT / HEIGHT;
+};
+
+/* ----------------- *
+ * Character classes *
+ * ----------------- */
 class Character {
     protected:
         int player;
@@ -75,6 +109,54 @@ class Character {
         virtual bool attack    (SDL_Surface* surface);
 };
 
+class Archer : public Character {
+    protected:
+        void set_values(int p, int lvl);
+
+    public:
+        Archer(int p);
+        Archer(int p, int lvl);
+
+        virtual void move(SDL_Surface* surface);
+        virtual bool attack(SDL_Surface* surface);
+};
+
+class Warrior : public Character {
+    protected:
+        void set_values(int p, int lvl);
+
+    public:
+        Warrior(int p);
+        Warrior(int p, int lvl);
+
+        virtual void move(SDL_Surface* surface);
+        virtual bool attack(SDL_Surface* surface);
+};
+
+class Healer : public Character {
+    protected:
+        int magic;
+        bool healed_this_turn;
+        void set_values(int p, int lvl);
+
+    public:
+        Healer(int p);
+        Healer(int p, int lvl);
+
+        int get_magic();
+
+        virtual bool get_healed_this_turn();
+        void set_healed_this_turn(bool h);
+
+        virtual bool can_heal();
+
+        virtual void move(SDL_Surface* surface);
+        virtual bool attack(SDL_Surface* surface);
+};
+
+/* ------------ *
+ * Tile classes *
+ * ------------ */
 class Tile {
     protected:
         SDL_Surface* image;
@@ -148,6 +230,9 @@ class RockTile : public Tile {
         static SDL_Surface* default_image;  
 };
 
+/* --------------------- * 
+ * State Machine classes *
+ * --------------------- */
 class State {
     public:
         // does appropriate stuff based on the event, and returns new state
@@ -173,53 +258,40 @@ class StateMachine {
         static Tile* get_inspected_tile();
 };
 
-class Archer : public Character {
-    protected:
-        void set_values(int p, int lvl);
-
-    public:
-        Archer(int p);
-        Archer(int p, int lvl);
-
-        virtual void move(SDL_Surface* surface);
-        virtual bool attack(SDL_Surface* surface);
-};
-
 class AttackingState : public State {
     public:
         void execute(SDL_Event event, SDL_Surface* surface);
         std::string sidebar_tip();
 };
 
-
-namespace Constants {
-    const int FRAMES_PER_SECOND = 20;
-
-    const int SCREEN_WIDTH  = 800;
-    const int SCREEN_HEIGHT = 600;
-    const int SCREEN_BPP    = 32;
-
-    const int PLAYER_WARRIOR = 1;
-    const int PLAYER_ARCHER  = 2;
-    const int PLAYER_HEALER  = 3;
-    const int ENEMY_WARRIOR  = 4;
-    const int ENEMY_ARCHER   = 5;
-    const int ENEMY_HEALER   = 6;
-
-    const int GRID_WIDTH  = 30;
-    const int GRID_HEIGHT = 30;
-
-    const int SPRITE_SIZE = 16;
-
-    const int WIDTH  = 640;
-    const int HEIGHT = 480;
-    const double fWIDTH  = 640;
-    const double fHEIGHT = 480;
-
-    const double X_RATIO = (double)SCREEN_WIDTH  / WIDTH;
-    const double Y_RATIO = (double)SCREEN_HEIGHT / HEIGHT;
+class HealingState : public State {
+    public:
+        void execute(SDL_Event event, SDL_Surface* surface);
+        std::string sidebar_tip();
 };
 
+class IdleState : public State {
+    public:
+        void execute(SDL_Event event, SDL_Surface* surface);
+        std::string sidebar_tip();
+};
+
+class MovingState : public State {
+    public:
+        void execute(SDL_Event event, SDL_Surface* surface);
+        std::string sidebar_tip();
+};
+
+class SelectedState : public State {
+    public:
+        void execute(SDL_Event event, SDL_Surface* surface);
+        std::string sidebar_tip();
+};
+
+
+/* ---------------------- * 
+ * The Grid / game screen *
+ * ---------------------- */
 class Grid {
     public:
         static SDL_Surface* grid_image;
@@ -282,51 +354,10 @@ class Grid {
         static void clean_up();
 };
 
-class Healer : public Character {
-    protected:
-        int magic;
-        bool healed_this_turn;
-        void set_values(int p, int lvl);
 
-    public:
-        Healer(int p);
-        Healer(int p, int lvl);
-
-        int get_magic();
-
-        virtual bool get_healed_this_turn();
-        void set_healed_this_turn(bool h);
-
-        virtual bool can_heal();
-
-        virtual void move(SDL_Surface* surface);
-        virtual bool attack(SDL_Surface* surface);
-};
-
-class HealingState : public State {
-    public:
-        void execute(SDL_Event event, SDL_Surface* surface);
-        std::string sidebar_tip();
-};
-
-class IdleState : public State {
-    public:
-        void execute(SDL_Event event, SDL_Surface* surface);
-        std::string sidebar_tip();
-};
-
-class MovingState : public State {
-    public:
-        void execute(SDL_Event event, SDL_Surface* surface);
-        std::string sidebar_tip();
-};
-
-class SelectedState : public State {
-    public:
-        void execute(SDL_Event event, SDL_Surface* surface);
-        std::string sidebar_tip();
-};
-
+/* ---------------------- * 
+ * Graphics utility class *
+ * ---------------------- */
 class Util {
     public:
         static SDL_Surface* init_screen(int width, int height, int bpp);
@@ -340,19 +371,10 @@ class Util {
         static SDL_Surface* scale2x(SDL_Surface* source);
 };
 
-class Warrior : public Character {
-    protected:
-        void set_values(int p, int lvl);
 
-    public:
-        Warrior(int p);
-        Warrior(int p, int lvl);
-
-        virtual void move(SDL_Surface* surface);
-        virtual bool attack(SDL_Surface* surface);
-};
-
-/* Map selector classes */
+/* -------------------- *
+ * Map selector classes *
+ * -------------------- */
 class MapButton {
     private:
         std::string name;
@@ -383,6 +405,8 @@ class MapSelector {
 
         int current_page;
         int buttons_per_page;
+
+        bool in_bounds(int x, int y, MapButton* button);
     public:
         MapSelector();
         ~MapSelector();

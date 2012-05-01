@@ -59,16 +59,14 @@ MapButton* MapSelector::get_selected_button(int x, int y) {
     int start_index = current_page * buttons_per_page;
     int end_index = min(start_index + buttons_per_page, (int)(buttons.size()));
 
+    // Check to see if one of the maps was selected
     for (int i = start_index; i < end_index; i++) {
-        if (x >= Constants::X_RATIO*x_padding &&
-            x <= Constants::X_RATIO*(x_padding+buttons[i]->get_width()) &&
-            y >= Constants::Y_RATIO*(y_padding + buttons[i]->get_height()*(i%buttons_per_page)) &&
-            y <= Constants::Y_RATIO*(y_padding + buttons[i]->get_height()*(i%buttons_per_page) + buttons[i]->get_height())) {
-
+        if (in_bounds(x, y, buttons[i])) {
             return buttons[i];
         }
     }
 
+    // Check to see if one of the arrows was clicked
     if (y >= Constants::Y_RATIO*(Constants::HEIGHT / 2 - 32) &&
         y <= Constants::Y_RATIO*(Constants::HEIGHT / 2 - 32 + 64)) {
 
@@ -83,6 +81,13 @@ MapButton* MapSelector::get_selected_button(int x, int y) {
 
 
     return NULL;
+}
+
+bool MapSelector::in_bounds(int x, int y, MapButton* button) {
+    return x >= Constants::X_RATIO*x_padding &&
+           x <= Constants::X_RATIO*(x_padding+button->get_width()) &&
+           y >= Constants::Y_RATIO*(y_padding + button->get_height()*(i%buttons_per_page)) &&
+           y <= Constants::Y_RATIO*(y_padding + button->get_height()*(i%buttons_per_page) + button->get_height());
 }
 
 void MapSelector::next_page() {
