@@ -98,6 +98,7 @@ class Tile {
     public:
         Tile(int i, int j);
         Tile(int i, int j, int type);
+        ~Tile();
 
         void set_selected(bool s);
         void set_move_on(bool s);
@@ -215,8 +216,8 @@ namespace Constants {
     const double fWIDTH  = 640;
     const double fHEIGHT = 480;
 
-    const double X_RATIO = WIDTH  / (double)SCREEN_WIDTH;
-    const double Y_RATIO = HEIGHT / (double)SCREEN_HEIGHT;
+    const double X_RATIO = (double)SCREEN_WIDTH  / WIDTH;
+    const double Y_RATIO = (double)SCREEN_HEIGHT / HEIGHT;
 };
 
 class Grid {
@@ -226,7 +227,7 @@ class Grid {
 
         static TTF_Font* font;
 
-        static void load_file();
+        static void load_file(std::string filename);
         static void draw_grid(SDL_Surface* surface);
         static void draw_tile(Tile* tile, SDL_Surface* surface);
         static void draw_lines(SDL_Surface* surface);
@@ -277,6 +278,8 @@ class Grid {
         static void new_turn();
 
         static void draw_sidebar(SDL_Surface* surface);
+
+        static void clean_up();
 };
 
 class Healer : public Character {
@@ -325,16 +328,16 @@ class SelectedState : public State {
 };
 
 class Util {
-    private:
-        static void scale  (SDL_Surface* source, SDL_Surface* destination);
-        static void bilinear_scale  (SDL_Surface* source, SDL_Surface* destination);
-        static SDL_Surface* scale2x(SDL_Surface* source);
     public:
         static SDL_Surface* init_screen(int width, int height, int bpp);
         static void update_screen(SDL_Surface* source, SDL_Surface* destination);
 
         static SDL_Surface* load_image(std::string filename);
         static void apply_surface(int x, int y, SDL_Surface* source, SDL_Surface* destination, SDL_Rect* clip = NULL);
+
+        static void scale  (SDL_Surface* source, SDL_Surface* destination);
+        static void bilinear_scale  (SDL_Surface* source, SDL_Surface* destination);
+        static SDL_Surface* scale2x(SDL_Surface* source);
 };
 
 class Warrior : public Character {
@@ -347,4 +350,46 @@ class Warrior : public Character {
 
         virtual void move(SDL_Surface* surface);
         virtual bool attack(SDL_Surface* surface);
+};
+
+/* Map selector classes */
+class MapButton {
+    private:
+        std::string name;
+        std::string filename;
+        SDL_Surface* preview;
+        SDL_Surface* name_surface;
+        SDL_Surface* surface;
+        int width;
+        int height;
+    public:
+        MapButton(std::string filename);
+        ~MapButton();
+
+        int get_width();
+        int get_height();
+
+        SDL_Surface* get_button();
+        std::string get_filename();
+};
+
+class MapSelector {
+    private:
+        std::vector<MapButton*> buttons;
+        std::vector<SDL_Surface*> pages;
+
+        int x_padding;
+        int y_padding;
+
+        int current_page;
+        int buttons_per_page;
+    public:
+        MapSelector();
+        ~MapSelector();
+
+        SDL_Surface* get_surface();
+        MapButton* get_selected_button(int x, int y);
+
+        void next_page();
+        void previous_page();
 };

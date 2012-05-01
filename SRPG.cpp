@@ -18,8 +18,9 @@ static void clean_up() {
     SDL_FreeSurface(Grid::sidebar);
     SDL_FreeSurface(surface);
     SDL_FreeSurface(screen);
+    
+    Grid::clean_up();
 }
-
 
 int main(int argc, char* args[]) {
     bool quit = false;
@@ -53,16 +54,12 @@ int main(int argc, char* args[]) {
     Grid::font = TTF_OpenFont("fonts/04B-03/04B_03__.TTF", 14);
     if (Grid::font == NULL) return 1;
 
-    Grid::load_file();
-    Grid::draw_grid(surface);
-    Util::update_screen(surface, screen);
-
-    Grid::sidebar = Util::load_image("sprites/sidebar-bg.png");
-    Grid::draw_sidebar(surface);
-
-    bool success;
-
     StateMachine::init();
+
+    MapSelector* selector = new MapSelector();
+    Util::update_screen(selector->get_surface(), screen);
+
+    bool game_started = false;
 
     while (quit == false) {
 
@@ -73,21 +70,54 @@ int main(int argc, char* args[]) {
             if (event.type == SDL_QUIT) {
                 cout << "Quit Event" << endl;
                 quit = true;
-            } else {
+            } else if (event.type == SDL_MOUSEBUTTONDOWN && !game_started) {
+                //If the left mouse button was pressed
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    int x = event.button.x;
+                    int y = event.button.y;
+                    
+                    MapButton* selected_button = selector->get_selected_button(x, y);
+                    if (selected_button != NULL) {
+                        string filename = selector->get_selected_button(x, y)->get_filename();
+
+                        Grid::load_file(filename);
+                        Grid::draw_grid(surface);
+                        Util::update_screen(surface, screen);
+
+                        Grid::sidebar = Util::load_image("sprites/sidebar-bg.png");
+                        Grid::draw_sidebar(surface);
+
+                        game_started = true;
+                    }
+                }
+            } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_LEFT && !game_started) {
+                selector->previous_page();
+            } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RIGHT && !game_started) {
+                selector->next_page();
+            } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_BACKSPACE && game_started) {
+                game_started = false;
+            }
+
+            if (game_started) {
                 StateMachine::execute(event, surface, screen);
+
             }
         }
-        Grid::draw_sidebar(surface);
-
 
         int ticks = SDL_GetTicks() - start_ticks;
         if (ticks < 1000 / Constants::FRAMES_PER_SECOND) {
             SDL_Delay((1000 / Constants::FRAMES_PER_SECOND) - ticks);
         }
 
-        Util::update_screen(surface, screen);
+        if (game_started) {
+            Grid::draw_sidebar(surface);
+            Util::update_screen(surface, screen);
+        } else {
+            Util::update_screen(selector->get_surface(), screen);
+        }
     }
 
+    delete selector;
     clean_up();
     SDL_Quit();
 

@@ -14,9 +14,14 @@ SDL_Surface* Grid::sidebar = NULL;
 TTF_Font* Grid::font = NULL;
 
 // loads the test map into the grid
-void Grid::load_file() {
-    std::ifstream file("testmap.txt");
-    std::string line;
+void Grid::load_file(string filename) {
+    player_characters.clear();
+    enemy_characters.clear();
+
+    ifstream file(filename.c_str());
+    string line;
+
+    cout << filename << endl;
 
     for (int j = 0; j < Constants::GRID_HEIGHT; j++) {
         std::getline(file, line);
@@ -292,7 +297,8 @@ void Grid::generate_move_tiles(Tile* character_tile, Tile* current_tile, int ran
 }
 
 void Grid::play_ai_turn(SDL_Surface* surface, SDL_Surface* screen) {
-    for (int i = 0; i < enemy_characters.size(); i++) {
+    // iterate in opposite order so enemies in the "front" move first
+    for (int i = enemy_characters.size() - 1; i >= 0; i--) {
         Character* character = enemy_characters[i]; 
         if (character != NULL && player_characters.size() > 0) {
             character->play_turn(surface, screen);
@@ -647,4 +653,20 @@ void Grid::draw_sidebar(SDL_Surface* surface) {
     SDL_Surface* state_info = TTF_RenderText_Solid(font, state_str.c_str(), text_color);
     Util::apply_surface(486, 460, state_info, surface);
     SDL_FreeSurface(state_info);
+}
+
+void Grid::clean_up() {
+    for (int i = 0; i < Constants::GRID_HEIGHT; i++) {
+        for (int j = 0; j < Constants::GRID_WIDTH; j++) {
+            delete grid[i][j];
+        }
+    }
+
+    for (int i = 0; i < player_characters.size(); i++) {
+        delete player_characters[i];
+    }
+
+    for (int i = 0; i < enemy_characters.size(); i++) {
+        delete enemy_characters[i];
+    }
 }
