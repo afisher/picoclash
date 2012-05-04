@@ -109,7 +109,7 @@ Tile* Grid::get(int i, int j)  { return grid[j][i];     }
 int Grid::get_current_player() { return current_player; }
 
 vector<Character*> Grid::get_player_characters() { return player_characters; }
-vector<Character*> Grid::get_enemy_characters() { return enemy_characters; }
+vector<Character*> Grid::get_enemy_characters()  { return enemy_characters;  }
 
 void Grid::add_player_character(Character* c) {
     player_characters.push_back(c);
@@ -121,9 +121,8 @@ void Grid::add_enemy_character(Character* c) {
 
 bool Grid::show_move_tiles(int i, int j, SDL_Surface* surface, bool show) {
     Character* selected_character = grid[j][i]->get_character();
-    //if (selected_character->get_player() != current_player) return false;
 
-    int mobility = 0;
+    int mobility;
 
     if (selected_character != NULL) {
         mobility = selected_character->get_mobility();
@@ -139,7 +138,7 @@ bool Grid::show_attack_tiles(int i, int j, SDL_Surface* surface, bool show) {
     Character* selected_character = grid[j][i]->get_character();
     //if (selected_character->get_player() != current_player) return false;
 
-    int range = 0;
+    int range;
 
     if (selected_character != NULL) {
         range = selected_character->get_range();
@@ -155,7 +154,7 @@ bool Grid::show_heal_tiles(int i, int j, SDL_Surface* surface, bool show) {
     Character* selected_character = grid[j][i]->get_character();
     //if (selected_character->get_player() != current_player) return false;
 
-    int range = 0;
+    int range;
 
     if (selected_character != NULL) {
         range = selected_character->get_range();
@@ -348,8 +347,6 @@ bool Grid::attack(int i, int j, int x, int y, SDL_Surface* surface) {
 
         character2->take_damage(character1->get_strength());
         if (character2->get_health() <= 0) {
-            grid[y][x]->character_died();
-
             for (int i = 0; i < player_characters.size(); i++) {
                 if (player_characters[i]->get_x() == x && player_characters[i]->get_y() == y) {
                     player_characters.erase(player_characters.begin()+i);
@@ -361,14 +358,14 @@ bool Grid::attack(int i, int j, int x, int y, SDL_Surface* surface) {
                     enemy_characters.erase(enemy_characters.begin()+i);
                 }
             }
+
+            grid[y][x]->character_died();
         }
 
         get(i, j)->set_selected(false);
         select_attack_tiles(i, j, range, false);
 
         character1->set_attacked_this_turn(true);
-
-        draw_grid(surface);
 
         return true;
     }

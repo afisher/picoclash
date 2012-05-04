@@ -44,38 +44,28 @@ void Healer::set_healed_this_turn(bool h) {
 void Healer::move(SDL_Surface* surface) {
     vector<Tile*> move_tiles = Grid::get_move_tiles(Grid::get(x, y), mobility);
 
-    vector<Character*> enemies = Grid::get_enemy_characters();
+    vector<Character*> allies = Grid::get_enemy_characters();
 
     // Find closest ally
     int min_dist = INT_MAX;
-    Tile* closest_enemy_tile = NULL;
-    for (int i = 0; i < enemies.size(); i++) {
-        int dist = Grid::distance(x, y, enemies[i]->get_x(), enemies[i]->get_y());
-        if (dist < min_dist && !enemies[i]->can_heal()) {
+    Tile* closest_ally_tile = NULL;
+    for (int i = 0; i < allies.size(); i++) {
+        int dist = Grid::distance(x, y, allies[i]->get_x(), allies[i]->get_y());
+        if (dist < min_dist && !allies[i]->can_heal()) {
             min_dist = dist;
-            closest_enemy_tile = Grid::get(enemies[i]->get_x(), enemies[i]->get_y());
+            closest_ally_tile = Grid::get(allies[i]->get_x(), allies[i]->get_y());
         }
     }
 
-    if (closest_enemy_tile == NULL) return;
+    if (closest_ally_tile == NULL) return;
 
-    // Calculate move tile that is closest to the closest ally
-    min_dist = INT_MAX;
     Tile* closest_move_tile = NULL;
-    for (int i = 0; i < move_tiles.size(); i++) {
-        int dist = Grid::distance(move_tiles[i]->get_x(), move_tiles[i]->get_y(),
-                                  closest_enemy_tile->get_x(), closest_enemy_tile->get_y());
-        if (dist < min_dist && move_tiles[i]->get_character() == NULL) {
-            min_dist = dist;
-            closest_move_tile = move_tiles[i];
-        }
-    }
 
-    vector<Tile*> path = Grid::path_search(Grid::get(x, y), closest_move_tile);
+    vector<Tile*> path = Grid::path_search(Grid::get(x, y), closest_ally_tile);
     int size = path.size();
     if (size > 1) {
         int index = min(size-1, mobility);
-        closest_move_tile = path[index];
+        closest_ally_tile = path[index];
     }
 
     if (closest_move_tile != NULL) {

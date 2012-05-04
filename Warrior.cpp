@@ -47,22 +47,12 @@ void Warrior::move(SDL_Surface* surface) {
 
     if (closest_enemy_tile == NULL) return;
 
-    // Calculate move tile that is closest to the closest enemy
-    min_dist = INT_MAX;
     Tile* closest_move_tile = NULL;
-    for (int i = 0; i < move_tiles.size(); i++) {
-        int dist = Grid::distance(move_tiles[i]->get_x(), move_tiles[i]->get_y(),
-                                  closest_enemy_tile->get_x(), closest_enemy_tile->get_y());
-        if (dist < min_dist && move_tiles[i]->get_character() == NULL) {
-            min_dist = dist;
-            closest_move_tile = move_tiles[i];
-        }
-    }
 
-    vector<Tile*> path = Grid::path_search(Grid::get(x, y), closest_move_tile);
+    vector<Tile*> path = Grid::path_search(Grid::get(x, y), closest_enemy_tile);
     int size = path.size();
     if (size > 1) {
-        int index = min(size-1, mobility);
+        int index = min(size-2, mobility);
         closest_move_tile = path[index];
     }
 

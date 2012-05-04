@@ -42,7 +42,11 @@ void Archer::move(SDL_Surface* surface) {
         }
     }
 
-    int enemy_dist = Grid::distance(x, y, closest_enemy_tile->get_x(), closest_enemy_tile->get_y());
+    int enemy_dist = INT_MAX;
+    if (closest_enemy_tile != NULL) {
+        enemy_dist = Grid::distance(x, y, closest_enemy_tile->get_x(), closest_enemy_tile->get_y());
+    }
+
     Tile* best_move_tile = NULL;
 
     if (enemy_dist <= range) {
@@ -56,17 +60,6 @@ void Archer::move(SDL_Surface* surface) {
                     max_dist = dist;
                     best_move_tile = move_tiles[i];
                 }
-            }
-        }
-    } else {
-        // Calculate move tile that is closest to the closest enemy
-        min_dist = INT_MAX;
-        for (int i = 0; i < move_tiles.size(); i++) {
-            int dist = Grid::distance(move_tiles[i]->get_x(), move_tiles[i]->get_y(),
-                    closest_enemy_tile->get_x(), closest_enemy_tile->get_y());
-            if (dist < min_dist && move_tiles[i]->get_character() == NULL) {
-                min_dist = dist;
-                best_move_tile = move_tiles[i];
             }
         }
     }
@@ -83,8 +76,8 @@ void Archer::move(SDL_Surface* surface) {
     Tile* closest_move_tile = NULL;
 
     int size = path.size();
-    if (size > 0) {
-        int index = min(size-1, mobility);
+    if (size > 1) {
+        int index = min(size-2, mobility);
         closest_move_tile = path[index];
     }
 
