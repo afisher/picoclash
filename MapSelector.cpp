@@ -26,7 +26,8 @@ MapSelector::MapSelector() {
         closedir(dir);
     }  
 
-    int num_pages = (buttons.size() / buttons_per_page) + 1;
+    int num_pages = (buttons.size() / buttons_per_page);
+    if (buttons.size() % buttons_per_page != 0) num_pages++;
 
     for (int i = 0; i < num_pages; i++) {
         pages.push_back(SDL_CreateRGBSurface(SDL_SWSURFACE,
