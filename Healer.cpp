@@ -46,6 +46,7 @@ void Healer::move(SDL_Surface* surface) {
 
     vector<Character*> enemies = Grid::get_enemy_characters();
 
+    // Find closest ally
     int min_dist = INT_MAX;
     Tile* closest_enemy_tile = NULL;
     for (int i = 0; i < enemies.size(); i++) {
@@ -58,12 +59,22 @@ void Healer::move(SDL_Surface* surface) {
 
     if (closest_enemy_tile == NULL) return;
 
+    // Calculate move tile that is closest to the closest ally
+    min_dist = INT_MAX;
     Tile* closest_move_tile = NULL;
+    for (int i = 0; i < move_tiles.size(); i++) {
+        int dist = Grid::distance(move_tiles[i]->get_x(), move_tiles[i]->get_y(),
+                                  closest_enemy_tile->get_x(), closest_enemy_tile->get_y());
+        if (dist < min_dist && move_tiles[i]->get_character() == NULL) {
+            min_dist = dist;
+            closest_move_tile = move_tiles[i];
+        }
+    }
 
-    vector<Tile*> path = Grid::path_search(Grid::get(x, y), closest_enemy_tile);
+    vector<Tile*> path = Grid::path_search(Grid::get(x, y), closest_move_tile);
     int size = path.size();
     if (size > 1) {
-        int index = min(size - 2, mobility);
+        int index = min(size-1, mobility);
         closest_move_tile = path[index];
     }
 
@@ -79,7 +90,7 @@ bool Healer::attack(SDL_Surface* surface, SDL_Surface* screen) {
     for (int i = 0; i < attack_tiles.size(); i++) {
         Character* cur_char = attack_tiles[i]->get_character();
 
-        if (cur_char != NULL && cur_char->get_player() == player && 
+        if (cur_char != NULL && cur_char->get_player() == player && cur_char->get_health() < cur_char->get_max_health() && 
             (cur_char->get_x() != x || cur_char->get_y() != y)) {
 
             attack_tiles[i]->set_heal_on(true);

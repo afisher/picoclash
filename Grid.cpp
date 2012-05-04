@@ -309,7 +309,7 @@ void Grid::play_ai_turn(SDL_Surface* surface, SDL_Surface* screen) {
 
 bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
     Character* cur_char = grid[j][i]->get_character();
-    if (cur_char == NULL) { return false; }
+    if (cur_char == NULL) return false;
     if (cur_char->get_player() != current_player) return false;
 
     int mobility = cur_char->get_mobility();
@@ -318,7 +318,7 @@ bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
     Tile* selected_tile = grid[y][x];
 
     // move if we picked an empty square
-    if (selected_tile->is_standable()/*get_character() == NULL*/) {
+    if (selected_tile->/*is_standable()*/get_character() == NULL) {
         for (int k = 0; k < move_tiles.size(); k++) {
             if (move_tiles[k] == selected_tile) {
                 selected_tile->set_character(cur_char);
