@@ -286,7 +286,7 @@ void Grid::generate_move_tiles(Tile* character_tile, Tile* current_tile, int ran
     int dist = distance(character_tile, current_tile);
     if (dist > range) return;
 
-    if (current_tile->is_standable() && move_tiles->count(current_tile) == 0) {
+    if ((character_tile == current_tile || current_tile->is_standable()) && move_tiles->count(current_tile) == 0) {
         move_tiles->insert(current_tile);
 
         vector<Tile*> nbrs = get_neighbors(current_tile);
@@ -318,7 +318,7 @@ bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
     Tile* selected_tile = grid[y][x];
 
     // move if we picked an empty square
-    if (selected_tile->get_character() == NULL) {
+    if (selected_tile->is_standable()/*get_character() == NULL*/) {
         for (int k = 0; k < move_tiles.size(); k++) {
             if (move_tiles[k] == selected_tile) {
                 selected_tile->set_character(cur_char);
