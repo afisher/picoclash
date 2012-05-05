@@ -58,6 +58,7 @@ void Character::play_turn(SDL_Surface* surface, SDL_Surface* screen) {
     SDL_Delay(50);
     Tile* my_tile = Grid::get(x, y);
     my_tile->set_selected(true);
+
     Grid::draw_grid(surface);
     Util::update_screen(surface, screen);
 

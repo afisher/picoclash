@@ -66,6 +66,8 @@ int main(int argc, char* args[]) {
     Grid::font = TTF_OpenFont("fonts/04B-03/04B_03__.TTF", 14);
     if (Grid::font == NULL) return 1;
 
+    Grid::sidebar = Util::load_image("sprites/sidebar-bg.png");
+
     StateMachine::init();
 
     MapSelector* selector = new MapSelector();
@@ -82,7 +84,6 @@ int main(int argc, char* args[]) {
             if (event.type == SDL_QUIT) {
                 quit = true;
             } else if (event.type == SDL_MOUSEBUTTONDOWN && !game_started) {
-                //If the left mouse button was pressed
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     int x = event.button.x;
                     int y = event.button.y;
@@ -93,10 +94,10 @@ int main(int argc, char* args[]) {
 
                         Grid::load_file(filename);
                         Grid::draw_grid(surface);
-                        Util::update_screen(surface, screen);
 
-                        Grid::sidebar = Util::load_image("sprites/sidebar-bg.png");
                         Grid::draw_sidebar(surface);
+
+                        Util::update_screen(surface, screen);
 
                         game_started = true;
                     }
@@ -107,14 +108,13 @@ int main(int argc, char* args[]) {
                 selector->next_page();
             } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_BACKSPACE && game_started) {
                 game_started = false;
-            } else if (game_started) {
-
-                if (Grid::get_game_type() == Constants::CPU_V_CPU) {
-                    Grid::play_ai_turn(surface, screen);
-                } else {
-                    StateMachine::execute(event, surface, screen);
-                }
+            } else if (game_started && Grid::get_game_type() != Constants::CPU_V_CPU) {
+                StateMachine::execute(event, surface, screen);
             }
+        }
+
+        if (game_started && !Grid::game_over() && Grid::get_game_type() == Constants::CPU_V_CPU) {
+            Grid::play_ai_turn(surface, screen);
         }
 
         int ticks = SDL_GetTicks() - start_ticks;

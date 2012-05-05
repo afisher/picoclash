@@ -319,6 +319,7 @@ void Grid::play_ai_turn(SDL_Surface* surface, SDL_Surface* screen) {
     }
 
     new_turn();
+    draw_sidebar(surface);
 }
 
 bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
@@ -553,6 +554,10 @@ void Grid::new_turn() {
     else current_player = 1;
 }
 
+bool Grid::game_over() {
+    return (player_characters.size() == 0) || (enemy_characters.size() == 0);
+}
+
 // this should probably go somewhere else, but here is fine for now...
 void Grid::draw_sidebar(SDL_Surface* surface) {
     SDL_Color text_color = { 255, 255, 255 };
@@ -563,10 +568,17 @@ void Grid::draw_sidebar(SDL_Surface* surface) {
     Tile* selected_tile = StateMachine::get_selected_tile();
     Tile* inspected_tile = StateMachine::get_inspected_tile();
 
-    if (selected_tile == NULL || inspected_tile == NULL) return;
+    //if (selected_tile == NULL || inspected_tile == NULL) return;
 
-    Character* selected_character = selected_tile->get_character();
-    Character* inspected_character = inspected_tile->get_character();
+    Character* selected_character = NULL;
+    if (selected_tile != NULL) {
+        selected_character = selected_tile->get_character();
+    }
+
+    Character* inspected_character = NULL;
+    if (inspected_tile != NULL) {
+        inspected_character = inspected_tile->get_character();
+    }
 
     if (inspected_character != NULL) {
         // Build stat info
@@ -635,20 +647,27 @@ void Grid::draw_sidebar(SDL_Surface* surface) {
         }
     }
 
-    string end = "v - End turn";
-    SDL_Surface* end_control = TTF_RenderText_Solid(font, end.c_str(), text_color);
-    Util::apply_surface(486, 260, end_control, surface);
-    SDL_FreeSurface(end_control);
+    if (game_type != Constants::CPU_V_CPU) {
+        string end = "v - End turn";
+        SDL_Surface* end_control = TTF_RenderText_Solid(font, end.c_str(), text_color);
+        Util::apply_surface(486, 260, end_control, surface);
+        SDL_FreeSurface(end_control);
 
-    string cancel = "Esc - Cancel";
-    SDL_Surface* cancel_control = TTF_RenderText_Solid(font, cancel.c_str(), text_color);
-    Util::apply_surface(486, 280, cancel_control, surface);
-    SDL_FreeSurface(cancel_control);
+        string cancel = "Esc - Cancel";
+        SDL_Surface* cancel_control = TTF_RenderText_Solid(font, cancel.c_str(), text_color);
+        Util::apply_surface(486, 280, cancel_control, surface);
+        SDL_FreeSurface(cancel_control);
 
-    string grid = "Shift - Toggle grid";
-    SDL_Surface* grid_control = TTF_RenderText_Solid(font, grid.c_str(), text_color);
-    Util::apply_surface(486, 300, grid_control, surface);
-    SDL_FreeSurface(grid_control);
+        string grid = "Shift - Toggle grid";
+        SDL_Surface* grid_control = TTF_RenderText_Solid(font, grid.c_str(), text_color);
+        Util::apply_surface(486, 300, grid_control, surface);
+        SDL_FreeSurface(grid_control);
+
+        string state_str = StateMachine::get_current_state()->sidebar_tip();
+        SDL_Surface* state_info = TTF_RenderText_Solid(font, state_str.c_str(), text_color);
+        Util::apply_surface(486, 460, state_info, surface);
+        SDL_FreeSurface(state_info);
+    }
 
     string turn_str = "";
     if (current_player == 1) {
@@ -659,11 +678,6 @@ void Grid::draw_sidebar(SDL_Surface* surface) {
     SDL_Surface* turn_info = TTF_RenderText_Solid(font, turn_str.c_str(), text_color);
     Util::apply_surface(486, 440, turn_info, surface);
     SDL_FreeSurface(turn_info);
-
-    string state_str = StateMachine::get_current_state()->sidebar_tip();
-    SDL_Surface* state_info = TTF_RenderText_Solid(font, state_str.c_str(), text_color);
-    Util::apply_surface(486, 460, state_info, surface);
-    SDL_FreeSurface(state_info);
 }
 
 void Grid::clean_up() {

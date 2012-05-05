@@ -358,6 +358,8 @@ class Grid {
 
         static void new_turn();
 
+        static bool game_over();
+
         static void draw_sidebar(SDL_Surface* surface);
 
         static void clean_up();
