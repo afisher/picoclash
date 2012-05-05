@@ -2,7 +2,7 @@
 CC = g++
 LDFLAGS = -lSDL -lSDL_image -lSDL_ttf -lm
 OBJS = \
-	SRPG.o \
+	Picoclash.o \
 	Util.o \
 	Tile.o \
 	RockTile.o \
@@ -21,9 +21,9 @@ OBJS = \
 	MapButton.o \
 	CheckButton.o
 
-all: SRPG
+all: Picoclash
 
-SRPG: $(OBJS)
+Picoclash: $(OBJS)
 
 clean:
 	rm -f SRPG *.o

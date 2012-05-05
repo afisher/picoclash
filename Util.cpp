@@ -11,7 +11,7 @@ SDL_Surface* Util::init_screen(int width, int height, int bpp) {
 
     SDL_Surface* screen = SDL_SetVideoMode(width, height, bpp, SDL_SWSURFACE);
 
-    SDL_WM_SetCaption("Someday soon I'll be a game!", NULL);
+    SDL_WM_SetCaption("Picoclash", NULL);
 
     return screen;
 }
