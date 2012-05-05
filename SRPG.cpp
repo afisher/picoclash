@@ -108,7 +108,12 @@ int main(int argc, char* args[]) {
             } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_BACKSPACE && game_started) {
                 game_started = false;
             } else if (game_started) {
-                StateMachine::execute(event, surface, screen);
+
+                if (Grid::get_game_type() == Constants::CPU_V_CPU) {
+                    Grid::play_ai_turn(surface, screen);
+                } else {
+                    StateMachine::execute(event, surface, screen);
+                }
             }
         }
 

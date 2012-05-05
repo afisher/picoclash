@@ -32,7 +32,15 @@ void Archer::move(SDL_Surface* surface) {
     vector<Tile*> move_tiles = Grid::get_move_tiles(Grid::get(x, y), mobility);
 
     Tile* closest_enemy_tile = NULL;
-    vector<Character*> enemies = Grid::get_player_characters();
+
+    vector<Character*> enemies;
+
+    if (player == 1) {
+        enemies = Grid::get_enemy_characters();
+    } else {
+        enemies = Grid::get_player_characters();
+    }
+
     int min_dist = INT_MAX;
     for (int i = 0; i < enemies.size(); i++) {
         int dist = Grid::distance(x, y, enemies[i]->get_x(), enemies[i]->get_y());

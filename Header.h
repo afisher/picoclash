@@ -306,6 +306,7 @@ class Grid {
         static TTF_Font* font;
 
         static void set_game_type(int type);
+        static int get_game_type();
 
         static void load_file(std::string filename);
         static void draw_grid(SDL_Surface* surface);

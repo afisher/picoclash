@@ -44,7 +44,13 @@ void Healer::set_healed_this_turn(bool h) {
 void Healer::move(SDL_Surface* surface) {
     vector<Tile*> move_tiles = Grid::get_move_tiles(Grid::get(x, y), mobility);
 
-    vector<Character*> allies = Grid::get_enemy_characters();
+    vector<Character*> allies;
+
+    if (player == 1) {
+        allies = Grid::get_player_characters();
+    } else {
+        allies = Grid::get_enemy_characters();
+    }
 
     // Find closest ally
     int min_dist = INT_MAX;

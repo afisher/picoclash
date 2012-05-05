@@ -32,7 +32,13 @@ void Warrior::set_values(int p, int lvl) {
 void Warrior::move(SDL_Surface* surface) {
     vector<Tile*> move_tiles = Grid::get_move_tiles(Grid::get(x, y), mobility);
 
-    vector<Character*> enemies = Grid::get_player_characters();
+    vector<Character*> enemies;
+
+    if (player == 1) {
+        enemies = Grid::get_enemy_characters();
+    } else {
+        enemies = Grid::get_player_characters();
+    }
 
     // Find closest enemy
     int min_dist = INT_MAX;

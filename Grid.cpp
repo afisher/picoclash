@@ -58,6 +58,8 @@ void Grid::set_game_type(int type) {
     game_type = type;
 }
 
+int Grid::get_game_type() { return game_type; }
+
 // draw the grid -- assumes the file has been loaded
 void Grid::draw_grid(SDL_Surface* surface) {
     for (int j = 0; j < Constants::GRID_HEIGHT; j++) {
@@ -298,13 +300,25 @@ void Grid::generate_move_tiles(Tile* character_tile, Tile* current_tile, int ran
 }
 
 void Grid::play_ai_turn(SDL_Surface* surface, SDL_Surface* screen) {
-    // iterate in opposite order so enemies in the "front" move first
-    for (int i = enemy_characters.size() - 1; i >= 0; i--) {
-        Character* character = enemy_characters[i]; 
-        if (character != NULL && player_characters.size() > 0) {
+    vector<Character*> characters;
+    vector<Character*> other_characters;
+
+    if (current_player == 1) {
+        characters = player_characters;
+        other_characters = enemy_characters;
+    } else {
+        characters = enemy_characters;
+        other_characters = player_characters;
+    }
+
+    for (int i = 0; i < characters.size(); i++) {
+        Character* character = characters[i]; 
+        if (character != NULL && other_characters.size() > 0) {
             character->play_turn(surface, screen);
         }
     }
+
+    new_turn();
 }
 
 bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
@@ -318,7 +332,7 @@ bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
     Tile* selected_tile = grid[y][x];
 
     // move if we picked an empty square
-    if (selected_tile->/*is_standable()*/get_character() == NULL) {
+    if (selected_tile->is_standable()) {
         for (int k = 0; k < move_tiles.size(); k++) {
             if (move_tiles[k] == selected_tile) {
                 selected_tile->set_character(cur_char);
