@@ -64,8 +64,8 @@ void Healer::move(SDL_Surface* surface) {
     vector<Tile*> path = Grid::path_search(Grid::get(x, y), closest_ally_tile);
     int size = path.size();
     if (size > 1) {
-        int index = min(size-1, mobility);
-        closest_ally_tile = path[index];
+        int index = min(size-2, mobility);
+        closest_move_tile = path[index];
     }
 
     if (closest_move_tile != NULL) {

@@ -126,11 +126,11 @@ void Tile::update_image() {
     }
 }
 
-SDL_Surface* Tile::get_image()         { return image;     }
+SDL_Surface* Tile::get_image()         { return image;         }
 SDL_Surface* Tile::get_overlay_image() { return overlay_image; }
-Character*   Tile::get_character()     { return character; }
+Character*   Tile::get_character()     { return character;     }
 
-bool Tile::is_standable() { return true; /*character == NULL;*/ }
+bool Tile::is_standable() { return (character == NULL); }
 
 void Tile::character_died() {
     character = NULL;

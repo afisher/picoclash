@@ -32,6 +32,10 @@ namespace Constants {
     const int ENEMY_ARCHER   = 5;
     const int ENEMY_HEALER   = 6;
 
+    const int P_V_CPU   = 1;
+    const int P_V_P     = 2;
+    const int CPU_V_CPU = 3;
+
     const int GRID_WIDTH  = 30;
     const int GRID_HEIGHT = 30;
 
@@ -188,10 +192,10 @@ class Tile {
         void set_heal_on(bool s);
         void set_character(Character* c);
 
-        bool         get_selected();
+        bool get_selected();
         virtual SDL_Surface* get_image();
         virtual SDL_Surface* get_overlay_image();
-        Character*   get_character();
+        Character* get_character();
 
         virtual bool is_standable();
 
@@ -301,6 +305,8 @@ class Grid {
 
         static TTF_Font* font;
 
+        static void set_game_type(int type);
+
         static void load_file(std::string filename);
         static void draw_grid(SDL_Surface* surface);
         static void draw_tile(Tile* tile, SDL_Surface* surface);
@@ -397,6 +403,29 @@ class MapButton {
         std::string get_filename();
 };
 
+class CheckButton {
+    private:
+        SDL_Surface* check_box;
+        SDL_Surface* surface;
+
+        int width;
+        int height;
+    public:
+        CheckButton(std::string label_string, bool checked);
+        ~CheckButton();
+
+        int get_width();
+        int get_height();
+
+        SDL_Surface* get_button();
+
+        void set_checked();
+        void set_unchecked();
+
+        static SDL_Surface* box_checked;
+        static SDL_Surface* box_unchecked;
+};
+
 class MapSelector {
     private:
         std::vector<MapButton*> buttons;
@@ -408,6 +437,12 @@ class MapSelector {
         int current_page;
         int buttons_per_page;
 
+        CheckButton* p_vs_cpu_button;
+        CheckButton* p_vs_p_button;
+        CheckButton* cpu_vs_cpu_button;
+
+        CheckButton* previous_check_button;
+
         bool in_bounds(int x, int y, MapButton* button, int button_number);
     public:
         MapSelector();
@@ -418,4 +453,10 @@ class MapSelector {
 
         void next_page();
         void previous_page();
+
+        void p_vs_cpu_clicked();
+        void p_vs_p_clicked();
+        void cpu_vs_cpu_clicked();
+
+        void draw_check_buttons();
 };

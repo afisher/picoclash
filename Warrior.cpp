@@ -54,7 +54,7 @@ void Warrior::move(SDL_Surface* surface) {
     if (size > 1) {
         int index = min(size-2, mobility);
         closest_move_tile = path[index];
-    }
+    } 
 
     if (closest_move_tile != NULL) {
         Grid::move(x, y, closest_move_tile->get_x(), closest_move_tile->get_y(), surface);

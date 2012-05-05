@@ -18,7 +18,8 @@ OBJS = \
 	HealingState.o \
 	StateMachine.o \
 	MapSelector.o \
-	MapButton.o
+	MapButton.o \
+	CheckButton.o
 
 all: SRPG
 

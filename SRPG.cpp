@@ -57,6 +57,9 @@ int main(int argc, char* args[]) {
     RockTile::attack_image   = Util::load_image("sprites/overlay-attack.png");
     RockTile::heal_image     = Util::load_image("sprites/overlay-heal.png");
 
+    CheckButton::box_checked   = Util::load_image("sprites/box_checked.png");
+    CheckButton::box_unchecked = Util::load_image("sprites/box_unchecked.png");
+
     if (screen == NULL)   return 1;
     if (TTF_Init() == -1) return 1;
 
@@ -77,7 +80,6 @@ int main(int argc, char* args[]) {
         while (SDL_PollEvent(&event)) {
 
             if (event.type == SDL_QUIT) {
-                cout << "Quit Event" << endl;
                 quit = true;
             } else if (event.type == SDL_MOUSEBUTTONDOWN && !game_started) {
                 //If the left mouse button was pressed

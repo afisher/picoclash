@@ -26,18 +26,32 @@ MapSelector::MapSelector() {
         closedir(dir);
     }  
 
+    SDL_Surface* arrow_left  = Util::load_image("sprites/arrow-left.png");
+    SDL_Surface* arrow_right = Util::load_image("sprites/arrow.png");
+
+    SDL_Color text_color = { 255, 255, 255 };
+
+    p_vs_cpu_button = new CheckButton("PvCPU", true); 
+    p_vs_p_button = new CheckButton("PvP", false); 
+    cpu_vs_cpu_button = new CheckButton("CPUvCPU", false); 
+
     int num_pages = (buttons.size() / buttons_per_page);
     if (buttons.size() % buttons_per_page != 0) num_pages++;
 
     for (int i = 0; i < num_pages; i++) {
-        pages.push_back(SDL_CreateRGBSurface(SDL_SWSURFACE,
-                          Constants::WIDTH,
-                          Constants::HEIGHT,
-                          Constants::SCREEN_BPP, 0, 0, 0, 0));
+        SDL_Surface* page = SDL_CreateRGBSurface(SDL_SWSURFACE,
+                            Constants::WIDTH,
+                            Constants::HEIGHT,
+                            Constants::SCREEN_BPP, 0, 0, 0, 0);
+
+        // Apply the arrow buttons
+        Util::apply_surface(10, Constants::HEIGHT / 2 - 32, arrow_left, page);
+        Util::apply_surface(Constants::WIDTH - 74, Constants::HEIGHT / 2 - 32, arrow_right, page);
+
+        pages.push_back(page);
     }
 
-    SDL_Surface* arrow_left  = Util::load_image("sprites/arrow-left.png");
-    SDL_Surface* arrow_right = Util::load_image("sprites/arrow.png");
+    draw_check_buttons();
 
     for (int i = 0; i < buttons.size(); i++) {
         int page_number = i / buttons_per_page;
@@ -46,13 +60,12 @@ MapSelector::MapSelector() {
         SDL_Surface* button = buttons[i]->get_button();
 
         Util::apply_surface(x_padding, y_padding + 130*position, button, pages[page_number]);
-
-        Util::apply_surface(10, Constants::HEIGHT / 2 - 32, arrow_left, pages[page_number]);
-        Util::apply_surface(Constants::WIDTH - 74, Constants::HEIGHT / 2 - 32, arrow_right, pages[page_number]);
     }
 
     SDL_FreeSurface(arrow_left);
     SDL_FreeSurface(arrow_right);
+
+    previous_check_button = p_vs_cpu_button;
 }
 
 SDL_Surface* MapSelector::get_surface() {
@@ -83,6 +96,24 @@ MapButton* MapSelector::get_selected_button(int x, int y) {
         }
     }
 
+    // Check to see if one of the check boxes was clicked
+    if (y >= Constants::Y_RATIO*(Constants::HEIGHT - 44) &&
+        y <= Constants::Y_RATIO*(Constants::HEIGHT - 44 + 32)) {
+        
+        if (x >= Constants::X_RATIO*(x_padding) &&
+            x <= Constants::X_RATIO*(x_padding + 32)) {
+
+            p_vs_cpu_clicked();
+        } else if (x >= Constants::X_RATIO*(x_padding + 160) &&
+            x <= Constants::X_RATIO*(x_padding + 160 + 32)) {
+
+            p_vs_p_clicked();
+        } else if (x >= Constants::X_RATIO*(x_padding + 320) &&
+            x <= Constants::X_RATIO*(x_padding + 320 + 32)) {
+
+            cpu_vs_cpu_clicked();
+        }
+    }
 
     return NULL;
 }
@@ -100,6 +131,47 @@ void MapSelector::next_page() {
 
 void MapSelector::previous_page() {
     if (current_page > 0) current_page--;
+}
+
+void MapSelector::p_vs_cpu_clicked() {
+    Grid::set_game_type(Constants::P_V_CPU);
+
+    previous_check_button->set_unchecked();
+    previous_check_button = p_vs_cpu_button;
+
+    p_vs_cpu_button->set_checked();
+
+    draw_check_buttons();
+}
+
+void MapSelector::p_vs_p_clicked() {
+    Grid::set_game_type(Constants::P_V_P);
+
+    previous_check_button->set_unchecked();
+    previous_check_button = p_vs_p_button;
+
+    p_vs_p_button->set_checked();
+
+    draw_check_buttons();
+}
+
+void MapSelector::cpu_vs_cpu_clicked() {
+    Grid::set_game_type(Constants::CPU_V_CPU);
+
+    previous_check_button->set_unchecked();
+    previous_check_button = cpu_vs_cpu_button;
+
+    cpu_vs_cpu_button->set_checked();
+
+    draw_check_buttons();
+}
+
+void MapSelector::draw_check_buttons() {
+    for (int i = 0; i < pages.size(); i++) {
+        Util::apply_surface(x_padding, Constants::HEIGHT - 44, p_vs_cpu_button->get_button(), pages[i]);
+        Util::apply_surface(x_padding + 160, Constants::HEIGHT - 44, p_vs_p_button->get_button(), pages[i]);
+        Util::apply_surface(x_padding + 320, Constants::HEIGHT - 44, cpu_vs_cpu_button->get_button(),  pages[i]);
+    }
 }
 
 MapSelector::~MapSelector() {

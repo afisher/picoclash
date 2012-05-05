@@ -7,6 +7,8 @@ vector<Character*> player_characters;
 vector<Character*> enemy_characters;
 int current_player = 1;
 
+int game_type = Constants::P_V_CPU;
+
 SDL_Surface* Grid::grid_image = NULL;
 bool grid_on = true;
 
@@ -21,13 +23,10 @@ void Grid::load_file(string filename) {
     ifstream file(filename.c_str());
     string line;
 
-    cout << filename << endl;
-
     for (int j = 0; j < Constants::GRID_HEIGHT; j++) {
         std::getline(file, line);
         for (int i = 0; i < Constants::GRID_WIDTH; i++) {
             char c = line.at(i);
-            std::cout << c;
 
             switch(c) {
                 case 'w':
@@ -48,12 +47,15 @@ void Grid::load_file(string filename) {
                     grid[j][i] = new Tile(i, j);
             }
         }
-        std::cout << "\n";
     }
 
     file.close();
     grid_image = Util::load_image("sprites/grid.png");
 
+}
+
+void Grid::set_game_type(int type) {
+    game_type = type;
 }
 
 // draw the grid -- assumes the file has been loaded
@@ -285,7 +287,7 @@ void Grid::generate_move_tiles(Tile* character_tile, Tile* current_tile, int ran
     int dist = distance(character_tile, current_tile);
     if (dist > range) return;
 
-    if ((character_tile == current_tile || current_tile->is_standable()) && move_tiles->count(current_tile) == 0) {
+    if ((dist == 0 || current_tile->is_standable()) && move_tiles->count(current_tile) == 0) {
         move_tiles->insert(current_tile);
 
         vector<Tile*> nbrs = get_neighbors(current_tile);
@@ -293,7 +295,6 @@ void Grid::generate_move_tiles(Tile* character_tile, Tile* current_tile, int ran
             generate_move_tiles(character_tile, nbrs[i], range, move_tiles);
         }
     }
-
 }
 
 void Grid::play_ai_turn(SDL_Surface* surface, SDL_Surface* screen) {
@@ -414,10 +415,6 @@ int Grid::distance(Tile* tile1, Tile* tile2) {
     return abs(tile1->get_x() - tile2->get_x()) + abs(tile1->get_y() - tile2->get_y());
 }
 
-double Grid::sqrt_distance(Tile* tile1, Tile* tile2) {
-    return sqrt(pow(tile1->get_x() - tile2->get_x(), 2) + pow(tile1->get_y() - tile2->get_y(), 2));
-}
-
 // translated from psuedocode found at
 // http://en.wikipedia.org/wiki/A*_search_algorithm
 vector<Tile*> Grid::path_search(Tile* start, Tile* end) {
@@ -471,7 +468,7 @@ vector<Tile*> Grid::path_search(Tile* start, Tile* end) {
 
         vector<Tile*> nbrs = get_neighbors(current);
         for (int i = 0; i < nbrs.size(); i++) {
-            if (nbrs[i]->is_standable()) {
+            if (nbrs[i]->is_standable() || nbrs[i] == end) {
                 int nbr_x = nbrs[i]->get_x();
                 int nbr_y = nbrs[i]->get_y();
 

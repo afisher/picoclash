@@ -56,7 +56,7 @@ void Archer::move(SDL_Surface* surface) {
                 int dist = Grid::distance(move_tiles[i], closest_enemy_tile);
 
                 // if this is the biggest distance to a closest enemy, then save this move as the best
-                if (dist <= range && dist > max_dist && move_tiles[i]->get_character() == NULL) {
+                if (dist <= range && dist > max_dist && move_tiles[i]->is_standable()) {
                     max_dist = dist;
                     best_move_tile = move_tiles[i];
                 }
@@ -79,6 +79,16 @@ void Archer::move(SDL_Surface* surface) {
     if (size > 1) {
         int index = min(size-2, mobility);
         closest_move_tile = path[index];
+    } else {
+        // if there's no path, just move as close as possible to the enemy
+        min_dist = INT_MAX;
+        for (int i = 0; i < move_tiles.size(); i++) {
+            int dist = Grid::distance(closest_enemy_tile, move_tiles[i]);
+            if (dist < min_dist) {
+                min_dist = dist;
+                closest_move_tile = move_tiles[i];
+            }
+        }
     }
 
     if (closest_move_tile != NULL) {

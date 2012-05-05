@@ -24,6 +24,7 @@ void MovingState::execute(SDL_Event event, SDL_Surface* surface) {
             StateMachine::set_selected_tile(Grid::get(selected_character->get_x(),
                                                       selected_character->get_y()));
             StateMachine::get_selected_tile()->set_selected(true);
+            StateMachine::get_selected_tile()->set_move_on(false);
             Grid::draw_grid(surface);
 
             StateMachine::set_previous_state(this);
