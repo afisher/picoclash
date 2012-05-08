@@ -29,7 +29,6 @@ void StateMachine::execute(SDL_Event event, SDL_Surface* surface, SDL_Surface* s
             if (Grid::get_game_type() == Constants::P_V_CPU && Grid::get_current_player() == 2) {
                 Grid::draw_sidebar(surface);
                 Grid::play_ai_turn(surface, screen);
-                Grid::new_turn();
                 Grid::draw_grid(surface);
             }
         }
