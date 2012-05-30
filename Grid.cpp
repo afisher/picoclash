@@ -333,7 +333,7 @@ bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
     Tile* selected_tile = grid[y][x];
 
     // move if we picked an empty square
-    if (selected_tile->is_standable()) {
+    if (selected_tile->is_standable() && selected_tile->get_character() == NULL) {
         for (int k = 0; k < move_tiles.size(); k++) {
             if (move_tiles[k] == selected_tile) {
                 selected_tile->set_character(cur_char);
@@ -363,15 +363,17 @@ bool Grid::attack(int i, int j, int x, int y, SDL_Surface* surface) {
 
         character2->take_damage(character1->get_strength());
         if (character2->get_health() <= 0) {
-            for (int i = 0; i < player_characters.size(); i++) {
-                if (player_characters[i]->get_x() == x && player_characters[i]->get_y() == y) {
-                    player_characters.erase(player_characters.begin()+i);
+            if (character2->get_player() == 1) {
+                for (int i = 0; i < player_characters.size(); i++) {
+                    if (player_characters[i]->get_x() == x && player_characters[i]->get_y() == y) {
+                        player_characters.erase(player_characters.begin()+i);
+                    }
                 }
-            }
-
-            for (int i = 0; i < enemy_characters.size(); i++) {
-                if (enemy_characters[i]->get_x() == x && enemy_characters[i]->get_y() == y) {
-                    enemy_characters.erase(enemy_characters.begin()+i);
+            } else {
+                for (int i = 0; i < enemy_characters.size(); i++) {
+                    if (enemy_characters[i]->get_x() == x && enemy_characters[i]->get_y() == y) {
+                        enemy_characters.erase(enemy_characters.begin()+i);
+                    }
                 }
             }
 
