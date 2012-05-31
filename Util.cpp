@@ -20,6 +20,8 @@ void Util::update_screen(SDL_Surface* source, SDL_Surface* destination) {
     SDL_Surface* scaled2x = scale2x(source);
     scale(scaled2x, destination);
     SDL_FreeSurface(scaled2x);
+
+    //apply_surface(0, 0, source, destination);
     
     SDL_Flip(destination);
 }

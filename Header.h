@@ -19,7 +19,7 @@ using namespace std;
  * Global game constants *
  * --------------------- */
 namespace Constants {
-    const int FRAMES_PER_SECOND = 20;
+    const int FRAMES_PER_SECOND = 60;
 
     const int SCREEN_WIDTH  = 1280;
     const int SCREEN_HEIGHT = 960;
