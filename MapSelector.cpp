@@ -10,6 +10,8 @@ MapSelector::MapSelector() {
     x_padding = 120;
     y_padding = 30;
 
+    SDL_Surface* bg = Util::load_image("sprites/selector_bg.png");
+
     DIR* dir;
     struct dirent *entry;
     if(dir = opendir("maps/"))
@@ -43,6 +45,9 @@ MapSelector::MapSelector() {
                             Constants::WIDTH,
                             Constants::HEIGHT,
                             Constants::SCREEN_BPP, 0, 0, 0, 0);
+
+        // Apply the background
+        Util::apply_surface(0, 0, bg, page);
 
         // Apply the arrow buttons
         Util::apply_surface(10, Constants::HEIGHT / 2 - 32, arrow_left, page);

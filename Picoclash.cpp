@@ -66,14 +66,31 @@ int main(int argc, char* args[]) {
     Grid::font = TTF_OpenFont("fonts/04B-03/04B_03__.TTF", 14);
     if (Grid::font == NULL) return 1;
 
+    // make the sidebar surface
     Grid::sidebar = Util::load_image("sprites/sidebar-bg.png");
 
     StateMachine::init();
 
+    // make the map selector
     MapSelector* selector = new MapSelector();
     Util::update_screen(selector->get_surface(), screen);
 
     bool game_started = false;
+
+
+    // make the title screen surface
+    SDL_Surface* title_screen = Util::load_image("sprites/title.png");
+    Util::update_screen(title_screen, screen);
+
+    while (quit == false) {
+        if (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                quit = true;
+            } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RETURN) {
+                break;
+            }
+        }
+    }
 
     while (quit == false) {
 

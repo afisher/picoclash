@@ -9,11 +9,12 @@ CheckButton::CheckButton(string label_string, bool checked) {
     width = 160;
     height = 32;
 
-    surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+    surface = Util::load_image("sprites/check_bg.png");
+                                /*SDL_CreateRGBSurface(SDL_SWSURFACE,
                                    width,
                                    height,
                                    Constants::SCREEN_BPP,
-                                   0, 0, 0, 0);
+                                   0, 0, 0, 0);*/
 
     if (checked) {
         Util::apply_surface(0, 0, box_checked, surface);

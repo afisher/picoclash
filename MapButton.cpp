@@ -31,13 +31,14 @@ MapButton::MapButton(string file) {
     SDL_Color text_color = { 255, 255, 255 };
     name_surface = TTF_RenderText_Solid(Grid::font, name.c_str(), text_color);
 
-    surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+    surface = Util::load_image("sprites/button_bg.png");
+                                /*SDL_CreateRGBSurface(SDL_SWSURFACE,
                                    width,
                                    height,
                                    Constants::SCREEN_BPP,
-                                   0, 0, 0, 0);
+                                   0, 0, 0, 0);*/
 
-    Util::apply_surface(5, 5, preview, surface);
+    Util::apply_surface(0, 0, preview, surface);
     Util::apply_surface(130, 50, name_surface, surface);
 
     SDL_FreeSurface(preview);

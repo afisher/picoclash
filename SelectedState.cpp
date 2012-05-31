@@ -10,6 +10,7 @@ void SelectedState::execute(SDL_Event event, SDL_Surface* surface) {
     if (event.type == SDL_MOUSEMOTION) {
         if (selected_tile != NULL) {
             selected_tile->set_selected(false);
+            Grid::draw_tile(selected_tile, surface);
         }
         
         int x = event.motion.x / (Constants::X_RATIO * Constants::SPRITE_SIZE); 
@@ -21,7 +22,7 @@ void SelectedState::execute(SDL_Event event, SDL_Surface* surface) {
 
             // highlight the tile
             selected_tile->set_selected(true);
-            Grid::draw_grid(surface);
+            Grid::draw_tile(selected_tile, surface);
             Grid::draw_sidebar(surface);
 
             StateMachine::set_previous_state(this);
