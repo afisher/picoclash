@@ -5,6 +5,7 @@ void SelectedState::execute(SDL_Event event, SDL_Surface* surface) {
     Character* selected_character = NULL;
     if (selected_tile != NULL) {
         selected_character = selected_tile->get_character();
+        Grid::draw_sidebar(surface);
     }
 
     if (event.type == SDL_MOUSEMOTION) {
@@ -26,7 +27,6 @@ void SelectedState::execute(SDL_Event event, SDL_Surface* surface) {
             // highlight the tile
             selected_tile->set_selected(true);
             Grid::draw_tile(selected_tile, surface);
-            Grid::draw_sidebar(surface);
 
             StateMachine::set_previous_state(this);
             StateMachine::set_current_state(new SelectedState());

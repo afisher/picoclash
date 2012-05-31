@@ -140,7 +140,7 @@ int main(int argc, char* args[]) {
         }
 
         if (game_started) {
-            Grid::draw_sidebar(surface);
+            //Grid::draw_sidebar(surface);
             Util::update_screen(surface, screen);
         } else {
             Util::update_screen(selector->get_surface(), screen);
