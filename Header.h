@@ -1,6 +1,7 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include "SDL/SDL_ttf.h"
+#include "SDL/SDL_mixer.h"
 
 #include <string>
 #include <vector>
@@ -462,4 +463,19 @@ class MapSelector {
         void cpu_vs_cpu_clicked();
 
         void draw_check_buttons();
+};
+
+/* ----------- *
+ * Sound class *
+ * ----------- */
+class Sound {
+    public:
+        static void init();
+        static void clean_up();
+        
+        static void play_hit();
+        static void play_heal();
+        static void play_death();
+        static void play_hover();
+        static void play_move();
 };

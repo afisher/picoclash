@@ -29,6 +29,7 @@ static void clean_up() {
     SDL_FreeSurface(screen);
     
     Grid::clean_up();
+    Sound::clean_up();
 }
 
 int main(int argc, char* args[]) {
@@ -70,6 +71,7 @@ int main(int argc, char* args[]) {
     Grid::sidebar = Util::load_image("sprites/sidebar-bg.png");
 
     StateMachine::init();
+    Sound::init();
 
     // make the map selector
     MapSelector* selector = new MapSelector();
@@ -91,10 +93,16 @@ int main(int argc, char* args[]) {
             }
         }
     }
+    
+    // make surfaces for win screens
+    SDL_Surface* win_blue = Util::load_image("sprites/win_blue.png");
+    SDL_Surface* win_red = Util::load_image("sprites/win_red.png");
+    SDL_Surface* win_screen = NULL;
 
     while (quit == false) {
 
         int start_ticks = SDL_GetTicks();
+
 
         while (SDL_PollEvent(&event)) {
 
@@ -123,6 +131,8 @@ int main(int argc, char* args[]) {
                 selector->previous_page();
             } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RIGHT && !game_started) {
                 selector->next_page();
+            } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RETURN && game_started && Grid::game_over()) {
+                game_started = false;
             } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_BACKSPACE && game_started) {
                 game_started = false;
             } else if (game_started && Grid::get_game_type() != Constants::CPU_V_CPU) {
@@ -139,8 +149,15 @@ int main(int argc, char* args[]) {
             SDL_Delay((1000 / Constants::FRAMES_PER_SECOND) - ticks);
         }
 
-        if (game_started) {
-            //Grid::draw_sidebar(surface);
+        if (Grid::game_over() && game_started) {
+            if (Grid::get_player_characters().size() == 0) {
+                win_screen = win_red;
+            } else if (Grid::get_enemy_characters().size() == 0) {
+                win_screen = win_blue;
+            }
+
+            Util::update_screen(win_screen, screen);
+        } else if (game_started) {
             Util::update_screen(surface, screen);
         } else {
             Util::update_screen(selector->get_surface(), screen);

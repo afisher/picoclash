@@ -1,6 +1,6 @@
 #CXXFLAGS = -Wall
 CC = g++
-LDFLAGS = -lSDL -lSDL_image -lSDL_ttf -lm
+LDFLAGS = -lSDL -lSDL_image -lSDL_ttf -lSDL_mixer -lm
 OBJS = \
 	Picoclash.o \
 	Util.o \
@@ -19,7 +19,8 @@ OBJS = \
 	StateMachine.o \
 	MapSelector.o \
 	MapButton.o \
-	CheckButton.o
+	CheckButton.o \
+	Sound.o
 
 all: Picoclash
 

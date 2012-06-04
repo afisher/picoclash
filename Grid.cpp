@@ -336,6 +336,8 @@ bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
     if (selected_tile->is_standable() && selected_tile->get_character() == NULL) {
         for (int k = 0; k < move_tiles.size(); k++) {
             if (move_tiles[k] == selected_tile) {
+                Sound::play_move();
+
                 selected_tile->set_character(cur_char);
                 grid[j][i]->set_character(NULL);
 
@@ -362,6 +364,8 @@ bool Grid::attack(int i, int j, int x, int y, SDL_Surface* surface) {
         && character1->get_player() != character2->get_player()) {
 
         character2->take_damage(character1->get_strength());
+        Sound::play_hit();
+
         if (character2->get_health() <= 0) {
             if (character2->get_player() == 1) {
                 for (int i = 0; i < player_characters.size(); i++) {
@@ -378,6 +382,7 @@ bool Grid::attack(int i, int j, int x, int y, SDL_Surface* surface) {
             }
 
             grid[y][x]->character_died();
+            Sound::play_death();
         }
 
         get(i, j)->set_selected(false);
@@ -403,6 +408,8 @@ bool Grid::heal(int i, int j, int x, int y, SDL_Surface* surface) {
 
     if (distance(i, j, x, y) <= range && !character1->get_attacked_this_turn()
         && character1->get_player() == character2->get_player()) {
+
+        Sound::play_heal();
 
         // heal for less if we're healing ourselves
         if (distance(i, j, x, y) == 0) {

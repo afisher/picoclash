@@ -56,6 +56,8 @@ void StateMachine::execute(SDL_Event event, SDL_Surface* surface, SDL_Surface* s
             inspected_tile->set_selected(true);
             Grid::draw_tile(inspected_tile, surface);
         }
+
+        Grid::draw_sidebar(surface);
     }
 
 }
