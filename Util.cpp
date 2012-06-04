@@ -2,6 +2,9 @@
 
 using namespace std;
 
+double Util::X_RATIO = 1;
+double Util::Y_RATIO = 1;
+
 // intitializes the screen and returns it (returns null if something went wrong)
 SDL_Surface* Util::init_screen(int width, int height, int bpp) {
     //Initialize all SDL subsystems
@@ -12,6 +15,8 @@ SDL_Surface* Util::init_screen(int width, int height, int bpp) {
     SDL_Surface* screen = SDL_SetVideoMode(width, height, bpp, SDL_SWSURFACE);
 
     SDL_WM_SetCaption("Picoclash", NULL);
+
+    update_ratios(screen);
 
     return screen;
 }
@@ -207,4 +212,9 @@ void Util::apply_surface(int x, int y, SDL_Surface* source, SDL_Surface* destina
     offset.y = y;
 
     SDL_BlitSurface(source, clip, destination, &offset);
+}
+
+void Util::update_ratios(SDL_Surface* screen) {
+    X_RATIO = (double)screen->w / Constants::WIDTH;
+    Y_RATIO = (double)screen->h / Constants::HEIGHT;
 }

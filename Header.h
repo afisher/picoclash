@@ -22,8 +22,6 @@ using namespace std;
 namespace Constants {
     const int FRAMES_PER_SECOND = 60;
 
-    const int SCREEN_WIDTH  = 1280;
-    const int SCREEN_HEIGHT = 960;
     const int SCREEN_BPP    = 32;
 
     const int PLAYER_WARRIOR = 1;
@@ -44,11 +42,7 @@ namespace Constants {
 
     const int WIDTH  = 640;
     const int HEIGHT = 480;
-    const double fWIDTH  = 640;
-    const double fHEIGHT = 480;
 
-    const double X_RATIO = (double)SCREEN_WIDTH  / WIDTH;
-    const double Y_RATIO = (double)SCREEN_HEIGHT / HEIGHT;
 };
 
 /* ----------------- *
@@ -372,8 +366,13 @@ class Grid {
  * ---------------------- */
 class Util {
     public:
+        static double X_RATIO;
+        static double Y_RATIO;
+
         static SDL_Surface* init_screen(int width, int height, int bpp);
         static void update_screen(SDL_Surface* source, SDL_Surface* destination);
+
+        static void update_ratios(SDL_Surface* screen);
 
         static SDL_Surface* load_image(std::string filename);
         static void apply_surface(int x, int y, SDL_Surface* source, SDL_Surface* destination, SDL_Rect* clip = NULL);

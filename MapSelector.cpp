@@ -89,32 +89,32 @@ MapButton* MapSelector::get_selected_button(int x, int y) {
     }
 
     // Check to see if one of the arrows was clicked
-    if (y >= Constants::Y_RATIO*(Constants::HEIGHT / 2 - 32) &&
-        y <= Constants::Y_RATIO*(Constants::HEIGHT / 2 - 32 + 64)) {
+    if (y >= Util::Y_RATIO*(Constants::HEIGHT / 2 - 32) &&
+        y <= Util::Y_RATIO*(Constants::HEIGHT / 2 - 32 + 64)) {
 
-        if (x >= Constants::X_RATIO*10 &&
-            x <= Constants::X_RATIO*74) {
+        if (x >= Util::X_RATIO*10 &&
+            x <= Util::X_RATIO*74) {
             previous_page();
-        } else if (x >= Constants::X_RATIO*(Constants::WIDTH - 74) &&
-                   x <= Constants::X_RATIO*(Constants::WIDTH - 74 + 64)) {
+        } else if (x >= Util::X_RATIO*(Constants::WIDTH - 74) &&
+                   x <= Util::X_RATIO*(Constants::WIDTH - 74 + 64)) {
             next_page();
         }
     }
 
     // Check to see if one of the check boxes was clicked
-    if (y >= Constants::Y_RATIO*(Constants::HEIGHT - 44) &&
-        y <= Constants::Y_RATIO*(Constants::HEIGHT - 44 + 32)) {
+    if (y >= Util::Y_RATIO*(Constants::HEIGHT - 44) &&
+        y <= Util::Y_RATIO*(Constants::HEIGHT - 44 + 32)) {
         
-        if (x >= Constants::X_RATIO*(x_padding) &&
-            x <= Constants::X_RATIO*(x_padding + 32)) {
+        if (x >= Util::X_RATIO*(x_padding) &&
+            x <= Util::X_RATIO*(x_padding + 32)) {
 
             p_vs_cpu_clicked();
-        } else if (x >= Constants::X_RATIO*(x_padding + 160) &&
-            x <= Constants::X_RATIO*(x_padding + 160 + 32)) {
+        } else if (x >= Util::X_RATIO*(x_padding + 160) &&
+            x <= Util::X_RATIO*(x_padding + 160 + 32)) {
 
             p_vs_p_clicked();
-        } else if (x >= Constants::X_RATIO*(x_padding + 320) &&
-            x <= Constants::X_RATIO*(x_padding + 320 + 32)) {
+        } else if (x >= Util::X_RATIO*(x_padding + 320) &&
+            x <= Util::X_RATIO*(x_padding + 320 + 32)) {
 
             cpu_vs_cpu_clicked();
         }
@@ -124,10 +124,10 @@ MapButton* MapSelector::get_selected_button(int x, int y) {
 }
 
 bool MapSelector::in_bounds(int x, int y, MapButton* button, int button_number) {
-    return x >= Constants::X_RATIO*x_padding &&
-           x <= Constants::X_RATIO*(x_padding+button->get_width()) &&
-           y >= Constants::Y_RATIO*(y_padding + button->get_height()*(button_number%buttons_per_page)) &&
-           y <= Constants::Y_RATIO*(y_padding + button->get_height()*(button_number%buttons_per_page) + button->get_height());
+    return x >= Util::X_RATIO*x_padding &&
+           x <= Util::X_RATIO*(x_padding+button->get_width()) &&
+           y >= Util::Y_RATIO*(y_padding + button->get_height()*(button_number%buttons_per_page)) &&
+           y <= Util::Y_RATIO*(y_padding + button->get_height()*(button_number%buttons_per_page) + button->get_height());
 }
 
 void MapSelector::next_page() {

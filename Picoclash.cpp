@@ -10,6 +10,9 @@ SDL_Surface* win_red      = NULL;
 
 SDL_Event event;
 
+const int SCREEN_WIDTH = 640;
+const int SCREEN_HEIGHT = 480;
+
 static void clean_up() {
     SDL_FreeSurface(Tile::default_image);
     SDL_FreeSurface(Tile::alt_image);
@@ -37,17 +40,34 @@ static void clean_up() {
     Sound::clean_up();
 }
 
+static void handle_resize(SDL_Surface* screen) {
+    if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_1) {
+        screen == Util::init_screen(640, 480, Constants::SCREEN_BPP);
+    } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_2) {
+        screen == Util::init_screen(800, 600, Constants::SCREEN_BPP);
+    } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_3) {
+        screen == Util::init_screen(960, 720, Constants::SCREEN_BPP);
+    } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_4) {
+        screen == Util::init_screen(1280, 960, Constants::SCREEN_BPP);
+    } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_5) {
+        screen == Util::init_screen(1400, 1080, Constants::SCREEN_BPP);
+    }
+}
+
 int main(int argc, char* args[]) {
+
     bool quit = false;
 
-    screen = Util::init_screen(Constants::SCREEN_WIDTH,
-                               Constants::SCREEN_HEIGHT,
+    screen = Util::init_screen(SCREEN_WIDTH,
+                               SCREEN_HEIGHT,
                                Constants::SCREEN_BPP);
 
     surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
                                    Constants::WIDTH,
                                    Constants::HEIGHT,
                                    Constants::SCREEN_BPP, 0, 0, 0, 0);
+
+    Util::update_ratios(screen);
 
     Tile::default_image  = Util::load_image("sprites/grass-plain.png");
     Tile::alt_image      = Util::load_image("sprites/grass-alt.png");
@@ -83,13 +103,23 @@ int main(int argc, char* args[]) {
     Util::update_screen(title_screen, screen);
 
     while (quit == false) {
+        int start_ticks = SDL_GetTicks();
+
         if (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 quit = true;
             } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RETURN) {
                 break;
             }
+            handle_resize(screen);
         }
+
+        int ticks = SDL_GetTicks() - start_ticks;
+        if (ticks < 1000 / Constants::FRAMES_PER_SECOND) {
+            SDL_Delay((1000 / Constants::FRAMES_PER_SECOND) - ticks);
+        }
+
+        Util::update_screen(title_screen, screen);
     }
 
     // make the map selector
@@ -107,6 +137,7 @@ int main(int argc, char* args[]) {
         int start_ticks = SDL_GetTicks();
 
         while (SDL_PollEvent(&event)) {
+            handle_resize(screen);
 
             if (event.type == SDL_QUIT) {
                 quit = true;

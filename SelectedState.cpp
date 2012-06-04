@@ -9,8 +9,8 @@ void SelectedState::execute(SDL_Event event, SDL_Surface* surface) {
     }
 
     if (event.type == SDL_MOUSEMOTION) {
-        int x = event.motion.x / (Constants::X_RATIO * Constants::SPRITE_SIZE); 
-        int y = event.motion.y / (Constants::Y_RATIO * Constants::SPRITE_SIZE); 
+        int x = event.motion.x / (Util::X_RATIO * Constants::SPRITE_SIZE); 
+        int y = event.motion.y / (Util::Y_RATIO * Constants::SPRITE_SIZE); 
 
         if (selected_tile != NULL) {
             if (selected_tile->get_x() == x && selected_tile->get_y() == y) return;

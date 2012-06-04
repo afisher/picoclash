@@ -45,8 +45,8 @@ void StateMachine::execute(SDL_Event event, SDL_Surface* surface, SDL_Surface* s
             Grid::draw_tile(inspected_tile, surface);
         }
 
-        int x = event.motion.x / (Constants::X_RATIO * Constants::SPRITE_SIZE); 
-        int y = event.motion.y / (Constants::Y_RATIO * Constants::SPRITE_SIZE); 
+        int x = event.motion.x / (Util::X_RATIO * Constants::SPRITE_SIZE); 
+        int y = event.motion.y / (Util::Y_RATIO * Constants::SPRITE_SIZE); 
 
         if (x >= 0 && y >= 0 && x < Constants::GRID_WIDTH && y < Constants::GRID_HEIGHT) { 
             StateMachine::set_inspected_tile(Grid::get(x, y));
