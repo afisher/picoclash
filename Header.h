@@ -476,6 +476,5 @@ class Sound {
         static void play_hit();
         static void play_heal();
         static void play_death();
-        static void play_hover();
         static void play_move();
 };

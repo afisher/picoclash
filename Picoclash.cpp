@@ -4,11 +4,9 @@ using namespace std;
 
 SDL_Surface* screen       = NULL;
 SDL_Surface* surface      = NULL;
-SDL_Surface* sidebar      = NULL;
 SDL_Surface* title_screen = NULL;
 SDL_Surface* win_blue     = NULL;
 SDL_Surface* win_red      = NULL;
-SDL_Surface* win_screen   = NULL;
 
 SDL_Event event;
 
@@ -27,15 +25,13 @@ static void clean_up() {
     SDL_FreeSurface(RockTile::attack_image);
     SDL_FreeSurface(RockTile::heal_image);
 
-    SDL_FreeSurface(Grid::grid_image);
-    SDL_FreeSurface(Grid::sidebar);
-    SDL_FreeSurface(surface);
-    SDL_FreeSurface(screen);
-
     SDL_FreeSurface(title_screen);
     SDL_FreeSurface(win_blue);
     SDL_FreeSurface(win_red);
-    SDL_FreeSurface(win_screen);
+
+    SDL_FreeSurface(Grid::grid_image);
+    SDL_FreeSurface(surface);
+    SDL_FreeSurface(screen);
     
     Grid::clean_up();
     Sound::clean_up();
@@ -105,7 +101,6 @@ int main(int argc, char* args[]) {
     // make surfaces for win screens
     win_blue = Util::load_image("sprites/win_blue.png");
     win_red = Util::load_image("sprites/win_red.png");
-    win_screen = NULL;
 
     while (quit == false) {
 
@@ -158,12 +153,11 @@ int main(int argc, char* args[]) {
 
         if (Grid::game_over() && game_started) {
             if (Grid::get_player_characters().size() == 0) {
-                win_screen = win_red;
+                Util::update_screen(win_red, screen);
             } else if (Grid::get_enemy_characters().size() == 0) {
-                win_screen = win_blue;
+                Util::update_screen(win_blue, screen);
             }
 
-            Util::update_screen(win_screen, screen);
         } else if (game_started) {
             Util::update_screen(surface, screen);
         } else {
