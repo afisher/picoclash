@@ -73,13 +73,6 @@ int main(int argc, char* args[]) {
     StateMachine::init();
     Sound::init();
 
-    // make the map selector
-    MapSelector* selector = new MapSelector();
-    Util::update_screen(selector->get_surface(), screen);
-
-    bool game_started = false;
-
-
     // make the title screen surface
     SDL_Surface* title_screen = Util::load_image("sprites/title.png");
     Util::update_screen(title_screen, screen);
@@ -93,7 +86,14 @@ int main(int argc, char* args[]) {
             }
         }
     }
-    
+
+    // make the map selector
+    MapSelector* selector = new MapSelector();
+    Util::update_screen(selector->get_surface(), screen);
+
+    bool game_started = false;
+
+
     // make surfaces for win screens
     SDL_Surface* win_blue = Util::load_image("sprites/win_blue.png");
     SDL_Surface* win_red = Util::load_image("sprites/win_red.png");
