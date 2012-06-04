@@ -7,7 +7,11 @@ Mix_Chunk* hover  = NULL;
 Mix_Chunk* move   = NULL;
 
 void Sound::init() {
-    Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
+    const int frequency = 22050;
+    const int channels = 2;
+    const int sample_size = 4096;
+
+    Mix_OpenAudio(frequency, MIX_DEFAULT_FORMAT, channels, sample_size);
 
     hit    = Mix_LoadWAV("sounds/hit.wav");
     heal   = Mix_LoadWAV("sounds/heal.wav");
