@@ -2,9 +2,13 @@
 
 using namespace std;
 
-SDL_Surface* screen = NULL;
-SDL_Surface* surface = NULL;
-SDL_Surface* sidebar = NULL;
+SDL_Surface* screen       = NULL;
+SDL_Surface* surface      = NULL;
+SDL_Surface* sidebar      = NULL;
+SDL_Surface* title_screen = NULL;
+SDL_Surface* win_blue     = NULL;
+SDL_Surface* win_red      = NULL;
+SDL_Surface* win_screen   = NULL;
 
 SDL_Event event;
 
@@ -27,6 +31,11 @@ static void clean_up() {
     SDL_FreeSurface(Grid::sidebar);
     SDL_FreeSurface(surface);
     SDL_FreeSurface(screen);
+
+    SDL_FreeSurface(title_screen);
+    SDL_FreeSurface(win_blue);
+    SDL_FreeSurface(win_red);
+    SDL_FreeSurface(win_screen);
     
     Grid::clean_up();
     Sound::clean_up();
@@ -74,7 +83,7 @@ int main(int argc, char* args[]) {
     Sound::init();
 
     // make the title screen surface
-    SDL_Surface* title_screen = Util::load_image("sprites/title.png");
+    title_screen = Util::load_image("sprites/title.png");
     Util::update_screen(title_screen, screen);
 
     while (quit == false) {
@@ -93,16 +102,14 @@ int main(int argc, char* args[]) {
 
     bool game_started = false;
 
-
     // make surfaces for win screens
-    SDL_Surface* win_blue = Util::load_image("sprites/win_blue.png");
-    SDL_Surface* win_red = Util::load_image("sprites/win_red.png");
-    SDL_Surface* win_screen = NULL;
+    win_blue = Util::load_image("sprites/win_blue.png");
+    win_red = Util::load_image("sprites/win_red.png");
+    win_screen = NULL;
 
     while (quit == false) {
 
         int start_ticks = SDL_GetTicks();
-
 
         while (SDL_PollEvent(&event)) {
 
