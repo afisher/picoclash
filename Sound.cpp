@@ -16,8 +16,8 @@ void Sound::init() {
     hit    = Mix_LoadWAV("sounds/hit.wav");
     heal   = Mix_LoadWAV("sounds/heal.wav");
     death  = Mix_LoadWAV("sounds/dead.wav");
-    hover  = Mix_LoadWAV("sounds/hover.wav");
-    move   = Mix_LoadWAV("sounds/hover.wav");
+    hover  = Mix_LoadWAV("sounds/move.wav");
+    move   = Mix_LoadWAV("sounds/move.wav");
 }
 
 void Sound::clean_up() {
