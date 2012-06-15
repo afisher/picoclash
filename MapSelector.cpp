@@ -40,6 +40,9 @@ MapSelector::MapSelector() {
     int num_pages = (buttons.size() / buttons_per_page);
     if (buttons.size() % buttons_per_page != 0) num_pages++;
 
+    string resize_str = "1 thru 5 - Resize Window";
+    SDL_Surface* resize_info = TTF_RenderText_Solid(Grid::font, resize_str.c_str(), text_color);
+
     for (int i = 0; i < num_pages; i++) {
         SDL_Surface* page = SDL_CreateRGBSurface(SDL_SWSURFACE,
                             Constants::WIDTH,
@@ -53,8 +56,12 @@ MapSelector::MapSelector() {
         Util::apply_surface(10, Constants::HEIGHT / 2 - 32, arrow_left, page);
         Util::apply_surface(Constants::WIDTH - 74, Constants::HEIGHT / 2 - 32, arrow_right, page);
 
+        Util::apply_surface(400, 10, resize_info, page);
+
         pages.push_back(page);
     }
+
+    SDL_FreeSurface(resize_info);
 
     draw_check_buttons();
 
