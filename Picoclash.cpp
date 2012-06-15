@@ -214,7 +214,7 @@ int main(int argc, char* args[]) {
             }
         }
 
-        if (game_started && !Grid::game_over() && Grid::get_game_type() == Constants::CPU_V_CPU) {
+        if (game_started && !Grid::game_over() && !game_paused && Grid::get_game_type() == Constants::CPU_V_CPU) {
             Grid::play_ai_turn(surface, screen);
         }
 
