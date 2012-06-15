@@ -13,7 +13,7 @@ Healer::Healer(int p, int lvl) : Character() {
 void Healer::set_values(int p, int lvl) {
     player    = p;
     level     = lvl;
-    mobility  = 2;
+    mobility  = 3;
     increment = 5;
     health    = increment  * level;
     strength  = 1  * level;
