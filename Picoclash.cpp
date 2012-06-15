@@ -113,6 +113,9 @@ int main(int argc, char* args[]) {
     // make the sidebar surface
     Grid::sidebar = Util::load_image("sprites/sidebar-bg.png");
 
+    // make the "are you sure?" surface
+    SDL_Surface* quit_screen = Util::load_image("sprites/quit.png");
+
     StateMachine::init();
     Sound::init();
 
@@ -158,6 +161,7 @@ int main(int argc, char* args[]) {
     MapSelector* selector = new MapSelector();
 
     bool game_started = false;
+    bool game_paused  = false;
 
     // make surfaces for win screens
     win_blue = Util::load_image("sprites/win_blue.png");
@@ -197,8 +201,14 @@ int main(int argc, char* args[]) {
                 selector->next_page();
             } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RETURN && game_started && Grid::game_over()) {
                 game_started = false;
-            } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_BACKSPACE && game_started) {
+            } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_BACKSPACE && game_started && !game_paused) {
+                //game_started = false;
+                game_paused = true;
+            } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RETURN && game_paused) {
+                game_paused  = false;
                 game_started = false;
+            } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE && game_paused) {
+                game_paused = false;
             } else if (game_started && Grid::get_game_type() != Constants::CPU_V_CPU) {
                 StateMachine::execute(event, surface, screen);
             }
@@ -220,6 +230,8 @@ int main(int argc, char* args[]) {
                 Util::update_screen(win_blue, screen);
             }
 
+        } else if (game_paused) {
+            Util::update_screen(quit_screen, screen);
         } else if (game_started) {
             Util::update_screen(surface, screen);
         } else {

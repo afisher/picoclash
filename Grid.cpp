@@ -701,6 +701,11 @@ void Grid::draw_sidebar(SDL_Surface* surface) {
     Util::apply_surface(486, 360, resize_info, surface);
     SDL_FreeSurface(resize_info);
 
+    string quit_str = "Backspace - Menu";
+    SDL_Surface* quit_info = TTF_RenderText_Solid(font, quit_str.c_str(), text_color);
+    Util::apply_surface(486, 380, quit_info, surface);
+    SDL_FreeSurface(quit_info);
+
     string turn_str = "";
     if (current_player == 1) {
         turn_str = "Blue turn";
