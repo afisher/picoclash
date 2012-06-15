@@ -102,10 +102,17 @@ int main(int argc, char* args[]) {
     title_screen = Util::load_image("sprites/title.png");
 
     SDL_Color text_color = { 255, 255, 255 };
+
+    string copyright_str = "Copyright (C) 2012 Ashley S. Fisher";
+    SDL_Surface* copyright_info = TTF_RenderText_Solid(Grid::font, copyright_str.c_str(), text_color);
+    Util::apply_surface(10, 10, copyright_info, title_screen);
+
     string resize_str = "1 thru 5 - Resize Window";
     SDL_Surface* resize_info = TTF_RenderText_Solid(Grid::font, resize_str.c_str(), text_color);
-    Util::apply_surface(400, 10, resize_info, title_screen);
+    Util::apply_surface(440, 10, resize_info, title_screen);
+
     SDL_FreeSurface(resize_info);
+    SDL_FreeSurface(copyright_info);
 
     Util::update_screen(title_screen, screen);
 

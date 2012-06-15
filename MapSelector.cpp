@@ -56,7 +56,7 @@ MapSelector::MapSelector() {
         Util::apply_surface(10, Constants::HEIGHT / 2 - 32, arrow_left, page);
         Util::apply_surface(Constants::WIDTH - 74, Constants::HEIGHT / 2 - 32, arrow_right, page);
 
-        Util::apply_surface(400, 10, resize_info, page);
+        Util::apply_surface(440, 10, resize_info, page);
 
         pages.push_back(page);
     }
