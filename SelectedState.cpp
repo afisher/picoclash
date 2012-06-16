@@ -27,6 +27,7 @@ void SelectedState::execute(SDL_Event event, SDL_Surface* surface) {
     }
 
     if (event.type == SDL_MOUSEMOTION) {
+        if (Grid::get_current_player() == 2 && Grid::get_game_type() != Constants::P_V_P) return;
         int x = event.motion.x / (Util::X_RATIO * Constants::SPRITE_SIZE); 
         int y = event.motion.y / (Util::Y_RATIO * Constants::SPRITE_SIZE); 
 

@@ -20,6 +20,7 @@
 
 void IdleState::execute(SDL_Event event, SDL_Surface* surface) {
     if (event.type == SDL_MOUSEMOTION) {
+        if (Grid::get_current_player() == 2 && Grid::get_game_type() != Constants::P_V_P) return;
         Tile* selected_tile = StateMachine::get_selected_tile();
         if (selected_tile != NULL) {
             selected_tile->set_selected(false);

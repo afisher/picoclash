@@ -47,10 +47,14 @@ void StateMachine::execute(SDL_Event event, SDL_Surface* surface, SDL_Surface* s
                Grid::get_current_player() == 1)) { 
 
                 Grid::new_turn();
+                StateMachine::get_inspected_tile()->set_selected(false);
+                StateMachine::get_selected_tile()->set_selected(false);
                 Grid::draw_grid(surface);
             }
         }
     } else if (event.type == SDL_MOUSEMOTION) {
+        if (Grid::get_current_player() == 2 && Grid::get_game_type() != Constants::P_V_P) return;
+
         Tile* inspected_tile = StateMachine::get_inspected_tile();
         Character* inspected_character = NULL;
         if (inspected_tile != NULL) {
