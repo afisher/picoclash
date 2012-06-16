@@ -41,12 +41,12 @@ void StateMachine::execute(SDL_Event event, SDL_Surface* surface, SDL_Surface* s
 
             Grid::toggle_show_lines(surface);
         } else if (event.key.keysym.sym == SDLK_v) {
-            // end the turn
-            Grid::new_turn();
-            Grid::draw_grid(surface);
-            if (Grid::get_game_type() == Constants::P_V_CPU && Grid::get_current_player() == 2) {
-                Grid::draw_sidebar(surface);
-                Grid::play_ai_turn(surface, screen);
+            // end the turn if it is within a player's control
+            if (Grid::get_game_type() == Constants::P_V_P ||
+               (Grid::get_game_type() == Constants::P_V_CPU &&
+               Grid::get_current_player() == 1)) { 
+
+                Grid::new_turn();
                 Grid::draw_grid(surface);
             }
         }

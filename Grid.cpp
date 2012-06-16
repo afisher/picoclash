@@ -23,6 +23,7 @@ using namespace std;
 Tile* grid[Constants::GRID_HEIGHT][Constants::GRID_WIDTH];
 vector<Character*> player_characters;
 vector<Character*> enemy_characters;
+vector<Character*> characters_to_act; // list of characters that need to act this turn
 int current_player = 1;
 
 int game_type = Constants::P_V_CPU;
@@ -35,6 +36,8 @@ TTF_Font* Grid::font = NULL;
 
 // loads the test map into the grid
 void Grid::load_file(string filename) {
+    current_player = 1;
+
     player_characters.clear();
     enemy_characters.clear();
 
@@ -139,6 +142,10 @@ void Grid::add_player_character(Character* c) {
 
 void Grid::add_enemy_character(Character* c) {
     enemy_characters.push_back(c);
+}
+
+void Grid::set_characters_to_act(vector<Character*> c) {
+    characters_to_act = c;
 }
 
 bool Grid::show_move_tiles(int i, int j, SDL_Surface* surface, bool show) {
@@ -340,6 +347,23 @@ void Grid::play_ai_turn(SDL_Surface* surface, SDL_Surface* screen) {
     draw_sidebar(surface);
 }
 
+void Grid::move_next_character(SDL_Surface* surface, SDL_Surface* screen) {
+    if (characters_to_act.size() > 0) {
+        Character* character = characters_to_act[0];
+        if (character->get_player() == current_player) {
+            characters_to_act[0]->play_turn(surface, screen);
+            characters_to_act.erase(characters_to_act.begin());
+
+            if (characters_to_act.empty()) {
+                new_turn();
+                draw_grid(surface);
+                draw_sidebar(surface);
+            }
+        }
+    }
+
+}
+
 bool Grid::move(int i, int j, int x, int y, SDL_Surface* surface) {
     Character* cur_char = grid[j][i]->get_character();
     if (cur_char == NULL) return false;
@@ -373,8 +397,8 @@ bool Grid::attack(int i, int j, int x, int y, SDL_Surface* surface) {
     Character* character1 = grid[j][i]->get_character();
     Character* character2 = grid[y][x]->get_character();
 
-    if (character1->get_player() != current_player) return false;
     if (character1 == NULL || character2 == NULL) return false;
+    if (character1->get_player() != current_player) return false;
 
     int range = character1->get_range();
 
@@ -563,6 +587,8 @@ vector<Tile*> Grid::reconstruct_path(vector<vector<Tile*> > came_from, Tile* cur
 }
 
 void Grid::new_turn() {
+    characters_to_act.clear();
+
     for (int j = 0; j < Constants::GRID_HEIGHT; j++) {
         for (int i = 0; i < Constants::GRID_WIDTH; i++) {
             Character* curChar = grid[j][i]->get_character();
@@ -577,8 +603,19 @@ void Grid::new_turn() {
         }
     }
 
-    if (current_player == 1) current_player = 2;
-    else current_player = 1;
+    if (current_player == 1) {
+        current_player = 2;
+
+        if (game_type != Constants::P_V_P) {
+            characters_to_act = enemy_characters;
+        }
+    } else {
+        current_player = 1;
+
+        if (game_type == Constants::CPU_V_CPU) {
+            characters_to_act = player_characters;
+        }
+    }
 }
 
 bool Grid::game_over() {

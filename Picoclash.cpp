@@ -192,6 +192,10 @@ int main(int argc, char* args[]) {
 
                         Util::update_screen(surface, screen);
 
+                        if (Grid::get_game_type() == Constants::CPU_V_CPU) {
+                            Grid::set_characters_to_act(Grid::get_player_characters());
+                        }
+
                         game_started = true;
                     }
                 }
@@ -202,7 +206,6 @@ int main(int argc, char* args[]) {
             } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RETURN && game_started && Grid::game_over()) {
                 game_started = false;
             } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_BACKSPACE && game_started && !game_paused) {
-                //game_started = false;
                 game_paused = true;
             } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RETURN && game_paused) {
                 game_paused  = false;
@@ -214,8 +217,12 @@ int main(int argc, char* args[]) {
             }
         }
 
-        if (game_started && !Grid::game_over() && !game_paused && Grid::get_game_type() == Constants::CPU_V_CPU) {
+        /*if (game_started && !Grid::game_over() && !game_paused && Grid::get_game_type() == Constants::CPU_V_CPU) {
             Grid::play_ai_turn(surface, screen);
+        }*/
+
+        if (game_started && !Grid::game_over() && !game_paused) { 
+            Grid::move_next_character(surface, screen);
         }
 
         int ticks = SDL_GetTicks() - start_ticks;

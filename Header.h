@@ -338,6 +338,8 @@ class Grid {
         static void add_player_character(Character* c);
         static void add_enemy_character(Character* c);
 
+        static void set_characters_to_act(std::vector<Character*> c);
+
         static int distance(int i, int j, int x, int y);
         static int distance(Tile* tile1, Tile* tile2);
         static double sqrt_distance(Tile* tile1, Tile* tile2);
@@ -361,6 +363,7 @@ class Grid {
         static bool has_path(Tile* character_tile, Tile* destination, int range);
 
         static void play_ai_turn(SDL_Surface* surface, SDL_Surface* screen);
+        static void move_next_character(SDL_Surface* surface, SDL_Surface* screen);
 
         static bool move  (int i, int j, int x, int y, SDL_Surface* surface);
         static bool attack(int i, int j, int x, int y, SDL_Surface* surface);

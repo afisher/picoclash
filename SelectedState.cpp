@@ -50,6 +50,15 @@ void SelectedState::execute(SDL_Event event, SDL_Surface* surface) {
             StateMachine::set_current_state(new SelectedState());
         }
     } else if (event.type == SDL_KEYDOWN) {
+
+        if (selected_character != NULL) {
+            if (selected_character->get_player() == 1 &&
+                Grid::get_game_type() == Constants::CPU_V_CPU) return;
+
+            if (selected_character->get_player() == 2 &&
+                Grid::get_game_type() != Constants::P_V_P) return;
+        }
+
         switch (event.key.keysym.sym) {
             case SDLK_z:
                 if (selected_character != NULL && !selected_character->get_moved_this_turn()) {
@@ -91,3 +100,4 @@ void SelectedState::execute(SDL_Event event, SDL_Surface* surface) {
 std::string SelectedState::sidebar_tip() {
     return "Choose an action";
 }
+

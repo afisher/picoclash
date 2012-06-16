@@ -36,8 +36,6 @@ void IdleState::execute(SDL_Event event, SDL_Surface* surface) {
             selected_tile->set_selected(true);
             Grid::draw_grid(surface);
 
-            //SRPG::draw_sidebar();
-
             StateMachine::set_previous_state(this);
             StateMachine::set_current_state(new SelectedState());
         }
