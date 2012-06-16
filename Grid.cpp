@@ -40,6 +40,7 @@ void Grid::load_file(string filename) {
 
     player_characters.clear();
     enemy_characters.clear();
+    characters_to_act.clear();
 
     ifstream file(filename.c_str());
     string line;
