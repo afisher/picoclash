@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=640" />
+
+    <link rel="stylesheet" href="stylesheets/core.css" media="screen"/>
+    <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-device-width:640px)"/>
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
+
+    <script type="text/javascript" src="javascripts/modernizr.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('#main_content').headsmart()
+      })
+    </script>
+    <title>Picoclash by afisher</title>
+  </head>
+
+  <body>
+    <a id="forkme_banner" href="https://github.com/afisher/picoclash">View on GitHub</a>
+    <div class="shell">
+
+      <header>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <h1>Picoclash</h1>
+            <h2>A grid-based turn-based 2D strategy game.</h2>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+      </header>
+
+      <section id="downloads">
+        <span class="inner">
+          <a href="https://github.com/afisher/picoclash/zipball/master" class="zip"><em>download</em> .ZIP</a><a href="https://github.com/afisher/picoclash/tarball/master" class="tgz"><em>download</em> .TGZ</a>
+        </span>
+      </section>
+
+
+      <span class="banner-fix"></span>
+
+
+      <section id="main_content">
+        <p>Picoclash is a strategy game that attempts to bring the battle mechanics from 2D strategy roleplaying games (SRPGs) to your personal computer.</p>
+
+<h3>Running Picoclash</h3>
+
+<p>These instructions assume you are running Linux. First you will need to download SDL and its extensions, SDL_image, SDL_ttf, and SDL_mixer. Once you have those installed through your favorite package manager, download the Picoclash source using either of the links above and extract. Then in your terminal:</p>
+
+<pre><code>$ cd picoclash
+$ make
+$ ./Picoclash
+</code></pre>
+
+<h3>Creating your own maps</h3>
+
+<p>Anyone can create their own map for Picoclash just by making a text file. All maps are 30x30 and are read from the <code>maps/</code> directory. Here is an example of a map file:</p>
+
+<pre><code>..............................
+..............................
+..............................
+..............................
+..............................
+..............................
+..............................
+..............................
+..............................
+..............................
+.........H.A.W.H.A.W..........
+..........W.A.H.W.A.H.........
+..............................
+..............................
+.......ooooooooooooooo........
+..............................
+..............................
+..............................
+..........w.a.h.w.a.h.........
+...........h.a.w.h.a.w........
+..............................
+..............................
+..............................
+..............................
+..............................
+..............................
+..............................
+..............................
+..............................
+..............................
+</code></pre>
+
+<p>Each character represents a square in the map. The key is found below:</p>
+
+<pre><code>w: blue warrior
+a: blue archer
+h: blue healer
+W: red warrior
+A: red archer
+H: red healer
+o: rock
+.: grass
+</code></pre>
+
+<h3>Contacting me</h3>
+
+<p>I'd love to hear your feedback on Picoclash! If you have any ideas to improve the game or would just like to tell me how much you like it (or hate it), drop me a line at <a href="mailto:fish.ash@gmail.com">fish.ash@gmail.com</a>.</p>
+      </section>
+
+      <footer>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <p>this project by <a href="https://github.com/afisher">afisher</a> can be found on <a href="https://github.com/afisher/picoclash">GitHub</a></p>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+        <p>Generated with <a href="http://pages.github.com">GitHub Pages</a> using Merlot</p>
+        <span class="octocat"></span>
+      </footer>
+
+    </div>
+
+    
+  </body>
+</html>
